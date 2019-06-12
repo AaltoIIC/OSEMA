@@ -63,3 +63,6 @@ local_settings.py
 
 .env
 db.sqlite3
+
+# Platform specific
+management/sensor_updates/
