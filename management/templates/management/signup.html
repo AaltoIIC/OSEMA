@@ -1,0 +1,47 @@
+{% extends 'management/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center text-white mb-4">Login</h2>
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <!-- form card login -->
+                    <div class="card rounded-0">
+                        <div class="card-header">
+                            <h3 class="mb-0">Signup</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form" role="form" autocomplete="off" id="formLogin" novalidate="" method="POST" action="{% url 'signup' %}">
+                                {% csrf_token %}
+                                {% for field in form %}
+                                  <div class="form-group">
+                                    <p>
+                                      {{ field.label_tag }}<br>
+                                      {{ field }}
+                                      {% if field.help_text %}
+                                        <small style="color: grey">{{ field.help_text }}</small>
+                                      {% endif %}
+                                      {% for error in field.errors %}
+                                        <p style="color: red">{{ error }}</p>
+                                      {% endfor %}
+                                    </p>
+                                  </div>
+                                {% endfor %}
+                                <button type="submit" class="btn btn-success btn-lg float-left" id="btnLogin">Signup</button>
+                            </form>
+                        </div>
+                        <!--/card-block-->
+                    </div>
+                    <!-- /form card login -->
+                </div>
+            </div>
+            <!--/row-->
+        </div>
+        <!--/col-->
+    </div>
+    <!--/row-->
+</div>
+<!--/container-->
+{% endblock %}

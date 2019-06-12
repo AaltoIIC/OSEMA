@@ -1,0 +1,60 @@
+{% extends "management/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center text-white mb-4">Login</h2>
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <!-- form card login -->
+                    <div class="card rounded-0">
+                        <div class="card-header">
+                            <h3 class="mb-0">Login</h3>
+                        </div>
+                        <div class="card-body">
+                          {% if next %}
+                            <form class="form" role="form" autocomplete="off" id="formLogin" novalidate="" method="POST" action="login?next={{next}}">
+                          {%else%}
+                            <form class="form" role="form" autocomplete="off" id="formLogin" novalidate="" method="POST" action="login">
+                          {% endif %}
+                                {% csrf_token %}
+                                {% if form.errors %}
+                                <p>Your username and password didn't match. Please try again.</p>
+                                {% endif %}
+                                <div class="form-group">
+                                  <td>{{ form.username.label_tag }}</td>
+                                  <br>
+                                  <td>{{ form.username }}</td>
+                                </div>
+                                <div class="form-group">
+                                  <td>{{ form.password.label_tag }}</td>
+                                  <br>
+                                  <td>{{ form.password }}</td>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-lg float-left" id="btnLogin">Login</button>
+                                {# Assumes you setup the password_reset view in your URLconf #}
+                                <br>
+                                <br>
+                                <br>
+                                <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                                <p>Don't have an account? <a href="{% url 'signup' %}">Signup!</a></p>
+                            </form>
+                        </div>
+                        <!--/card-block-->
+                    </div>
+                    <!-- /form card login -->
+
+                </div>
+
+
+            </div>
+            <!--/row-->
+
+        </div>
+        <!--/col-->
+    </div>
+    <!--/row-->
+</div>
+<!--/container-->
+{% endblock %}

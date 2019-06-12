@@ -1,0 +1,34 @@
+{% extends "management/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="w-75 p-3" style="margin: 0 auto;">
+    <h1 id="setting-up-new-server" class="mb-3">Setting up new server</h1>
+    <p>(Instructions for TP-Link router)</p>
+    <li>Connect to router</li>
+    <li>Go to http://tplinkwifi.net and log in</li>
+    <figure>
+      <img src="{% static 'management/instructions/tp_link_log_in.png' %}" alt="Log in">
+    </figure>
+    <li>Select "Wireless clients" from front page</li>
+    <li>There you can find the MAC address and IP address of the server</li>
+    <figure>
+      <img src="{% static 'management/instructions/mac_address_and_ip_address.PNG' %}" alt="MAC and IP address">
+    </figure>
+    <li>Go to Advanced tab and select Network from the right and then DHCP Server.</li>
+    <li>Reserve address to the server by clicking Add.</li>
+    <figure>
+      <img src="{% static 'management/instructions/address_reservation.PNG' %}" alt="Address reservation">
+    </figure>
+    <li>After you have saved settings go to NAT Forwarding from the right and select Virtual Servers</li>
+    <li>Add new virtual server. Use the previously reserved IP address and port can be freely chosen.</li>
+    <figure>
+      <img src="{% static 'management/instructions/virtual_server.PNG' %}" alt="Virtual server">
+    </figure>
+    </ul>
+  </div>
+</div>
+
+
+{% endblock %}

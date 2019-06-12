@@ -1,0 +1,236 @@
+{% extends "management/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<script type="text/javascript">
+   var sensor_id = {{sensor_id}};
+</script>
+
+
+<div class="container">
+ <div class="row">
+   <div class="col-md-8 order-md-1">
+     <br>
+      <form class="needs-validation" method="POST">
+        {% csrf_token %}
+        <h4 class="mb-3">General settings</h4>
+        <div class="mb-3">
+          {{ sensor_form.sensor_name.label_tag }}<br>
+          {{ sensor_form.sensor_name }}
+          {% if sensor_form.sensor_name.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.sensor_name.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.sensor_name.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ sensor_form.description.label_tag }}<br>
+          {{ sensor_form.description }}
+          {% if sensor_form.description.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.description.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.description.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ sensor_form.location.label_tag }}<br>
+          {{ sensor_form.location }}
+          {% if sensor_form.location.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.location.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.location.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ sensor_form.sensor_id.label_tag }}<br>
+          {{ sensor_form.sensor_id }}
+          {% if sensor_form.update_check_limit.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.sensor_id.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.sensor_id.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% if user.auth_level >= 2 %}
+        <div class="mb-3">
+          {{ sensor_form.sensor_key.label_tag }}<br>
+          {{ sensor_form.sensor_key }}
+          {% if sensor_form.sensor_key.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.sensor_key.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.sensor_key.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="mb-3">
+          {{ sensor_form.software_version.label_tag }}<br>
+          {{ sensor_form.software_version }}
+          {% if sensor_form.software_versiont.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.software_version.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.software_version.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+          <button type="button" id="download_file_btn" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Download software</button>
+        </div>
+        <div class="mb-3">
+          {{ sensor_form.data_server_ip_address.label_tag }}<br>
+          {{ sensor_form.data_server_ip_address }}
+          {% if sensor_form.data_server_ip_address.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.data_server_ip_address.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.data_server_ip_address.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ sensor_form.update_check_ip_address.label_tag }}<br>
+          {{ sensor_form.update_check_ip_address }}
+          {% if sensor_form.update_check_ip_address.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.update_check_ip_address.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.update_check_ip_address.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ sensor_form.update_check_limit.label_tag }}<br>
+          {{ sensor_form.update_check_limit }}
+          {% if sensor_form.update_check_limit.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.update_check_limit.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.update_check_limit.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+
+        <div class="mb-3">
+          <label for="id_adder">Adder:</label><br>
+            <input type="text" name="adder" value="{{ adder.username }}" class="form-control" title="Adder" disabled="True" maxlength="46" required id="id_adder" />
+            {% if sensor_form.adder.help_text %}
+              <p class="help_text" style="color: grey;display: none">{{ sensor_form.adder.help_text }}</p>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+          <label for="id_latest_modifier">Latest modifier:</label><br>
+            <input type="text" name="latest_modifier" value="{{ latest_modifier.username }}" class="form-control" title="Latest modifier" disabled="True" maxlength="46" required id="id_latest_modifier" />
+            {% if sensor_form.latest_modifier.help_text %}
+              <p class="help_text" style="color: grey;display: none">{{ sensor_form.latest_modifier.help_text }}</p>
+            {% endif %}
+        </div>
+
+
+        <h4 class="mb-3">Measurement settings</h4>
+        <div class="mb-3">
+          {{ sensor_form.model.label_tag }}<br>
+            <a href="type/{{sensor_form.model.value}}">{{ sensor_form.model.value }}</a>
+          {% if sensor_form.model.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.model.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.model.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label for="id_add_sensor-sample_rate">Sample rate (Hz):</label><br>
+            <input type="text" name="samplerate" value="{{ current_sample_rate }}" class="form-control" title="Current sample rate" disabled="True" maxlength="46" required id="id_sample_rate" />
+         </div>
+        <div class="mb-3">
+          <label for="id_add_sensor-sensitivity">Sensitivity:</label><br>
+              <input type="text" name="sensitivity" value="{{ current_sensitivity }}" class="form-control" title="Current sensitivity" disabled="True" maxlength="46" required id="id_sensitivity" />
+         </div>
+         <div class="mb-3">
+           {{ sensor_form.burst_length.label_tag }}<br>
+           {{ sensor_form.burst_length }}
+           {% if sensor_form.burst_length.help_text %}
+             <p class="help_text" style="color: grey;display: none">{{ sensor_form.burst_length.help_text }}</p>
+           {% endif %}
+           {% for error in sensor_form.burst_length.errors %}
+             <p style="color: red">{{ error }}</p>
+           {% endfor %}
+         </div>
+         <div class="mb-3">
+           {{ sensor_form.burst_rate.label_tag }}<br>
+           {{ sensor_form.burst_rate }}
+           {% if sensor_form.burst_rate.help_text %}
+             <p class="help_text" style="color: grey;display: none">{{ sensor_form.burst_rate.help_text }}</p>
+           {% endif %}
+           {% for error in sensor_form.burst_rate.errors %}
+             <p style="color: red">{{ error }}</p>
+           {% endfor %}
+         </div>
+
+         <h4 class="mb-3">Data transfer settings</h4>
+         <div class="mb-3">
+           {{ sensor_form.data_send_rate.label_tag }}<br>
+           {{ sensor_form.data_send_rate }}
+           {% if sensor_form.data_send_rate.help_text %}
+             <p class="help_text" style="color: grey;display: none">{{ sensor_form.data_send_rate.help_text }}</p>
+           {% endif %}
+           {% for error in sensor_form.data_send_rate.errors %}
+             <p style="color: red">{{ error }}</p>
+           {% endfor %}
+         </div>
+         <div class="mb-3">
+           {{ sensor_form.connection_close_limit.label_tag }}<br>
+           {{ sensor_form.connection_close_limit }}
+           {% if sensor_form.connection_close_limit.help_text %}
+             <p class="help_text" style="color: grey;display: none">{{ sensor_form.connection_close_limit.help_text }}</p>
+           {% endif %}
+           {% for error in sensor_form.connection_close_limit.errors %}
+             <p style="color: red">{{ error }}</p>
+           {% endfor %}
+         </div>
+         <div class="mb-3">
+           {{ sensor_form.network_close_limit.label_tag }}<br>
+           {{ sensor_form.network_close_limit }}
+           {% if sensor_form.network_close_limit.help_text %}
+             <p class="help_text" style="color: grey;display: none">{{ sensor_form.network_close_limit.help_text }}</p>
+           {% endif %}
+           {% for error in sensor_form.network_close_limit.errors %}
+             <p style="color: red">{{ error }}</p>
+           {% endfor %}
+         </div>
+         <h4 class="mb-3">Communication settings</h4>
+         <div class="mb-3">
+            <label for="id_protocol">Communication technology:</label><br>
+            <input type="text" name="communication technology" value="{{communication_technology}}" class="form-control" disabled="True" maxlength="100" required id="id_protocol" />
+         </div>
+         {% for field in communication_form %}
+           {% if field.name != "key" %}
+             <div class="mb-3">
+                {{ field.label_tag }}<br>
+                {{ field }}
+             </div>
+           {% elif user.auth_level > 1 %}
+             <div class="mb-3">
+                {{ field.label_tag }}<br>
+                {{ field }}
+             </div>
+          {% endif %}
+        {% endfor %}
+       <h4 class="mb-3">Protocol settings</h4>
+       <div class="mb-3">
+          <label for="id_protocol">Protocol:</label><br>
+          <input type="text" name="protocol" value="{{protocol}}" class="form-control" disabled="True" maxlength="100" required id="id_protocol" />
+       </div>
+       {% for field in protocol_form %}
+       <div class="mb-3">
+          {{ field.label_tag }}<br>
+          {{ field }}
+       </div>
+       {% endfor %}
+     </form>
+   </div>
+ </div>
+</div>
+
+<script src="{% static "management/sensor_info.js" %}"></script>
+
+{% endblock %}
