@@ -298,8 +298,8 @@ def add_sensor(request):
         if not errors:
             modify_communication_form = ModifyWlanForm(instance=communication_object, prefix='wlan')
             communication_instances = Wlan.objects.all()
-            modify_protocol_form = ModifyLWDTPForm(instance=protocol_object, prefix='lwdtp')
-            protocol_instances = LWDTP.objects.all()
+            modify_protocol_form = ModifyHttpForm(instance=protocol_object, prefix='http')
+            protocol_instances = Http.objects.all()
     else:
         context = {'title':'Not authorized!', 'error_msg':'You are not allowed to add sensor. Please contact admin to request rights to modify/add sensors.'}
         return render(request, 'management/error.html', context)

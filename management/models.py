@@ -205,7 +205,7 @@ class LWDTP(models.Model):
 #Message Queuing Telemetry Transport
 class MQTT(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, default="LWDTP", unique=True)
+    name = models.CharField(max_length=50, default="MQTT", unique=True)
     user = models.CharField(max_length=50, default="Not set")
     key = models.CharField(max_length=50, default="Not set")
     topic = models.CharField(max_length=150, default="Not set")
