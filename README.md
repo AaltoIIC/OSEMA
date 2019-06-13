@@ -36,7 +36,7 @@ python add_objects_to_db.py
 ```
 Create superuser:
 ```
-python manage.py create superuser
+python manage.py createsuperuser
 ```
 
 Configure your network so that you have public IP addres.
