@@ -39,7 +39,9 @@ Create superuser:
 python manage.py createsuperuser
 ```
 
-Configure your network so that you have public IP addres.
+Configure your network so that you have a public IP address.
+
+Change the ALLOWED_HOSTS in sensor_management_platform/settings.py to match your network settings.
 
 Run server:
 ```
