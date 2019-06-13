@@ -39,6 +39,12 @@ Create superuser:
 python manage.py create superuser
 ```
 
+Configure your network so that you have public IP addres.
+
+Run server:
+```
+python manage.py <ip_address>:<port>
+```
 
 
 ## Authors
