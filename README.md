@@ -21,6 +21,24 @@ To install libraries run:
 pip install django ntplib djangorestframework rest-framework-generic-relations djangorestframework_simplejwt requests
 ```
 
+## Getting started
+
+First the database needs to be initialized:
+```
+python manage.py makemigrations management
+
+python manage.py migrate
+```
+
+Run script add_objects_to_db.py:
+```
+python add_objects_to_db.py
+```
+Create superuser:
+```
+python manage.py create superuser
+```
+
 
 
 ## Authors
