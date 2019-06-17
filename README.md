@@ -36,9 +36,21 @@ python add_objects_to_db.py
 ```
 Create superuser:
 ```
-python manage.py create superuser
+python manage.py createsuperuser
 ```
 
+Configure your network to have either a public IP address or place all sensor nodes at the same local network.
+
+Change the ALLOWED_HOSTS in sensor_management_platform/settings.py to match your network settings.
+
+Change the SECRET_KEY in sensor_management_platform/settings.py.
+
+Set DEBUG = False in sensor_management_platform/settings.py.
+
+Run server:
+```
+python manage.py <ip_address>:<port>
+```
 
 
 ## Authors
