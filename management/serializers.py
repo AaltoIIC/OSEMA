@@ -1,7 +1,7 @@
 from management.models import Sensor, Type_of_sensor, Wlan, Nb_iot, Http, Https, Sample_rate, Sensitivity, Value_pair, LWDTP, MQTT
 from rest_framework import serializers
 from generic_relations.relations import GenericRelatedField
-from management.utils import update_sensor, create_new_sensor_to_dataserver
+from management.utils import update_sensor, create_new_sensor
 
 
 class WlanSerializer(serializers.ModelSerializer):
@@ -93,7 +93,7 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
                         communication_object = validated_data['communication_object'],
                         protocol_object = validated_data['protocol_object']
         )
-        create_new_sensor_to_dataserver(s)
+        create_new_sensor(s)
         return s
 
     def update(self, instance, validated_data):

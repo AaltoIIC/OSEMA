@@ -46,11 +46,10 @@
             {% if user.auth_level > 1 %}
               <button type="button" onclick="location.href='{{sensor.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
               <button type="button" onclick="location.href='modify/{{sensor.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
-              <button type="button" onclick="location.href='../data/{{sensor.id}}';" class="btn btn-info btn-md" style="padding-top: 2px; padding-bottom: 2px;">Data</button>
               <button type="button" value="delete/{{sensor.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
             {% else %}
               <button type="button" onclick="location.href='{{sensor.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
-              <button type="button" value="delete/{{sensor.id}}" class="btn btn-info btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Data</button>
+              <button type="button" value="delete/{{sensor.id}}" class="btn btn-info btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
             {% endif %}
             </td>
         </tr>

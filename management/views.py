@@ -10,7 +10,7 @@ from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sampl
 from .forms import ModifySensorForm, ModifySensorFormLocked, AddSensorForm, SignUpForm, TypeOfSensorInfoLockedForm
 from .forms import ModifyWlanForm, ModifyNbIotForm, ModifyHttpForm, ModifyHttpsForm, ModifyLWDTPForm, ModifyMQTTForm
 from .forms import WlanInfoForm, NbIotInfoForm, HttpInfoForm, HttpsInfoForm, LWDTPInfoForm, MQTTInfoForm
-from management.utils import update_sensor, create_new_sensor_to_dataserver, delete_sensor_from_data_server, update_sensor_status, update_key, get_latest_data_date, parse_date, get_data_files, delete_datafile_from_data_server, get_datafile, get_date_and_type, get_previous_and_next
+from management.utils import update_sensor, create_new_sensor, parse_date
 from .api_permissions import AuthLevel2Permission
 from rest_framework.decorators import api_view
 
@@ -115,7 +115,6 @@ def get_update(request):
                     sensor_object.software_version = update.filename
                     sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                     sensor_object.save()
-                    update_sensor_status(sensor_object, Sensor.MEASURING_UP_TO_DATE)
                 return HttpResponse("UP-TO-DATE", content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
             update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
@@ -130,15 +129,12 @@ def confirm_update(request):
         sensor_object = get_object_or_404(Sensor, pk=request.POST['sensor_id'])
         if sensor_object.sensor_key == request.POST['sensor_key']:
             sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-            update_sensor_status(sensor_object, Sensor.MEASURING_UP_TO_DATE)
             sensor_object.save()
             return HttpResponse("OK", content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
             alphabet = string.ascii_letters + string.digits
             sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password
             sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-            update_key(sensor_object)
-            update_sensor_status(sensor_object, Sensor.MEASURING_UP_TO_DATE)
             sensor_object.save()
             return HttpResponse("OK", content_type='text/plain')
         else:
@@ -255,7 +251,7 @@ def add_sensor(request):
                     new_sensor.adder = user
                     new_sensor.latest_modifier = user
                     new_sensor.save()
-                    create_new_sensor_to_dataserver(new_sensor)
+                    create_new_sensor(new_sensor)
                     return redirect('browse_sensors')
 
                 else:
@@ -635,10 +631,14 @@ def get_protocol_form_blank(request, type):
 
 @login_required
 def delete_sensor(request, sensor_id):
-    sensor_object = Sensor.objects.get(pk=sensor_id)
-    delete_sensor_from_data_server(sensor_object)
-    sensor_object.delete()
-    return redirect('browse_sensors')
+    if user.auth_level >= 2:
+        sensor_object = Sensor.objects.get(pk=sensor_id)
+        delete_sensor_from_data_server(sensor_object)
+        sensor_object.delete()
+        return redirect('browse_sensors')
+    else:
+        return render(request, 'management/error.html', {'title' : 'You are not allowed to delete sensor', 'error_msg' : 'Ask rights to delete sensor from admin.'})
+
 
 @login_required
 def sensor_type_info(request, model):
@@ -885,162 +885,6 @@ def delete_protocols(request, type, id):
     else:
         raise Http404("Page doesn't exist")
     return redirect('browse_protocols')
-
-#list all sensors data
-@login_required
-def data(request):
-    checked_addresses = []
-    sensor_data_dates = {}
-    for sensor in Sensor.objects.all():
-        if sensor.data_server_ip_address not in checked_addresses:
-            data = get_latest_data_date(sensor)
-            if data != FAILURE:
-                data_as_json = data.json()
-                data_as_dict = dict(data_as_json)
-                sensor_data_dates.update(data_as_dict)
-                checked_addresses.append(sensor.data_server_ip_address)
-    for sensor in Sensor.objects.all():
-        try:
-            value = sensor_data_dates[str(sensor.sensor_id)]
-        except KeyError:
-            sensor_data_dates[str(sensor.sensor_id)] = ["Not available", "None", "Not available"]
-    context = {}
-    sensors = list(map(lambda x: {  "name":x.sensor_name,
-                                    "model":x.model.sensor_model,
-                                    "id":x.pk,
-                                    "latest_update": parse_date(sensor_data_dates[str(x.pk)][2]),
-                                    "filename": sensor_data_dates[str(x.pk)][0],
-                                    "file_type": sensor_data_dates[str(x.pk)][1]},
-                                    Sensor.objects.all()))
-    context['sensors'] = sensors
-    return render(request, 'management/data.html', context)
-
-#list specific sensor data
-@login_required
-def browse_sensor_data(request, id):
-    sensor_object = get_object_or_404(Sensor, pk=id)
-    data = get_data_files(sensor_object)
-    files = []
-    if data != FAILURE:
-        data_as_json = data.json()
-        data_as_dict = dict(data_as_json)
-        for key in data_as_dict:
-            files.append({"filename":key, "file_type":data_as_dict[key][0], "date":parse_date(data_as_dict[key][1])})
-    context = {}
-    context['files'] = files
-    context['sensor_id'] = sensor_object.sensor_id
-    return render(request, 'management/browse_sensor_data.html', context)
-
-#Display data info
-@login_required
-def display_sensor_data(request, id, filename):
-    sensor_object = get_object_or_404(Sensor, pk=id)
-    data = get_datafile(filename, sensor_object)
-    date_and_type = get_date_and_type(filename, sensor_object)
-    data_previous_and_next = get_previous_and_next(filename, sensor_object)
-    if data != FAILURE and date_and_type != FAILURE and data_previous_and_next != FAILURE:
-        context = {}
-        list_of_data = data.text.splitlines()
-        titles = list_of_data[0].split(",") #list of titles
-        data_as_dict = {}
-        #Creating keys to dictionary
-        for i in range(0, len(titles)):
-            data_as_dict[titles[i]] = []
-        #Adding values to dictionary
-        for i in range(1, len(list_of_data)):
-            j = 0
-            values = [float(value.strip()) for value in list_of_data[i].split(",")]
-            for title in titles:
-                data_as_dict[title].append(values[j])
-                j += 1
-        date_and_type = (dict(date_and_type.json()))
-        previous_and_next = (dict(data_previous_and_next.json()))
-        context['previous'] = previous_and_next['previous']
-        context['next'] = previous_and_next['next']
-        context['graph_data'] = json.dumps(data_as_dict)
-        context['filename'] = filename
-        context['file_type'] = date_and_type['type']
-        context['sensor_id'] = id
-        context['date'] = parse_date(date_and_type['date'])
-        return render(request, 'management/display_data.html', context)
-    context = {'title':'No data available', 'error_msg':'There is an error with data server'}
-    return render(request, 'management/error.html', context)
-
-#Visualize data
-@login_required
-def visualize_sensor_data(request, id, filename):
-    sensor_object = get_object_or_404(Sensor, pk=id)
-    data = get_datafile(filename, sensor_object)
-    data_previous_and_next = get_previous_and_next(filename, sensor_object)
-    if data != FAILURE and data_previous_and_next != FAILURE:
-        context = {}
-        list_of_data = data.text.splitlines()
-        titles = list_of_data[0].split(",") #list of titles
-        data_as_dict = {}
-        #Creating keys to dictionary
-        for i in range(0, len(titles)):
-            data_as_dict[titles[i]] = []
-        #Adding values to dictionary
-        for i in range(1, len(list_of_data)):
-            j = 0
-            values = [float(value.strip()) for value in list_of_data[i].split(",")]
-            for title in titles:
-                data_as_dict[title].append(values[j])
-                j += 1
-        previous_and_next = (dict(data_previous_and_next.json()))
-        context['previous'] = previous_and_next['previous']
-        context['next'] = previous_and_next['next']
-        context['graph_data'] = json.dumps(data_as_dict)
-        context['filename'] = filename
-        context['sensor_id'] = id
-        return render(request, 'management/visualize.html', context)
-    context = {'title':'No data available', 'error_msg':'There is an error with data server'}
-    return render(request, 'management/error.html', context)
-
-#Table data
-@login_required
-def table_sensor_data(request, id, filename):
-    sensor_object = get_object_or_404(Sensor, pk=id)
-    data = get_datafile(filename, sensor_object)
-    if data != FAILURE:
-        context = {}
-        list_of_data = data.text.splitlines()
-        titles = list_of_data[0].split(",") #list of titles
-        data_as_dict = {}
-        #Creating keys to dictionary
-        for i in range(0, len(titles)):
-            data_as_dict[titles[i]] = []
-        #Adding values to dictionary
-        for i in range(1, len(list_of_data)):
-            j = 0
-            values = [float(value.strip()) for value in list_of_data[i].split(",")]
-            for title in titles:
-                data_as_dict[title].append(values[j])
-                j += 1
-        context['graph_data'] = json.dumps(data_as_dict)
-        context['filename'] = filename
-        return render(request, 'management/table_data.html', context)
-    context = {'title':'No data available', 'error_msg':'There is an error with data server'}
-    return render(request, 'management/error.html', context)
-
-#Download
-@login_required
-def download_sensor_data(request, id, filename, file_type):
-    sensor_object = get_object_or_404(Sensor, pk=id)
-    data = get_datafile(filename, sensor_object)
-    if data != FAILURE:
-        response = HttpResponse(data.text, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename={0}'.format(filename + "." + file_type)
-        return response
-    context = {'title':'No data available', 'error_msg':'There is an error with data server'}
-    return render(request, 'management/error.html', context)
-
-#Delete datafile
-@login_required
-def delete_datafile(request, id, filename):
-    sensor_object = get_object_or_404(Sensor, pk=id)
-    delete_datafile_from_data_server(filename, sensor_object)
-    return redirect("/data/{}".format(id))
 
 #instructions
 @login_required
