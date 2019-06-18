@@ -1,4 +1,4 @@
-from management.models import Sensor, Type_of_sensor, Wlan, Nb_iot, Http, Https, Sample_rate, Sensitivity, Value_pair, LWDTP, MQTT
+from management.models import Sensor, Type_of_sensor, Wlan, Nb_iot, HTTP, HTTPS, Sample_rate, Sensitivity, Value_pair, MQTT
 from rest_framework import serializers
 from generic_relations.relations import GenericRelatedField
 from management.utils import update_sensor, create_new_sensor
@@ -14,25 +14,20 @@ class NbIotSerializer(serializers.HyperlinkedModelSerializer):
         model = Nb_iot
         fields = ('id', 'url', 'name', 'settings')
 
-class HttpSerializer(serializers.HyperlinkedModelSerializer):
+class HTTPSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Http
-        fields = ('id', 'url', 'name', 'settings', 'path')
+        model = HTTP
+        fields = ('id', 'url', 'name', 'data_server_url', 'port', 'path')
 
-class HttpsSerializer(serializers.HyperlinkedModelSerializer):
+class HTTPSSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Https
-        fields = ('id', 'url', 'name', 'settings', 'path')
-
-class LWDTPSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = LWDTP
-        fields = ('id', 'url', 'name', 'access_token', 'refresh_token')
+        model = HTTPS
+        fields = ('id', 'url', 'name', 'data_server_url', 'port', 'path')
 
 class MQTTSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = MQTT
-        fields = ('id', 'url', 'name', 'user', 'key', 'topic', 'data_server_url', 'refresh_token', 'port')
+        fields = ('id', 'url', 'name', 'user', 'key', 'topic', 'broker_url', 'refresh_token', 'port')
 
 class ModelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -51,17 +46,13 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
         ),
     })
     protocol_object = GenericRelatedField({
-            Http: serializers.HyperlinkedRelatedField(
-                queryset = Http.objects.all(),
+            HTTP: serializers.HyperlinkedRelatedField(
+                queryset = HTTP.objects.all(),
                 view_name='http-detail',
             ),
-            Https: serializers.HyperlinkedRelatedField(
-                queryset = Https.objects.all(),
+            HTTPS: serializers.HyperlinkedRelatedField(
+                queryset = HTTPS.objects.all(),
                 view_name='https-detail',
-            ),
-            LWDTP: serializers.HyperlinkedRelatedField(
-                queryset = LWDTP.objects.all(),
-                view_name='lwdtp-detail',
             ),
             MQTT: serializers.HyperlinkedRelatedField(
                 queryset = MQTT.objects.all(),

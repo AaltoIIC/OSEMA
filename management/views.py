@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+HTTPSfrom django.shortcuts import render, redirect, get_object_or_404
 
 from django.http import HttpResponse, Http404, JsonResponse
 
@@ -6,10 +6,10 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, Http, Https, Update, LWDTP, MQTT
+from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT
 from .forms import ModifySensorForm, ModifySensorFormLocked, AddSensorForm, SignUpForm, TypeOfSensorInfoLockedForm
-from .forms import ModifyWlanForm, ModifyNbIotForm, ModifyHttpForm, ModifyHttpsForm, ModifyLWDTPForm, ModifyMQTTForm
-from .forms import WlanInfoForm, NbIotInfoForm, HttpInfoForm, HttpsInfoForm, LWDTPInfoForm, MQTTInfoForm
+from .forms import ModifyWlanForm, ModifyNbIotForm, ModifyHTTPForm, ModifyHTTPSForm, ModifyMQTTForm
+from .forms import WlanInfoForm, NbIotInfoForm, HTTPInfoForm, HTTPSInfoForm, MQTTInfoForm
 from management.utils import update_sensor, create_new_sensor, parse_date
 from .api_permissions import AuthLevel2Permission
 from rest_framework.decorators import api_view
@@ -32,13 +32,13 @@ except:
 
 
 
-from .serializers import SensorSerializer, ModelSerializer, NbIotSerializer, WlanSerializer, HttpSerializer, LWDTPSerializer, MQTTSerializer, HttpsSerializer, SampleRateSerializer, SensitivitySerializer, ValuePairSerializer
+from .serializers import SensorSerializer, ModelSerializer, NbIotSerializer, WlanSerializer, HTTPSerializer, MQTTSerializer, HTTPSSerializer, SampleRateSerializer, SensitivitySerializer, ValuePairSerializer
 
 import json
 from itertools import chain
 
-AVAILABLE_PROTOCOLS_CLASSES = [Http, Https, LWDTP, MQTT]
-AVAILABLE_PROTOCOLS = ['Http', 'Https', 'LWDTP', 'MQTT']
+AVAILABLE_PROTOCOLS_CLASSES = [HTTP, HTTPS, MQTT]
+AVAILABLE_PROTOCOLS = ['HTTP', 'HTTPS', 'MQTT']
 AVAILABLE_COMMUNICATION_TECHNOLOGIES_CLASSES = [Wlan, Nb_iot]
 AVAILABLE_COMMUNICATION_TECHNOLOGIES = ['Wlan', 'Nb_iot']
 
@@ -63,19 +63,14 @@ class WlanViewSet(viewsets.ModelViewSet):
     serializer_class = WlanSerializer
     permission_classes = [AuthLevel2Permission]
 
-class HttpViewSet(viewsets.ModelViewSet):
-    queryset = Http.objects.all()
-    serializer_class = HttpSerializer
+class HTTPViewSet(viewsets.ModelViewSet):
+    queryset = HTTP.objects.all()
+    serializer_class = HTTPSerializer
     permission_classes = [AuthLevel2Permission]
 
-class HttpsViewSet(viewsets.ModelViewSet):
-    queryset = Https.objects.all()
-    serializer_class = HttpsSerializer
-    permission_classes = [AuthLevel2Permission]
-
-class LWDTPViewSet(viewsets.ModelViewSet):
-    queryset = LWDTP.objects.all()
-    serializer_class = LWDTPSerializer
+class HTTPSViewSet(viewsets.ModelViewSet):
+    queryset = HTTPS.objects.all()
+    serializer_class = HTTPSSerializer
     permission_classes = [AuthLevel2Permission]
 
 class MQTTViewSet(viewsets.ModelViewSet):
@@ -206,33 +201,23 @@ def add_sensor(request):
                         new_sensor.communication_object = instance
                     else:
                         errors = True
-                if protocol == 'Http':
-                    instance = Http.objects.get(pk=request.POST['protocol_instance'])
-                    modified_http_form = ModifyHttpForm(request.POST, instance=instance, prefix='http')
-                    protocol_instances = Http.objects.all()
+                if protocol == 'HTTP':
+                    instance = HTTP.objects.get(pk=request.POST['protocol_instance'])
+                    modified_http_form = ModifyHTTPForm(request.POST, instance=instance, prefix='http')
+                    protocol_instances = HTTP.objects.all()
                     modify_protocol_form = modified_http_form
                     if modified_http_form.is_valid():
                         modified_http_form.save()
                         new_sensor.protocol_object = instance
                     else:
                         errors = True
-                elif protocol == 'Https':
-                    instance = Https.objects.get(pk=request.POST['protocol_instance'])
-                    modified_https_form = ModifyHttpsForm(request.POST, instance=instance, prefix='https')
-                    protocol_instances = Https.objects.all()
+                elif protocol == 'HTTPS':
+                    instance = HTTPS.objects.get(pk=request.POST['protocol_instance'])
+                    modified_https_form = ModifyHTTPSForm(request.POST, instance=instance, prefix='https')
+                    protocol_instances = HTTPS.objects.all()
                     modify_protocol_form = modified_https_form
                     if modified_https_form.is_valid():
                         modified_https_form.save()
-                        new_sensor.protocol_object = instance
-                    else:
-                        errors = True
-                elif protocol == 'LWDTP':
-                    instance = LWDTP.objects.get(pk=request.POST['protocol_instance'])
-                    modified_LWDTP_form = ModifyLWDTPForm(request.POST, instance=instance, prefix='lwdtp')
-                    lwdtp_instances = LWDTP.objects.all()
-                    modify_protocol_form = modified_LWDTP_form
-                    if modified_LWDTP_form.is_valid():
-                        modified_LWDTP_form.save()
                         new_sensor.protocol_object = instance
                     else:
                         errors = True
@@ -294,8 +279,8 @@ def add_sensor(request):
         if not errors:
             modify_communication_form = ModifyWlanForm(instance=communication_object, prefix='wlan')
             communication_instances = Wlan.objects.all()
-            modify_protocol_form = ModifyHttpForm(instance=protocol_object, prefix='http')
-            protocol_instances = Http.objects.all()
+            modify_protocol_form = ModifyHTTPForm(instance=protocol_object, prefix='http')
+            protocol_instances = HTTP.objects.all()
     else:
         context = {'title':'Not authorized!', 'error_msg':'You are not allowed to add sensor. Please contact admin to request rights to modify/add sensors.'}
         return render(request, 'management/error.html', context)
@@ -341,12 +326,10 @@ def sensor_info(request, sensor_id):
         communication_form = NbIotInfoForm(instance=communication_object, prefix='nb_iot')
     else:
         raise Http404("Page doesn't exist")
-    if protocol == 'Http':
-        protocol_form = HttpInfoForm(instance=protocol_object, prefix='http')
-    elif protocol == 'Https':
-        protocol_form = HttpsInfoForm(instance=protocol_object, prefix='https')
-    elif protocol == 'LWDTP':
-        protocol_form = LWDTPInfoForm(instance=protocol_object, prefix='lwdtp')
+    if protocol == 'HTTP':
+        protocol_form = HTTPInfoForm(instance=protocol_object, prefix='http')
+    elif protocol == 'HTTPS':
+        protocol_form = HTTPSInfoForm(instance=protocol_object, prefix='https')
     elif protocol == 'MQTT':
         protocol_form = MQTTInfoForm(instance=protocol_object, prefix='mqtt')
     else:
@@ -412,33 +395,23 @@ def modify_sensor(request, sensor_id):
                     modified_sensor.communication_object = instance
                 else:
                     errors = True
-            if protocol == 'Http':
-                instance = Http.objects.get(pk=request.POST['protocol_instance'])
-                modified_http_form = ModifyHttpForm(request.POST, instance=instance, prefix='http')
-                protocol_instances = Http.objects.all()
+            if protocol == 'HTTP':
+                instance = HTTP.objects.get(pk=request.POST['protocol_instance'])
+                modified_http_form = ModifyHTTPForm(request.POST, instance=instance, prefix='http')
+                protocol_instances = HTTP.objects.all()
                 modify_protocol_form = modified_http_form
                 if modified_http_form.is_valid():
                     modified_http_form.save()
                     modified_sensor.protocol_object = instance
                 else:
                     errors = True
-            elif protocol == 'Https':
-                instance = Https.objects.get(pk=request.POST['protocol_instance'])
-                modified_https_form = ModifyHttpsForm(request.POST, instance=instance, prefix='https')
-                protocol_instances = Https.objects.all()
+            elif protocol == 'HTTPS':
+                instance = HTTPS.objects.get(pk=request.POST['protocol_instance'])
+                modified_https_form = ModifyHTTPSForm(request.POST, instance=instance, prefix='https')
+                protocol_instances = HTTPS.objects.all()
                 modify_protocol_form = modified_https_form
                 if modified_https_form.is_valid():
                     modified_https_form.save()
-                    modified_sensor.protocol_object = instance
-                else:
-                    errors = True
-            elif protocol == 'LWDTP':
-                instance = LWDTP.objects.get(pk=request.POST['protocol_instance'])
-                modified_LWDTP_form = ModifyLWDTPForm(request.POST, instance=instance, prefix='lwdtp')
-                protocol_instances = LWDTP.objects.all()
-                modify_protocol_form = modified_LWDTP_form
-                if modified_LWDTP_form.is_valid():
-                    modified_LWDTP_form.save()
                     modified_sensor.protocol_object = instance
                 else:
                     errors = True
@@ -488,15 +461,12 @@ def modify_sensor(request, sensor_id):
                 communication_instances = Nb_iot.objects.all()
             else:
                 raise Http404("Page doesn't exist")
-            if protocol == 'Http':
-                modify_protocol_form = ModifyHttpForm(instance=protocol_object, prefix='http')
-                protocol_instances = Http.objects.all()
-            elif protocol == 'Https':
-                modify_protocol_form = ModifyHttpsForm(instance=protocol_object, prefix='https')
-                protocol_instances = Https.objects.all()
-            elif protocol == 'LWDTP':
-                modify_protocol_form = ModifyLWDTPForm(instance=protocol_object, prefix='lwdtp')
-                protocol_instances = LWDTP.objects.all()
+            if protocol == 'HTTP':
+                modify_protocol_form = ModifyHTTPForm(instance=protocol_object, prefix='http')
+                protocol_instances = HTTP.objects.all()
+            elif protocol == 'HTTPS':
+                modify_protocol_form = ModifyHTTPSForm(instance=protocol_object, prefix='https')
+                protocol_instances = HTTPS.objects.all()
             elif protocol == 'MQTT':
                 modify_protocol_form = ModifyMQTTForm(instance=protocol_object, prefix='mqtt')
                 protocol_instances = MQTT.objects.all()
@@ -560,12 +530,10 @@ def get_communication_instances(request, type):
 
 @login_required
 def get_protocol_instances(request, type):
-    if type == "Http":
-        instances = Http.objects.all()
-    elif type == "Https":
-        instances = Https.objects.all()
-    elif type == "LWDTP":
-        instances = LWDTP.objects.all()
+    if type == "HTTP":
+        instances = HTTP.objects.all()
+    elif type == "HTTPS":
+        instances = HTTPS.objects.all()
     elif type == "MQTT":
         instances = MQTT.objects.all()
     else:
@@ -599,15 +567,12 @@ def get_communication_technology_form_blank(request, type):
 
 @login_required
 def get_protocol_form(request, type, id):
-    if type == 'Http':
-        protocol_object = get_object_or_404(Http, pk=id)
-        modify_protocol_form = ModifyHttpForm(instance=protocol_object, prefix='http')
-    elif type == 'Https':
-        protocol_object = get_object_or_404(Https, pk=id)
-        modify_protocol_form = ModifyHttpsForm(instance=protocol_object, prefix='https')
-    elif type == 'LWDTP':
-        protocol_object = get_object_or_404(LWDTP, pk=id)
-        modify_protocol_form = ModifyLWDTPForm(instance=protocol_object, prefix='lwdtp')
+    if type == 'HTTP':
+        protocol_object = get_object_or_404(HTTP, pk=id)
+        modify_protocol_form = ModifyHTTPForm(instance=protocol_object, prefix='http')
+    elif type == 'HTTPS':
+        protocol_object = get_object_or_404(HTTPS, pk=id)
+        modify_protocol_form = ModifyHTTPSForm(instance=protocol_object, prefix='https')
     elif type == 'MQTT':
         protocol_object = get_object_or_404(MQTT, pk=id)
         modify_protocol_form = ModifyMQTTForm(instance=protocol_object, prefix='mqtt')
@@ -617,12 +582,10 @@ def get_protocol_form(request, type, id):
 
 @login_required
 def get_protocol_form_blank(request, type):
-    if type == 'Http':
-        modify_protocol_form = ModifyHttpForm(prefix='http')
-    elif type == 'Https':
-        modify_protocol_form = ModifyHttpsForm(prefix='https')
-    elif type == 'LWDTP':
-        modify_protocol_form = ModifyLWDTPForm(prefix='lwdtp')
+    if type == 'HTTP':
+        modify_protocol_form = ModifyHTTPForm(prefix='http')
+    elif type == 'HTTPS':
+        modify_protocol_form = ModifyHTTPSForm(prefix='https')
     elif type == 'MQTT':
         modify_protocol_form = ModifyMQTTForm(prefix='mqtt')
     else:
@@ -753,15 +716,12 @@ def protocols(request):
 
 @login_required
 def protocol_info(request, type, id):
-    if type == 'Http':
-        communication_object = get_object_or_404(Http, pk=id)
-        form = HttpInfoForm(instance=communication_object)
-    elif type == 'Https':
-        communication_object = get_object_or_404(Https, pk=id)
-        form = HttpsInfoForm(instance=communication_object)
-    elif type == 'LWDTP':
-        communication_object = get_object_or_404(LWDTP, pk=id)
-        form = LWDTPInfoForm(instance=communication_object)
+    if type == 'HTTP':
+        communication_object = get_object_or_404(HTTP, pk=id)
+        form = HTTPInfoForm(instance=communication_object)
+    elif type == 'HTTPS':
+        communication_object = get_object_or_404(HTTPS, pk=id)
+        form = HTTPSInfoForm(instance=communication_object)
     elif type == 'MQTT':
         communication_object = get_object_or_404(MQTT, pk=id)
         form = MQTTInfoForm(instance=communication_object)
@@ -774,16 +734,13 @@ def protocol_info(request, type, id):
 def browse_protocols(request):
     context = {}
     http_instances = list(map(lambda x: {"name":x.name, 'type':x.__class__.__name__, "id":x.pk},
-                                Http.objects.all()))
+                                HTTP.objects.all()))
     https_instances = list(map(lambda x: {"name":x.name, 'type':x.__class__.__name__, "id":x.pk},
-                                Https.objects.all()))
-    lwdtp_instances = list(map(lambda x: {"name":x.name, 'type':x.__class__.__name__, "id":x.pk},
-                                LWDTP.objects.all()))
+                                HTTPS.objects.all()))
     mqtt_instances = list(map(lambda x: {"name":x.name, 'type':x.__class__.__name__, "id":x.pk},
                                 MQTT.objects.all()))
     context['http_instances'] = http_instances
     context['https_instances'] = https_instances
-    context['lwdtp_instances'] = lwdtp_instances
     context['mqtt_instances'] = mqtt_instances
     return render(request, 'management/browse_protocols.html', context)
 
@@ -796,12 +753,10 @@ def add_protocols(request):
             return render(request, 'management/error.html', context)
         else:
             protocol = request.POST['protocol']
-            if protocol ==  'Http':
-                modified_form = ModifyHttpForm(request.POST, prefix='http')
-            elif protocol == 'Https':
-                modified_form = ModifyHttpsForm(request.POST, prefix='https')
-            elif protocol == 'LWDTP':
-                modified_form = ModifyLWDTPForm(request.POST, prefix='lwdtp')
+            if protocol ==  'HTTP':
+                modified_form = ModifyHTTPForm(request.POST, prefix='http')
+            elif protocol == 'HTTPS':
+                modified_form = ModifyHTTPSForm(request.POST, prefix='https')
             elif protocol == 'MQTT':
                 modified_form = ModifyMQTTForm(request.POST, prefix='mqtt')
             else:
@@ -810,8 +765,8 @@ def add_protocols(request):
                 modified_form.save()
             return redirect('browse_protocols')
     context =   {'available_protocols': AVAILABLE_PROTOCOLS,
-                'protocol_form': ModifyLWDTPForm(prefix='lwdtp'),
-                'initial_protocol': 'LWDTP'
+                'protocol_form': ModifyHTTPForm(prefix='http'),
+                'initial_protocol': 'HTTP'
     }
     return render(request, 'management/add_protocol.html', context)
 
@@ -823,15 +778,12 @@ def modify_protocols(request, type, id):
             context = {'title':'Not authorized!', 'error_msg':'You are not allowed to modify protocol instances. Please contact admin to request rights to modify/add protocol instances.'}
             return render(request, 'management/error.html', context)
         else:
-            if type == 'Http':
-                protocol_object = get_object_or_404(Http, pk=id)
-                modify_protocol_form = ModifyHttpForm(request.POST, instance=protocol_object, prefix='http')
-            elif type == 'Https':
-                protocol_object = get_object_or_404(Https, pk=id)
-                modify_protocol_form = ModifyHttpsForm(request.POST, instance=protocol_object, prefix='https')
-            elif type == 'LWDTP':
-                protocol_object = get_object_or_404(LWDTP, pk=id)
-                modify_protocol_form = ModifyLWDTPForm(request.POST, instance=protocol_object, prefix='lwdtp')
+            if type == 'HTTP':
+                protocol_object = get_object_or_404(HTTP, pk=id)
+                modify_protocol_form = ModifyHTTPForm(request.POST, instance=protocol_object, prefix='http')
+            elif type == 'HTTPS':
+                protocol_object = get_object_or_404(HTTPS, pk=id)
+                modify_protocol_form = ModifyHTTPSForm(request.POST, instance=protocol_object, prefix='https')
             elif type == 'MQTT':
                 protocol_object = get_object_or_404(MQTT, pk=id)
                 modify_protocol_form = ModifyMQTTForm(request.POST, instance=protocol_object, prefix='mqtt')
@@ -841,30 +793,24 @@ def modify_protocols(request, type, id):
                 modify_protocol_form.save()
                 return redirect('browse_protocols')
     if user.auth_level >= 2:
-        if type == 'Http':
-            protocol_object = get_object_or_404(Http, pk=id)
-            form = ModifyHttpForm(instance=protocol_object, prefix='http')
-        elif type == 'Https':
-            protocol_object = get_object_or_404(Https, pk=id)
-            form = ModifyHttpsForm(instance=protocol_object, prefix='https')
-        elif type == 'LWDTP':
-            protocol_object = get_object_or_404(LWDTP, pk=id)
-            form = ModifyLWDTPForm(instance=protocol_object, prefix='lwdtp')
+        if type == 'HTTP':
+            protocol_object = get_object_or_404(HTTP, pk=id)
+            form = ModifyHTTPForm(instance=protocol_object, prefix='http')
+        elif type == 'HTTPS':
+            protocol_object = get_object_or_404(HTTPS, pk=id)
+            form = ModifyHTTPSForm(instance=protocol_object, prefix='https')
         elif type == 'MQTT':
             protocol_object = get_object_or_404(MQTT, pk=id)
             form = ModifyMQTTForm(instance=protocol_object, prefix='mqtt')
         else:
             raise Http404("Page doesn't exist")
     else:
-        if type == 'Http':
-            protocol_object = get_object_or_404(Http, pk=id)
-            form = HttpInfoForm(instance=protocol_object, prefix='http')
-        elif type == 'Https':
-            protocol_object = get_object_or_404(Https, pk=id)
-            form = HttpsInfoForm(instance=protocol_object, prefix='https')
-        elif type == 'LWDTP':
-            protocol_object = get_object_or_404(LWDTP, pk=id)
-            form = LWDTPInfoForm(instance=protocol_object, prefix='lwdtp')
+        if type == 'HTTP':
+            protocol_object = get_object_or_404(HTTP, pk=id)
+            form = HTTPInfoForm(instance=protocol_object, prefix='http')
+        elif type == 'HTTPS':
+            protocol_object = get_object_or_404(HTTPS, pk=id)
+            form = HTTPSInfoForm(instance=protocol_object, prefix='https')
         elif type == 'MQTT':
             protocol_object = get_object_or_404(MQTT, pk=id)
             form = MQTTInfoForm(instance=protocol_object, prefix='mqtt')
@@ -874,12 +820,10 @@ def modify_protocols(request, type, id):
 
 @login_required
 def delete_protocols(request, type, id):
-    if type == 'Http':
-        Http.objects.filter(pk=id).delete()
-    elif type == 'Https':
-        Https.objects.filter(pk=id).delete()
-    elif type == 'LWDTP':
-        LWDTP.objects.filter(pk=id).delete()
+    if type == 'HTTP':
+        HTTP.objects.filter(pk=id).delete()
+    elif type == 'HTTPS':
+        HTTPS.objects.filter(pk=id).delete()
     elif type == 'MQTT':
         MQTT.objects.filter(pk=id).delete()
     else:

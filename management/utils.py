@@ -1,4 +1,4 @@
-from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, Http, Https, Update
+from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update
 from sensor_management_platform.settings import FAILURE
 from requests.auth import HTTPBasicAuth
 import datetime
@@ -60,7 +60,7 @@ def write_imports(f, communication_object, protocol_object):
     f.write("from machine import RTC, I2C, Timer\n")
     if communication_object.__class__.__name__ == "Wlan":
         f.write("from network import WLAN\n")
-    if protocol_object.__class__.__name__ == "Https":
+    if protocol_object.__class__.__name__ == "HTTPS":
         f.write("import ssl\n")
     if protocol_object.__class__.__name__ == "MQTT":
         f.write("from ubinascii import hexlify\n")
@@ -119,9 +119,9 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
             f.write("SETTINGS_DICT['NETWORK_SETTINGS'] = ['{}', ({}, '{}'), 'Pycom{}']\n".format(ssid, security, key, sensor_object.sensor_id))
 
     # write setting from protocol_object
-    if protocol_object.__class__.__name__ == "Http":
+    if protocol_object.__class__.__name__ == "HTTP":
         f.write("SETTINGS_DICT['PATH'] = '{}'\n".format(protocol_object.path))
-    elif protocol_object.__class__.__name__ == "Https":
+    elif protocol_object.__class__.__name__ == "HTTPS":
         f.write("SETTINGS_DICT['PATH'] = '{}'\n".format(protocol_object.path))
     elif protocol_object.__class__.__name__ == "MQTT":
         f.write("SETTINGS_DICT['USER'] = '{}'\n".format(protocol_object.user))
@@ -148,9 +148,9 @@ def write_write(f, sample_rate_object, sensitivity_object):
 
 """
 def write_functions_used_by_functions_always_needed(f, sensor_object, protocol_object):
-    if protocol_object.__class__.__name__ == "Http":
+    if protocol_object.__class__.__name__ == "HTTP":
         pass #update when needed
-    elif protocol_object.__class__.__name__ == "Https":
+    elif protocol_object.__class__.__name__ == "HTTPS":
         pass #update when needed
 """
 
@@ -182,12 +182,10 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
         write_file_contents(f, "management/pycom_functions/close_network_wlan.py")
 
     #Write create and connect socket
-    if protocol_object.__class__.__name__ == "Http":
+    if protocol_object.__class__.__name__ == "HTTP":
         write_file_contents(f, "management/pycom_functions/create_and_connect_socket.py")
-    elif protocol_object.__class__.__name__ == "Https":
+    elif protocol_object.__class__.__name__ == "HTTPS":
         write_file_contents(f, "management/pycom_functions/create_and_connect_socket_ssl.py")
-    elif protocol_object.__class__.__name__ == "LWDTP":
-        write_file_contents(f, "management/pycom_functions/create_and_connect_socket.py")
     elif protocol_object.__class__.__name__ == "MQTT":
         write_file_contents(f, "management/pycom_functions/create_and_connect_socket.py")
 
@@ -196,22 +194,14 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
         if communication_object.__class__.__name__ == "Wlan":
             write_file_contents(f, "management/pycom_functions/keep_connection_wlan.py")
 
-    #Write communicate with server
-    if protocol_object.__class__.__name__ == "LWDTP":
-        if sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0:
-            write_file_contents(f, "management/pycom_functions/communicate_with_server_keep_connection_LWDTP.py")
-        elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit:
-            write_file_contents(f, "management/pycom_functions/communicate_with_server_close_connection_LWDTP.py")
-        elif sensor_object.data_send_rate > sensor_object.network_close_limit:
-            write_file_contents(f, "management/pycom_functions/communicate_with_server_close_network_LWDTP.py")
-    elif protocol_object.__class__.__name__ == "Http":
+    if protocol_object.__class__.__name__ == "HTTP":
         if sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0:
             write_file_contents(f, "management/pycom_functions/communicate_with_server_close_connection_HTTP.py") #Always close connection
         elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit:
             write_file_contents(f, "management/pycom_functions/communicate_with_server_close_connection_HTTP.py")
         elif sensor_object.data_send_rate > sensor_object.network_close_limit:
             write_file_contents(f, "management/pycom_functions/communicate_with_server_close_network_HTTP.py")
-    elif protocol_object.__class__.__name__ == "Https":
+    elif protocol_object.__class__.__name__ == "HTTPS":
         pass
     elif protocol_object.__class__.__name__ == "MQTT":
         if sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0:
@@ -223,27 +213,7 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
     else:
         print("There's an error with protocol class.")
 
-    #Write measurement
-    if protocol_object.__class__.__name__ == "LWDTP":
-        if sensor_object.burst_length > 0: #burst
-            if sensor_object.data_send_rate == 0:
-                write_file_contents(f, "management/pycom_functions/measure_continuous_burst_LWDTP.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0:
-                write_file_contents(f, "management/pycom_functions/measure_keep_connection_burst_LWDTP.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit:
-                write_file_contents(f, "management/pycom_functions/measure_close_connection_burst.py")
-            elif sensor_object.data_send_rate > sensor_object.network_close_limit:
-                write_file_contents(f, "management/pycom_functions/measure_close_network_burst.py")
-        else: #not burst
-            if sensor_object.data_send_rate == 0:
-                write_file_contents(f, "management/pycom_functions/measure_continuous_LWDTP.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0:
-                write_file_contents(f, "management/pycom_functions/measure_keep_connection_LWDTP.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit:
-                write_file_contents(f, "management/pycom_functions/measure_close_connection.py")
-            elif sensor_object.data_send_rate > sensor_object.network_close_limit:
-                write_file_contents(f, "management/pycom_functions/measure_close_network.py")
-    elif protocol_object.__class__.__name__ == "Http":
+    if protocol_object.__class__.__name__ == "HTTP":
         if sensor_object.burst_length > 0: #burst
             if sensor_object.data_send_rate == 0:
                 write_file_contents(f, "management/pycom_functions/measure_continuous_burst_HTTP.py")

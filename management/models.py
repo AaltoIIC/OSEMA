@@ -103,7 +103,6 @@ class Sensor(models.Model):
     FAILURE_MEM = 4
     FAILURE_OS = 5
     FAILURE_I2C = 6
-
     STATUS_CHOICES = (
     (MEASURING_UP_TO_DATE, 'Measuring'),
     (MEASURING_WAITING_FOR_UPDATE, 'Measuring, Waiting-for-update'),
@@ -122,7 +121,6 @@ class Sensor(models.Model):
     network_close_limit = models.FloatField(default=30)
     update_check_limit = models.FloatField(default=3600)
     update_check_ip_address = models.CharField(max_length=46, default="not set")
-    data_server_ip_address = models.CharField(max_length=46, default="not set")
 
     #Each communication type has it's own class
     communication_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name="communication_technology", blank=True, null=True)
@@ -170,33 +168,23 @@ class Nb_iot(models.Model):
     def __str__(self):
         return 'id: {}, name: {}'.format(self.id, self.name)
 
-class Http(models.Model):
+class HTTP(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, default="HTTP")
-    settings = models.CharField(max_length=50, default="default_settings")
-    path = models.CharField(max_length=50, default="/data")
+    data_server_url = models.CharField(max_length=150, default="Not set")
+    port = models.IntegerField(default=80)
+    path = models.CharField(max_length=150, default="/data")
     sensors_using = GenericRelation(Sensor, object_id_field='protocol_object_id', content_type_field='protocol_type', related_query_name="protocol")
 
     def __str__(self):
         return 'id: {}, name: {}'.format(self.id, self.name)
 
-class Https(models.Model):
+class HTTPS(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, default="HTTPS")
-    settings = models.CharField(max_length=50, default="default_settings")
-    path = models.CharField(max_length=50, default="/data")
-    sensors_using = GenericRelation(Sensor, object_id_field='protocol_object_id', content_type_field='protocol_type', related_query_name="protocol")
-
-    def __str__(self):
-        return 'id: {}, name: {}'.format(self.id, self.name)
-
-
-#Lightweight data transmission protocol
-class LWDTP(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, default="LWDTP", unique=True)
-    access_token = models.CharField(max_length=300, default="Not set")
-    refresh_token = models.CharField(max_length=300, default="Not set")
+    data_server_url = models.CharField(max_length=150, default="Not set")
+    port = models.IntegerField(default=80)
+    path = models.CharField(max_length=150, default="/data")
     sensors_using = GenericRelation(Sensor, object_id_field='protocol_object_id', content_type_field='protocol_type', related_query_name="protocol")
 
     def __str__(self):
@@ -209,7 +197,7 @@ class MQTT(models.Model):
     user = models.CharField(max_length=50, default="Not set")
     key = models.CharField(max_length=50, default="Not set")
     topic = models.CharField(max_length=150, default="Not set")
-    data_server_url = models.CharField(max_length=150, default="Not set")
+    broker_url = models.CharField(max_length=150, default="Not set")
     port = models.IntegerField(default=1883)
     sensors_using = GenericRelation(Sensor, object_id_field='protocol_object_id', content_type_field='protocol_type', related_query_name="protocol")
 
