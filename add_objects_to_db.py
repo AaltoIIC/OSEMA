@@ -97,12 +97,25 @@ def add_objects():
     seeed_grove_i2c_adc_400 = add_sample_rate(seeed_grove_i2c_adc, [seeed_grove_i2c_adc_12bit], 400, [p0_2], [p2_32], 100000, "<HL")
     seeed_grove_i2c_adc_800 = add_sample_rate(seeed_grove_i2c_adc, [seeed_grove_i2c_adc_12bit], 800, [p0_2], [p2_32], 100000, "<HL")
     seeed_grove_i2c_adc_1600 = add_sample_rate(seeed_grove_i2c_adc, [seeed_grove_i2c_adc_12bit], 1600, [p0_2], [p2_32], 100000, "<HL")
+    """Add default variables to sensors"""
+    add_default_variable("analog_signal", "", seeed_grove_i2c_adc)
+    add_default_variable("acceleration_x", "mg", adxl345)
+    add_default_variable("acceleration_y", "mg", adxl345)
+    add_default_variable("acceleration_z", "mg", adxl345)
+    add_default_variable("acceleration_x", "mg", lis3dsh)
+    add_default_variable("acceleration_y", "mg", lis3dsh)
+    add_default_variable("acceleration_z", "mg", lis3dsh)
+
     """Adding Http"""
     http_example = add_http("HTTP", "domain.com", 80, "/path")
     """Adding MQTT"""
     mqtt_example = add_mqtt("MQTT", "some/topic", "io.adafruit.com", 1883, "username", "key")
     """Adding Wlan"""
     wlan_example = add_wlan("wlan", "ssid", Wlan.WPA2, "key")
+    """Add dataformats"""
+    JSON = add_dataformat("JSON")
+    raw = add_dataformat("raw")
+    timestamp_value = add_dataformat("timestamp_value")
 
 def add_value_pair(value1, value2):
     p = Value_pair.objects.get_or_create(value1=value1, value2=value2)[0]
@@ -143,13 +156,13 @@ def add_sample_rate(model, supported_sensitivities, sample_rate, read_values, wr
     return s
 
 def add_http(name, data_server_url, port, path):
-    h = HTTP.objects.get_or_create(name=name, path=path, data_server_url=data_server_url, port=port)
+    h = HTTP.objects.get_or_create(name=name, path=path, data_server_url=data_server_url, data_server_port=port)
     if PRINT:
         print("HTTP: {} created.".format(name))
     return h
 
-def add_mqtt(name, topic, broker_url, port=1883, user="", key=""):
-    m = MQTT.objects.get_or_create(name=name, topic=topic, broker_url=broker_url, port=port, user=user, key=key)
+def add_mqtt(name, topic, broker_url, broker_port=1883, user="", key=""):
+    m = MQTT.objects.get_or_create(name=name, topic=topic, broker_url=broker_url, broker_port=broker_port, user=user, key=key)
     if PRINT:
         print("MQTT: {} created.".format(name))
     return m
@@ -170,13 +183,25 @@ def add_wlan(name, ssid, security, key, username=""):
         print("Wlan: {} created.".format(name))
     return w
 
+def add_default_variable(name, unit, type_of_sensor):
+    d = Default_variable.objects.get_or_create(name=name, unit=unit, type_of_sensor=type_of_sensor)
+    if PRINT:
+        print("Created default variable for {}: name: {}, unit: {}.".format(type_of_sensor.sensor_model, name, unit))
+    return d
+
+def add_dataformat(name):
+    d = Data_format.objects.get_or_create(name=name)
+    if PRINT:
+        print("Data format {} created.".format(name))
+    return d
+
 # Start execution here!
 if __name__ == '__main__':
     import django
     print("Starting database population script...")
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sensor_management_platform.settings')
     django.setup()
-    from management.models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT
+    from management.models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT, Data_format, Variable, Default_variable
     from django.core.files import File
     add_objects()
     print("Population script finished")

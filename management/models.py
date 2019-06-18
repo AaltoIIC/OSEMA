@@ -214,3 +214,28 @@ class Update(models.Model):
 
     def __str__(self):
         return 'sensor_id: {}, sensor_name: {}, filename: {}'.format(self.sensor.sensor_id, self.sensor.sensor_name, self.filename)
+
+class Data_format(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return 'format_name: {}'.format(self.name)
+
+class Variable(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30)
+    unit = models.CharField(max_length=10)
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}: {}'.format(self.name, self.unit)
+
+class Default_variable(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30)
+    unit = models.CharField(max_length=10)
+    type_of_sensor = models.ForeignKey(Type_of_sensor, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}: {} {}'.format(self.type_of_sensor.sensor_model, self.name, self.unit)
