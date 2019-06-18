@@ -8,7 +8,7 @@ class Measure:
         self.i2c = i2c
         self.data_with_ts = []
         self.current_no_of_measurements = 0
-        self.no_of_measurements = int(round(SETTINGS_DICT["DATA_SEND_RATE_S"] * SETTINGS_DICT["SAMPLE_RATE_HZ"]))
+        self.no_of_measurements = int(round(DATA_SEND_RATE_S * SAMPLE_RATE_HZ))
         self.rtc = RTC()
         self.rtc.init((2018, 7, 17, 10, 30, 0, 0, 0))
         sync_rtc(self.rtc)
@@ -16,7 +16,7 @@ class Measure:
         self.start = utime.ticks_cpu()
         self.header_ts = self.rtc.now()
         self.new_header_ts = self.rtc.now()
-        self.period_time_us = int(round((1/SETTINGS_DICT["SAMPLE_RATE_HZ"]) * 1000000))
+        self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
     #Called every period_time_us

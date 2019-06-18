@@ -5,7 +5,7 @@ def measure(i2c):
 
 class Measure:
     def __init__(self, i2c):
-        self.client = MQTTClient(str(SENSOR_ID), SETTINGS_DICT['DATA_SERVER_URL'],user=SETTINGS_DICT['USER'], password=SETTINGS_DICT["KEY"], port=SETTINGS_DICT["PORT"])
+        self.client = MQTTClient(str(SENSOR_ID), BROKER_URL, user=USER, password=KEY, port=BROKER_PORT)
         self.client.connect()
         self.i2c = i2c
         self.rtc = RTC()
@@ -14,9 +14,9 @@ class Measure:
         self.length = calculate_length()
         self.start = utime.ticks_cpu()
         self.header_ts = self.rtc.now()
-        self.period_time_us = int(round((1/SETTINGS_DICT["SAMPLE_RATE_HZ"]) * 1000000))
-        self.header = "BEGIN: " + str(SENSOR_ID) + ";" + SENSOR_KEY + ";" + SETTINGS_DICT["FORMAT_STRING"] + ";" + str(self.header_ts)
-        self.client.publish(topic=SETTINGS_DICT["TOPIC"], msg=self.header.encode("ascii"))
+        self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
+        self.header = "BEGIN: " + str(SENSOR_ID) + ";" + SENSOR_KEY + ";" + FORMAT_STRING + ";" + str(self.header_ts)
+        self.client.publish(topic=TOPIC, msg=self.header.encode("ascii"))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
     #Called every period_time_us
@@ -25,10 +25,10 @@ class Measure:
         timestamp = utime.ticks_diff(self.start, utime.ticks_cpu())
         data_string = "{\n"
         value_no = 1
-        data_tuple = ustruct.unpack(SETTINGS_DICT["FORMAT_STRING"][:-1] , data)
+        data_tuple = ustruct.unpack(FORMAT_STRING[:-1] , data)
         for value in data_tuple:
             data_string += "\t'Value" + str(value_no) + "':" + str(value) + "\n"
             value_no += 1
         data_string += "\t'Timestamp':" + str(timestamp) + "\n"
         data_string += "}"
-        self.client.publish(topic=SETTINGS_DICT["TOPIC"], msg=data_string.encode("ascii"))
+        self.client.publish(topic=TOPIC, msg=data_string.encode("ascii"))

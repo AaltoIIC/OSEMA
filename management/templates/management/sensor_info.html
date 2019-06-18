@@ -79,22 +79,22 @@
           <button type="button" id="download_file_btn" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Download software</button>
         </div>
         <div class="mb-3">
-          {{ sensor_form.data_server_ip_address.label_tag }}<br>
-          {{ sensor_form.data_server_ip_address }}
-          {% if sensor_form.data_server_ip_address.help_text %}
-            <p class="help_text" style="color: grey;display: none">{{ sensor_form.data_server_ip_address.help_text }}</p>
+          {{ sensor_form.update_url.label_tag }}<br>
+          {{ sensor_form.update_url }}
+          {% if sensor_form.update_url.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.update_url.help_text }}</p>
           {% endif %}
-          {% for error in sensor_form.data_server_ip_address.errors %}
+          {% for error in sensor_form.update_url.errors %}
             <p style="color: red">{{ error }}</p>
           {% endfor %}
         </div>
         <div class="mb-3">
-          {{ sensor_form.update_check_ip_address.label_tag }}<br>
-          {{ sensor_form.update_check_ip_address }}
-          {% if sensor_form.update_check_ip_address.help_text %}
-            <p class="help_text" style="color: grey;display: none">{{ sensor_form.update_check_ip_address.help_text }}</p>
+          {{ sensor_form.update_port.label_tag }}<br>
+          {{ sensor_form.update_port }}
+          {% if sensor_form.update_port.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.update_port.help_text }}</p>
           {% endif %}
-          {% for error in sensor_form.update_check_ip_address.errors %}
+          {% for error in sensor_form.update_port.errors %}
             <p style="color: red">{{ error }}</p>
           {% endfor %}
         </div>

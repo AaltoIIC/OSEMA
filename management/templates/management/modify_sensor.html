@@ -74,22 +74,22 @@
         {% endfor %}
       </div>
       <div class="mb-3">
-        {{ modify_sensor_form.data_server_ip_address.label_tag }}<br>
-        {{ modify_sensor_form.data_server_ip_address }}
-        {% if modify_sensor_form.data_server_ip_address.help_text %}
-          <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.data_server_ip_address.help_text }}</p>
+        {{ modify_sensor_form.update_url.label_tag }}<br>
+        {{ modify_sensor_form.update_url }}
+        {% if modify_sensor_form.update_url.help_text %}
+          <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.update_url.help_text }}</p>
         {% endif %}
-        {% for error in modify_sensor_form.data_server_ip_address.errors %}
+        {% for error in modify_sensor_form.update_url.errors %}
           <p style="color: red">{{ error }}</p>
         {% endfor %}
       </div>
       <div class="mb-3">
-        {{ modify_sensor_form.update_check_ip_address.label_tag }}<br>
-        {{ modify_sensor_form.update_check_ip_address }}
-        {% if modify_sensor_form.update_check_ip_address.help_text %}
-          <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.update_check_ip_address.help_text }}</p>
+        {{ modify_sensor_form.update_port.label_tag }}<br>
+        {{ modify_sensor_form.update_port }}
+        {% if modify_sensor_form.update_port.help_text %}
+          <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.update_port.help_text }}</p>
         {% endif %}
-        {% for error in modify_sensor_form.update_check_ip_address.errors %}
+        {% for error in modify_sensor_form.update_port.errors %}
           <p style="color: red">{{ error }}</p>
         {% endfor %}
       </div>

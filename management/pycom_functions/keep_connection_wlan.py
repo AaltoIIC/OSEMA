@@ -1,6 +1,6 @@
 """Keep connection to wifi"""
 def keep_connection(wlan):
-    ssid, auth, identity = SETTINGS_DICT["NETWORK_SETTINGS"]
+    ssid, auth, identity = NETWORK_SETTINGS
     interval = 3000
     while True:
         utime.sleep_ms(interval)

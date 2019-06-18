@@ -1,7 +1,7 @@
 """Asks updates at the given interval. Connects to network before asking updates"""
-def ask_updates(interval, ip_address, port):
+def ask_updates(interval, url, port):
     while True:
         network = connect_network()
-        write_new_main(ip_address, port)
+        check_update(url, port)
         close_network(network)
         utime.sleep(interval)

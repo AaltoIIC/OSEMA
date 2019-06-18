@@ -2,15 +2,14 @@
 {% load static %}
 
 {% block content %}
-<h2 style="margin-left: 10px; margin-top: 10px;" class="mb-3">Browse communication technologies</h2>
+<h2 style="margin-left: 10px; margin-top: 10px;" class="mb-3">Browse protocols technologies</h2>
 <form class="form-inline">
   <p style="margin-left: 10px;"> Select type:
     <select name="type" id="search_select">
       <option value="All" selected>All</option>
-      <option value="Http">Http</option>
-      <option value="Https">Https</option>
-      <option value="LWDTP">LWDTP</option>
-      <option value="Https">MQTT</option>
+      <option value="HTTP">HTTP</option>
+      <option value="HTTPS">HTTPS</option>
+      <option value="MQTT">MQTT</option>
     </select>
     </p>
 </form>
@@ -36,45 +35,30 @@
     <tbody>
         {% for instance in http_instances %}
         <tr>
-            <td class="name" style="vertical-align: middle;"><a href="/protocols/Http/{{instance.id}}">{{instance.name}}</td>
-            <td class="type" style="vertical-align: middle;">Http</td>
+            <td class="name" style="vertical-align: middle;"><a href="/protocols/HTTP/{{instance.id}}">{{instance.name}}</td>
+            <td class="type" style="vertical-align: middle;">HTTP</td>
             <td class="actions" style="margin: 0px;">
             {% if user.auth_level > 1 %}
-              <button type="button" onclick="location.href='Http/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
-              <button type="button" onclick="location.href='modify/Http/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
-              <button type="button" value="delete/Http/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
+              <button type="button" onclick="location.href='HTTP/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='modify/HTTP/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
+              <button type="button" value="delete/HTTP/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
             {% else %}
-              <button type="button" onclick="location.href='Http/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='HTTP/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
             {% endif %}
             </td>
         </tr>
         {% endfor %}
         {% for instance in https_instances %}
         <tr>
-            <td class="name" style="vertical-align: middle;"><a href="/protocols/Https/{{instance.id}}">{{instance.name}}</td>
-            <td class="type" style="vertical-align: middle;">Https</td>
+            <td class="name" style="vertical-align: middle;"><a href="/protocols/HTTPS/{{instance.id}}">{{instance.name}}</td>
+            <td class="type" style="vertical-align: middle;">HTTPS</td>
             <td class="actions" style="margin: 0px;">
             {% if user.auth_level > 1 %}
-              <button type="button" onclick="location.href='Https/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
-              <button type="button" onclick="location.href='modify/Https/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
-              <button type="button" value="delete/Https/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
+              <button type="button" onclick="location.href='HTTPS/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='modify/HTTPS/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
+              <button type="button" value="delete/HTTPS/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
             {% else %}
-              <button type="button" onclick="location.href='Https/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
-            {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-        {% for instance in lwdtp_instances %}
-        <tr>
-            <td class="name" style="vertical-align: middle;"><a href="/protocols/LWDTP/{{instance.id}}">{{instance.name}}</td>
-            <td class="type" style="vertical-align: middle;">LWDTP</td>
-            <td class="actions" style="margin: 0px;">
-            {% if user.auth_level > 1 %}
-              <button type="button" onclick="location.href='LWDTP/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
-              <button type="button" onclick="location.href='modify/LWDTP/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
-              <button type="button" value="delete/LWDTP/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
-            {% else %}
-              <button type="button" onclick="location.href='LWDTP/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='HTTPS/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
             {% endif %}
             </td>
         </tr>

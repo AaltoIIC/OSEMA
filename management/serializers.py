@@ -17,17 +17,17 @@ class NbIotSerializer(serializers.HyperlinkedModelSerializer):
 class HTTPSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HTTP
-        fields = ('id', 'url', 'name', 'data_server_url', 'port', 'path')
+        fields = ('id', 'url', 'name', 'data_server_url', 'data_server_port', 'path')
 
 class HTTPSSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HTTPS
-        fields = ('id', 'url', 'name', 'data_server_url', 'port', 'path')
+        fields = ('id', 'url', 'name', 'data_server_url', 'data_server_port', 'path')
 
 class MQTTSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = MQTT
-        fields = ('id', 'url', 'name', 'user', 'key', 'topic', 'broker_url', 'refresh_token', 'port')
+        fields = ('id', 'url', 'name', 'user', 'key', 'topic', 'broker_url', 'broker_port')
 
 class ModelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -62,7 +62,7 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Sensor
-        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_check_ip_address', 'data_server_ip_address', 'communication_object', 'protocol_object')
+        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_check_url', 'update_check_port', 'communication_object', 'protocol_object')
 
     def create(self, validated_data):
         s = Sensor.objects.create(  sensor_name = validated_data['sensor_name'],
@@ -79,8 +79,8 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
                         connection_close_limit = validated_data['connection_close_limit'],
                         network_close_limit = validated_data['network_close_limit'],
                         update_check_limit = validated_data['update_check_limit'],
-                        update_check_ip_address = validated_data['update_check_limit'],
-                        data_server_ip_address = validated_data['data_server_ip_address'],
+                        update_url = validated_data['update_url'],
+                        update_port = validated_data['update_port'],
                         communication_object = validated_data['communication_object'],
                         protocol_object = validated_data['protocol_object']
         )
@@ -102,8 +102,8 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
         instance.connection_close_limit = validated_data['connection_close_limit']
         instance.network_close_limit = validated_data['network_close_limit']
         instance.update_check_limit = validated_data['update_check_limit']
-        instance.update_check_ip_address = validated_data['update_check_limit']
-        instance.data_server_ip_address = validated_data['data_server_ip_address']
+        instance.update_url = validated_data['update_url']
+        instance.update_port = validated_data['update_port']
         instance.communication_object = validated_data['communication_object']
         instance.protocol_object = validated_data['protocol_object']
         intance.save()

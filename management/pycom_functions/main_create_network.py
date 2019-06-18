@@ -1,18 +1,16 @@
 def main():
     try:
         print("Entering main loop")
-        i2c = I2C(0, I2C.MASTER, baudrate=SETTINGS_DICT["BAUDRATE"])
+        i2c = I2C(0, I2C.MASTER, baudrate=BAUDRATE)
         config_sensor(i2c)
 
-        ip_address, port = SETTINGS_DICT['UPDATE_IP_ADDRESS'].strip().split(":")
         network = connect_network()
-        write_new_main(ip_address, int(port))
+        check_update(UPDATE_URL, int(UPDATE_PORT))
 
         #keep connection to network
         _thread.start_new_thread(keep_connection, (network,))
         _thread.start_new_thread(measure, (i2c,))
-        interval = SETTINGS_DICT['UPDATE_CHECK_LIMIT']
-        _thread.start_new_thread(ask_updates, (interval, ip_address, int(port)))
+        _thread.start_new_thread(ask_updates, (UPDATE_CHECK_LIMIT, UPDATE_URL, int(UPDATE_PORT)))
 
     except OSError as e:
         print(e)

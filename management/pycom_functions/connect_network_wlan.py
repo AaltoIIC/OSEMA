@@ -2,7 +2,7 @@
 def connect_network(flash_light=True):
     if flash_light:
         pycom.heartbeat(False)
-    ssid, auth, identity = SETTINGS_DICT["NETWORK_SETTINGS"]
+    ssid, auth, identity = NETWORK_SETTINGS
     wlan = WLAN(mode=WLAN.STA)
     wlan.connect(ssid=ssid, auth=auth, identity=identity)
     while not wlan.isconnected():

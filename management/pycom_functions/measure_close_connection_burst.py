@@ -10,9 +10,9 @@ class Measure:
         self.current_no_of_measurements = 0
         self.reference_point = utime.ticks_ms()
         self.sent = False
-        self.no_of_measurements = int(round(SETTINGS_DICT["BURST_LENGTH"] * SETTINGS_DICT["SAMPLE_RATE_HZ"])) #How many measurements is made
-        self.data_send_rate = SETTINGS_DICT["DATA_SEND_RATE_S"]
-        self.burst_rate = SETTINGS_DICT["BURST_RATE"]
+        self.no_of_measurements = int(round(BURST_LENGTH * SAMPLE_RATE_HZ)) #How many measurements is made
+        self.data_send_rate = DATA_SEND_RATE_S
+        self.burst_rate = BURST_RATE
         self.rtc = RTC()
         self.rtc.init((2018, 7, 17, 10, 30, 0, 0, 0))
         sync_rtc(self.rtc)
@@ -20,7 +20,7 @@ class Measure:
         self.start = utime.ticks_cpu()
         self.header_ts = self.rtc.now()
         self.new_header_ts = self.rtc.now()
-        self.period_time_us = int(round((1/SETTINGS_DICT["SAMPLE_RATE_HZ"]) * 1000000))
+        self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
     #Called every period_time_us

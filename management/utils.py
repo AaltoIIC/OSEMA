@@ -83,29 +83,28 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("SENSOR_ID = {}\n".format(sensor_object.sensor_id))
     f.write("SENSOR_KEY = '{}'\n".format(sensor_object.sensor_key))
     f.write("SOFTWARE_VERSION = '{}'\n".format(filename))
-    f.write("SETTINGS_DICT = {}\n")
 
     # write settings from sensor object
-    f.write("SETTINGS_DICT['DATA_SEND_RATE_S'] = {}\n".format(sensor_object.data_send_rate))
-    f.write("SETTINGS_DICT['BURST_LENGTH'] = {}\n".format(sensor_object.burst_length))
-    f.write("SETTINGS_DICT['BURST_RATE'] = {}\n".format(sensor_object.burst_rate))
-    f.write("SETTINGS_DICT['UPDATE_CHECK_LIMIT'] = {}\n".format(sensor_object.update_check_limit))
-    f.write("SETTINGS_DICT['UPDATE_IP_ADDRESS'] = '{}'\n".format(sensor_object.update_check_ip_address))
-    f.write("SETTINGS_DICT['IP_ADDRESS_SEND'] = '{}'\n".format(sensor_object.data_server_ip_address))
+    f.write("DATA_SEND_RATE_S = {}\n".format(sensor_object.data_send_rate))
+    f.write("BURST_LENGTH = {}\n".format(sensor_object.burst_length))
+    f.write("BURST_RATE = {}\n".format(sensor_object.burst_rate))
+    f.write("UPDATE_CHECK_LIMIT = {}\n".format(sensor_object.update_check_limit))
+    f.write("UPDATE_URL = '{}'\n".format(sensor_object.update_url))
+    f.write("UPDATE_PORT = {}\n".format(sensor_object.update_port))
 
     # write setting from type of sensor object
-    f.write("SETTINGS_DICT['ADDRESS'] = {}\n".format(type_of_sensor_object.address))
+    f.write("ADDRESS = {}\n".format(type_of_sensor_object.address))
 
     # write settings from sample rate
-    f.write("SETTINGS_DICT['SAMPLE_RATE_HZ'] = {}\n".format(sample_rate_object.sample_rate))
-    f.write("SETTINGS_DICT['BAUDRATE'] = {}\n".format(sample_rate_object.baudrate))
+    f.write("SAMPLE_RATE_HZ = {}\n".format(sample_rate_object.sample_rate))
+    f.write("BAUDRATE = {}\n".format(sample_rate_object.baudrate))
 
     if sensitivity_object.format_string == "": #Sensitivity object overrides samplerate's format string
-        f.write("SETTINGS_DICT['FORMAT_STRING'] = '{}'\n".format(sample_rate_object.format_string))
+        f.write("FORMAT_STRING = '{}'\n".format(sample_rate_object.format_string))
 
     # write settings from sensitivity_object
     if sensitivity_object.format_string != "":
-        f.write("SETTINGS_DICT['FORMAT_STRING'] = {}\n".format(sensitivity_object.format_string))
+        f.write("FORMAT_STRING = '{}'\n".format(sensitivity_object.format_string))
 
     # write settings from communication_object
     if communication_object.__class__.__name__ == "Wlan":
@@ -114,21 +113,25 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
         key = communication_object.key
         if security == "WLAN.WPA2_ENT":
             username = communication_object.username
-            f.write("SETTINGS_DICT['NETWORK_SETTINGS'] = ['{}', ({}, '{}', '{}'), 'Pycom{}']\n".format(ssid, security, username, key, sensor_object.sensor_id))
+            f.write("NETWORK_SETTINGS = ['{}', ({}, '{}', '{}'), 'Pycom{}']\n".format(ssid, security, username, key, sensor_object.sensor_id))
         else:
-            f.write("SETTINGS_DICT['NETWORK_SETTINGS'] = ['{}', ({}, '{}'), 'Pycom{}']\n".format(ssid, security, key, sensor_object.sensor_id))
+            f.write("NETWORK_SETTINGS = ['{}', ({}, '{}'), 'Pycom{}']\n".format(ssid, security, key, sensor_object.sensor_id))
 
     # write setting from protocol_object
     if protocol_object.__class__.__name__ == "HTTP":
-        f.write("SETTINGS_DICT['PATH'] = '{}'\n".format(protocol_object.path))
+        f.write("DATA_SERVER_URL = '{}'\n".format(protocol_object.data_server_url))
+        f.write("DATA_SERVER_PORT = {}\n".format(protocol_object.data_server_port))
+        f.write("PATH = '{}'\n".format(protocol_object.path))
     elif protocol_object.__class__.__name__ == "HTTPS":
-        f.write("SETTINGS_DICT['PATH'] = '{}'\n".format(protocol_object.path))
+        f.write("DATA_SERVER_URL = '{}'\n".format(protocol_object.data_server_url))
+        f.write("DATA_SERVER_PORT = {}\n".format(protocol_object.data_server_port))
+        f.write("PATH = '{}'\n".format(protocol_object.path))
     elif protocol_object.__class__.__name__ == "MQTT":
-        f.write("SETTINGS_DICT['USER'] = '{}'\n".format(protocol_object.user))
-        f.write("SETTINGS_DICT['KEY'] = '{}'\n".format(protocol_object.key))
-        f.write("SETTINGS_DICT['TOPIC'] = '{}'\n".format(protocol_object.topic))
-        f.write("SETTINGS_DICT['DATA_SERVER_URL'] = '{}'\n".format(protocol_object.data_server_url))
-        f.write("SETTINGS_DICT['PORT'] = {}\n".format(protocol_object.port))
+        f.write("USER = '{}'\n".format(protocol_object.user))
+        f.write("KEY = '{}'\n".format(protocol_object.key))
+        f.write("TOPIC = '{}'\n".format(protocol_object.topic))
+        f.write("BROKER_URL = '{}'\n".format(protocol_object.broker_url))
+        f.write("BROKER_PORT = {}\n".format(protocol_object.broker_port))
 
 
 
@@ -162,7 +165,7 @@ def write_functions_always_needed(f):
     write_file_contents(f, "management/pycom_functions/in_every_program/read_values.py")#read values
     write_file_contents(f, "management/pycom_functions/in_every_program/sender.py")#sender
     write_file_contents(f, "management/pycom_functions/in_every_program/sync_rtc.py")#sync_rtc
-    write_file_contents(f, "management/pycom_functions/in_every_program/write_new_main.py")#write new main
+    write_file_contents(f, "management/pycom_functions/in_every_program/check_update.py")#update check
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
     #If data needs to be handled spceifically (for example shifting bits)

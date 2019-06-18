@@ -120,7 +120,8 @@ class Sensor(models.Model):
     connection_close_limit = models.FloatField(default=3)
     network_close_limit = models.FloatField(default=30)
     update_check_limit = models.FloatField(default=3600)
-    update_check_ip_address = models.CharField(max_length=46, default="not set")
+    update_url = models.CharField(max_length=150, default="example.com")
+    update_port = models.IntegerField(default=8000)
 
     #Each communication type has it's own class
     communication_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name="communication_technology", blank=True, null=True)
@@ -172,7 +173,7 @@ class HTTP(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, default="HTTP")
     data_server_url = models.CharField(max_length=150, default="Not set")
-    port = models.IntegerField(default=80)
+    data_server_port = models.IntegerField(default=80)
     path = models.CharField(max_length=150, default="/data")
     sensors_using = GenericRelation(Sensor, object_id_field='protocol_object_id', content_type_field='protocol_type', related_query_name="protocol")
 
@@ -183,7 +184,7 @@ class HTTPS(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, default="HTTPS")
     data_server_url = models.CharField(max_length=150, default="Not set")
-    port = models.IntegerField(default=80)
+    data_server_port = models.IntegerField(default=80)
     path = models.CharField(max_length=150, default="/data")
     sensors_using = GenericRelation(Sensor, object_id_field='protocol_object_id', content_type_field='protocol_type', related_query_name="protocol")
 
@@ -198,7 +199,7 @@ class MQTT(models.Model):
     key = models.CharField(max_length=50, default="Not set")
     topic = models.CharField(max_length=150, default="Not set")
     broker_url = models.CharField(max_length=150, default="Not set")
-    port = models.IntegerField(default=1883)
+    broker_port = models.IntegerField(default=1883)
     sensors_using = GenericRelation(Sensor, object_id_field='protocol_object_id', content_type_field='protocol_type', related_query_name="protocol")
 
     def __str__(self):

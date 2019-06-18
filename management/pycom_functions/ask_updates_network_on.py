@@ -1,5 +1,5 @@
 """Asks updates from the sensor configuratot at the given interval"""
-def ask_updates(interval, ip_address, port):
+def ask_updates(interval, url, port):
     while True:
-        write_new_main(ip_address, port)
+        check_update(url, port)
         utime.sleep(interval)
