@@ -226,6 +226,51 @@
           {{ field }}
        </div>
        {% endfor %}
+       <h4 class="mb-3">Data format settings</h4>
+       <div class="mb-3">
+         {{ sensor_form.data_format.label_tag }}<br>
+         <input type="text" name="data_format" value="{{ data_format }}" class="form-control" disabled="True" maxlength="50" required id="id_data_format">
+         {% if sensor_form.data_format.help_text %}
+           <p class="help_text" style="color: grey;display: none">{{ sensor_form.data_format.help_text }}</p>
+         {% endif %}
+         {% for error in sensor_form.data_format.errors %}
+           <p style="color: red">{{ error }}</p>
+         {% endfor %}
+       </div>
+       <h5 class="mb-3">Variables</h5>
+       <div id="variable_options">
+         <table class="table">
+           <thead>
+               <tr>
+                   <th style="width: 50%">Name</th>
+                   <th style="width: 50%">Unit</th>
+               </tr>
+           </thead>
+           <tbody id="variable_table">
+             {{ variable_forms.management_form }}
+             {% for variable_form in variable_forms %}
+               <tr>
+                 <td>
+                   {{ variable_form.name}}
+                   {% if variable_form.name.errors %}
+                       {% for error in variable_form.name.errors %}
+                           {{ error|escape }}
+                       {% endfor %}
+                   {% endif %}
+                 </td>
+                 <td>
+                 {{ variable_form.unit }}
+                 {% if variable_form.unit.errors %}
+                     {% for error in variable_form.unit.errors %}
+                         {{ error|escape }}
+                     {% endfor %}
+                 {% endif %}
+                 </td>
+               </tr>
+             {% endfor %}
+           <tbody>
+         </table>
+       </div>
      </form>
    </div>
  </div>

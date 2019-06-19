@@ -10,6 +10,8 @@
    var current_communication_id = {{current_communication_id}};
    var current_protocol = "{{current_protocol}}";
    var current_protocol_id = {{current_protocol_id}};
+   var sensor_id = {{ sensor_id }};
+   var current_model = "{{ current_model }}";
 </script>
 
 <div class="container">
@@ -241,6 +243,51 @@
             {% endfor %}
           </div>
           {% endfor %}
+        </div>
+        <h4 class="mb-3">Data format settings</h4>
+        <div class="mb-3">
+          {{ modify_sensor_form.data_format.label_tag }}*<br>
+          {{ modify_sensor_form.data_format }}
+          {% if modify_sensor_form.data_format.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.data_format.help_text }}</p>
+          {% endif %}
+          {% for error in modify_sensor_form.data_format.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <h5 class="mb-3">Variables</h5>
+        <div id="variable_options">
+          <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 50%">Name</th>
+                    <th style="width: 50%">Unit</th>
+                </tr>
+            </thead>
+            <tbody id="variable_table">
+              {{ modify_variable_forms.management_form }}
+              {% for modify_variable_form in modify_variable_forms %}
+                <tr>
+                  <td>
+                    {{ modify_variable_form.name}}
+                    {% if modify_variable_form.name.errors %}
+                        {% for error in modify_variable_form.name.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    {% endif %}
+                  </td>
+                  <td>
+                  {{ modify_variable_form.unit }}
+                  {% if modify_variable_form.unit.errors %}
+                      {% for error in modify_variable_form.unit.errors %}
+                          {{ error|escape }}
+                      {% endfor %}
+                  {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            <tbody>
+          </table>
         </div>
        {% if user.auth_level >= 2 %}
          <hr class="mb-4">

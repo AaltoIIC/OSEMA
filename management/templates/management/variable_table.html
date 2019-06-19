@@ -1,0 +1,21 @@
+{{ modify_variable_forms.management_form }}
+{% for modify_variable_form in modify_variable_forms %}
+  <tr>
+    <td>
+      {{ modify_variable_form.name}}
+      {% if modify_variable_form.name.errors %}
+          {% for error in modify_variable_form.name.errors %}
+              {{ error|escape }}
+          {% endfor %}
+      {% endif %}
+    </td>
+    <td>
+    {{ modify_variable_form.unit }}
+    {% if modify_variable_form.unit.errors %}
+        {% for error in modify_variable_form.unit.errors %}
+            {{ error|escape }}
+        {% endfor %}
+    {% endif %}
+    </td>
+  </tr>
+{% endfor %}

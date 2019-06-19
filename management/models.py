@@ -52,6 +52,13 @@ class Type_of_sensor(models.Model):
     def __str__(self):
         return '{}'.format(self.sensor_model)
 
+class Data_format(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return '{}'.format(self.name)
+
 class Value_pair(models.Model):
     id = models.AutoField(primary_key=True)
     value1 = models.IntegerField()
@@ -88,7 +95,8 @@ class Sensor(models.Model):
     sensor_id = models.AutoField(primary_key=True)
     sensor_name = models.CharField(max_length=30, default="No name given")
     #on_delete=models.cacade: If sensor type is deleted all the sensors referencing to it also gets deleted
-    model = models.ForeignKey(Type_of_sensor, on_delete=models.CASCADE)
+    model = models.ForeignKey(Type_of_sensor, on_delete=models.CASCADE, related_name="model")
+    data_format = models.ForeignKey(Data_format, on_delete=models.CASCADE, related_name="data_format", blank=True, null=True)
     description = models.CharField(max_length=250, default="No description available")
     location = models.CharField(max_length=100, default="Location not available")
     date_added = models.DateTimeField(default=timezone.now)
@@ -214,13 +222,6 @@ class Update(models.Model):
 
     def __str__(self):
         return 'sensor_id: {}, sensor_name: {}, filename: {}'.format(self.sensor.sensor_id, self.sensor.sensor_name, self.filename)
-
-class Data_format(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return 'format_name: {}'.format(self.name)
 
 class Variable(models.Model):
     id = models.AutoField(primary_key=True)

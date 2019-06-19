@@ -6,11 +6,13 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
+from django.template.response import TemplateResponse
+
 from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT, Data_format, Variable, Default_variable
 from .forms import ModifySensorForm, ModifySensorFormLocked, AddSensorForm, SignUpForm, TypeOfSensorInfoLockedForm
 from .forms import ModifyWlanForm, ModifyNbIotForm, ModifyHTTPForm, ModifyHTTPSForm, ModifyMQTTForm
 from .forms import ModifyDataFormatForm, ModifyVariableForm, ModifyDefaultVariableForm
-from .forms import WlanInfoForm, NbIotInfoForm, HTTPInfoForm, HTTPSInfoForm, MQTTInfoForm
+from .forms import WlanInfoForm, NbIotInfoForm, HTTPInfoForm, HTTPSInfoForm, MQTTInfoForm, VariableInfoForm
 from django.forms.formsets import formset_factory
 from management.utils import update_sensor, create_new_sensor, parse_date
 from .api_permissions import AuthLevel2Permission
@@ -185,6 +187,7 @@ def sensors(request):
 @login_required
 def add_sensor(request):
     user = request.user
+    VariableFormSet = formset_factory(ModifyVariableForm, extra=0)
     errors_sensor_form = False
     errors = False
     if request.method == 'POST':
@@ -249,6 +252,16 @@ def add_sensor(request):
                         new_sensor.protocol_object = instance
                     else:
                         errors = True
+                variable_formset = VariableFormSet(request.POST)
+                if variable_formset.is_valid():
+                    for variable_form in variable_formset:
+                        name = variable_form.cleaned_data.get('name')
+                        unit = variable_form.cleaned_data.get('unit')
+                        if name and unit:
+                            v = Variable(sensor=new_sensor, name=name, unit=unit)
+                            v.save()
+                else:
+                    errors = True
                 if not errors:
                     new_sensor.status = Sensor.WAITING_FOR_UPDATE
                     new_sensor.adder = user
@@ -294,8 +307,7 @@ def add_sensor(request):
     default_variables = Default_variable.objects.filter(type_of_sensor=initial_sensor_type)
     initial_data = [{'name': dv.name, 'unit': dv.unit}
                     for dv in default_variables]
-    VariableFormSet = formset_factory(ModifyVariableForm)
-    modify_variable_form = VariableFormSet(initial=initial_data)
+    modify_variable_forms = VariableFormSet(initial=initial_data)
     if user.auth_level >= 2:
         if not errors_sensor_form:
             add_sensor_form = AddSensorForm(prefix='add_sensor')
@@ -322,7 +334,7 @@ def add_sensor(request):
                 'protocol_instances': protocol_instances,
                 'modify_protocol_form': modify_protocol_form,
                 'available_protocols': AVAILABLE_PROTOCOLS,
-                'modify_variable_form': modify_variable_form,
+                'modify_variable_forms': modify_variable_forms,
     }
     return render(request, 'management/add_sensor.html', context)
 
@@ -359,7 +371,13 @@ def sensor_info(request, sensor_id):
     else:
         raise Http404("Page doesn't exist")
     latest_modifier = sensor.latest_modifier
+    data_format = sensor.data_format
     adder = sensor.adder
+    VariableFormSet = formset_factory(VariableInfoForm, extra=0)
+    variables = Variable.objects.filter(sensor=Sensor.objects.get(pk=sensor_id))
+    initial_data = [{'name': v.name, 'unit': v.unit}
+                    for v in variables]
+    variable_forms = VariableFormSet(initial=initial_data)
     context =   {'sensor_form' : sensor_form,
                 'current_sample_rate': sensor.sample_rate.sample_rate,
                 'current_sensitivity': sensor.sensitivity.sensitivity,
@@ -369,7 +387,9 @@ def sensor_info(request, sensor_id):
                 'communication_form' : communication_form,
                 'protocol_form': protocol_form,
                 'sensor_id': sensor_id,
-                'protocol' : protocol
+                'protocol' : protocol,
+                'variable_forms': variable_forms,
+                'data_format': data_format
     }
     return render(request, 'management/sensor_info.html', context)
 
@@ -390,6 +410,7 @@ def return_software_file(request, sensor_id):
 def modify_sensor(request, sensor_id):
     errors = False
     user = request.user
+    VariableFormSet = formset_factory(ModifyVariableForm, extra=0)
     if request.method == 'POST':
         if user.auth_level < 2:
             context = {'title':'Not authorized!', 'error_msg':'You are not allowed to modify sensor values. Please contact admin to request rights to modify/add sensors.'}
@@ -451,6 +472,19 @@ def modify_sensor(request, sensor_id):
                     errors = True
             old_key = modified_sensor.sensor_key
             modify_sensor_form = modified_sensor_form
+            variable_formset = VariableFormSet(request.POST)
+            if variable_formset.is_valid():
+                old_variables = Variable.objects.filter(sensor=modified_sensor)
+                for o in old_variables:
+                    o.delete()
+                for variable_form in variable_formset:
+                    name = variable_form.cleaned_data.get('name')
+                    unit = variable_form.cleaned_data.get('unit')
+                    if name and unit:
+                        v = Variable(sensor=modified_sensor, name=name, unit=unit)
+                        v.save()
+            else:
+                errors = True
             if modified_sensor_form.is_valid():
                 if not errors:
                     modified_sensor.sample_rate = Sample_rate.objects.get(id=request.POST['modify_sensor-sample_rate'])
@@ -498,9 +532,13 @@ def modify_sensor(request, sensor_id):
                 raise Http404("Page doesn't exist")
     else:
         return render(request, 'management/error.html', {'title' : 'You are not allowed to modify sensor', 'error_msg' : 'Ask rights to modify sensor from admin.'})
-
+    variables = Variable.objects.filter(sensor=Sensor.objects.get(pk=sensor_id))
+    initial_data = [{'name': v.name, 'unit': v.unit}
+                    for v in variables]
+    modify_variable_forms = VariableFormSet(initial=initial_data)
     available_sample_rates = Sample_rate.objects.filter(model=sensor.model.pk)
     available_sensitivities = sensor.sample_rate.supported_sensitivities.all()
+    current_model = sensor.model.sensor_model
     context =   {'modify_sensor_form' : modify_sensor_form,
                 'available_sample_rates': available_sample_rates,
                 'current_sample_rate': sensor.sample_rate.id,
@@ -515,7 +553,10 @@ def modify_sensor(request, sensor_id):
                 'current_protocol_id': sensor.protocol_object.id,
                 'protocol_instances': protocol_instances,
                 'modify_protocol_form': modify_protocol_form,
-                'available_protocols': AVAILABLE_PROTOCOLS
+                'available_protocols': AVAILABLE_PROTOCOLS,
+                'modify_variable_forms': modify_variable_forms,
+                'sensor_id': sensor_id,
+                'current_model': current_model,
     }
     return render(request, 'management/modify_sensor.html', context)
 
@@ -531,11 +572,18 @@ def get_available_sample_rates(request, sensor_model):
 
 def get_default_variables(request, sensor_model):
     sensor_model_obj = get_object_or_404(Type_of_sensor, pk=sensor_model)
-    default_variables = Default_variable.objects.filter(model=sensor_model)
+    default_variables = Default_variable.objects.filter(type_of_sensor=sensor_model)
     initial_data = [{'name': dv.name, 'unit': dv.unit}
                     for dv in default_variables]
-    VariableFormSet = formset_factory(ModifyVariableForm)
-    return VariableFormSet(initial=initial_data)
+    VariableFormSet = formset_factory(ModifyVariableForm, extra=0)
+    return render(request, 'management/variable_table.html', context = {'modify_variable_forms': VariableFormSet(initial=initial_data)})
+
+def get_sensor_variables(request, sensor_id):
+    variables = Variable.objects.filter(sensor=Sensor.objects.get(pk=sensor_id))
+    initial_data = [{'name': v.name, 'unit': v.unit}
+                    for v in variables]
+    VariableFormSet = formset_factory(ModifyVariableForm, extra=0)
+    return render(request, 'management/variable_table.html', context = {'modify_variable_forms': VariableFormSet(initial=initial_data)})
 
 
 """Used to get list of available sample rates to certain type of sensor. Used by ajax"""
@@ -627,9 +675,9 @@ def get_protocol_form_blank(request, type):
 
 @login_required
 def delete_sensor(request, sensor_id):
+    user = request.user
     if user.auth_level >= 2:
         sensor_object = Sensor.objects.get(pk=sensor_id)
-        delete_sensor_from_data_server(sensor_object)
         sensor_object.delete()
         return redirect('browse_sensors')
     else:

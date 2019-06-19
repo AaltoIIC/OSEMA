@@ -199,22 +199,49 @@
           {% endfor %}
         </div>
         <h4 class="mb-3">Data format settings</h4>
-        <div id="data_format_options">
-          <p>Pass</p>
-        </div>
-        <div id="variable_options"> //https://whoisnicoleharris.com/2015/01/06/implementing-django-formsets.html
-          {% for form in modify_variable_form %}
-          <div class="mb-3">
-            {{ field.label_tag }}<br>
-            {{ field }}
-            {% if field.help_text %}
-              <p style="color: grey; display:none;">{{ field.help_text }}</p>
-            {% endif %}
-            {% for error in field.errors %}
-              <p style="color: red">{{ error }}</p>
-            {% endfor %}
-          </div>
+        <div class="mb-3">
+          {{ add_sensor_form.data_format.label_tag }}*<br>
+          {{ add_sensor_form.data_format }}
+          {% if add_sensor_form.data_format.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ add_sensor_form.data_format.help_text }}</p>
+          {% endif %}
+          {% for error in add_sensor_form.data_format.errors %}
+            <p style="color: red">{{ error }}</p>
           {% endfor %}
+        </div>
+        <h5 class="mb-3">Variables</h5>
+        <div id="variable_options">
+          <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 50%">Name</th>
+                    <th style="width: 50%">Unit</th>
+                </tr>
+            </thead>
+            <tbody id="variable_table">
+              {{ modify_variable_forms.management_form }}
+              {% for modify_variable_form in modify_variable_forms %}
+                <tr>
+                  <td>
+                    {{ modify_variable_form.name}}
+                    {% if modify_variable_form.name.errors %}
+                        {% for error in modify_variable_form.name.errors %}
+                            {{ error|escape }}
+                        {% endfor %}
+                    {% endif %}
+                  </td>
+                  <td>
+                  {{ modify_variable_form.unit }}
+                  {% if modify_variable_form.unit.errors %}
+                      {% for error in modify_variable_form.unit.errors %}
+                          {{ error|escape }}
+                      {% endfor %}
+                  {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            <tbody>
+          </table>
         </div>
        {% if user.auth_level >= 2 %}
          <hr class="mb-4">

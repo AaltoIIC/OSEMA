@@ -21,7 +21,7 @@ class ModifySensorForm(forms.ModelForm):
 
     class Meta:
         model = Sensor
-        fields = ['sensor_name', 'sensor_id', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port']
+        fields = ['sensor_name', 'sensor_id', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'data_format']
 
 class ModifySensorFormLocked(forms.ModelForm):
     sensor_name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
@@ -44,7 +44,7 @@ class ModifySensorFormLocked(forms.ModelForm):
 
     class Meta:
         model = Sensor
-        fields = ['sensor_name', 'sensor_id', 'sensor_key', 'adder', 'latest_modifier', 'model', 'status', 'software_version', 'description', 'location', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'software_version', 'adder', 'latest_modifier']
+        fields = ['sensor_name', 'sensor_id', 'sensor_key', 'adder', 'latest_modifier', 'model', 'status', 'software_version', 'description', 'location', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'software_version', 'adder', 'latest_modifier', 'data_format']
 
 class AddSensorForm(forms.ModelForm):
     sensor_name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control'}))
@@ -59,7 +59,7 @@ class AddSensorForm(forms.ModelForm):
 
     class Meta:
         model = Sensor
-        fields = ['sensor_name', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'update_url', 'update_port']
+        fields = ['sensor_name', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'update_url', 'update_port', 'data_format']
 
 
 class SignUpForm(UserCreationForm):

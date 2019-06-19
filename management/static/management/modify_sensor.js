@@ -2,6 +2,7 @@
 sensor_type_selection = document.getElementById("id_modify_sensor-model");
 sample_rate_selection = document.getElementById("id_modify_sensor-sample_rate");
 sample_rate_selection.value = current_sample_rate; //set default value
+default_variable_table = document.getElementById("variable_table");
 sensor_type_selection.onchange = function() //Change available sample rates if sensor type is changed
 {
   $.get('get_sample_rates/' + sensor_type_selection.value,
@@ -22,6 +23,20 @@ sensor_type_selection.onchange = function() //Change available sample rates if s
       change_available_sensitivities();
     }
   );
+  if (sensor_type_selection.value == current_model) {
+    $.get('get_sensor_variables/' + sensor_id,
+      function(data){
+        default_variable_table.innerHTML = data;
+      }
+    );
+  }
+  else {
+    $.get('get_default_variables/' + sensor_type_selection.value,
+      function(data){
+        default_variable_table.innerHTML = data;
+      }
+    );
+  }
 };
 
 // When sample rate is selected only avaialable sensitivities are shown #template
