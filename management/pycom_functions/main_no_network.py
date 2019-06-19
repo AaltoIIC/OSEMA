@@ -6,6 +6,9 @@ def main():
 
         network = connect_network()
         check_update(UPDATE_URL, int(UPDATE_PORT))
+        rtc = machine.RTC()
+        rtc.init((2018, 7, 17, 10, 30, 0, 0, 0))
+        sync_rtc(rtc)
         close_network(network)
 
         _thread.start_new_thread(measure, (i2c,))

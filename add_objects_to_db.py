@@ -115,7 +115,7 @@ def add_objects():
     """Add dataformats"""
     JSON = add_dataformat("JSON")
     raw = add_dataformat("raw")
-    timestamp_value = add_dataformat("timestamp_value")
+    Regatta = add_dataformat("Regatta")
 
 def add_value_pair(value1, value2):
     p = Value_pair.objects.get_or_create(value1=value1, value2=value2)[0]

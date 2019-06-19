@@ -32,9 +32,9 @@ class Measure:
             data_string += "\t'Timestamp':" + str(timestamp) + "\n"
             data_string += "},\n"
             data_string += "]"
-            content_length = len("sensor_id={}&sensor_key={}&Timestamp={}&data=".format(SENSOR_ID, SENSOR_KEY, self.header_ts))
+            content_length = len("sensor_id={}&sensor_key={}&data=".format(SENSOR_ID, SENSOR_KEY))
             content_length += len(data_string)
-            string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}&Timestamp={}&data={}\r\n\r\n""".format(PATH, DATA_SERVER_URL, content_length, SENSOR_ID, SENSOR_KEY, self.header_ts, data_string)
+            string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}&data={}\r\n\r\n""".format(PATH, DATA_SERVER_URL, content_length, SENSOR_ID, SENSOR_KEY, data_string)
             s.send(bytes(string, 'utf8'))
             s.close()
         except:

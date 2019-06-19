@@ -23,12 +23,5 @@ class Measure:
     def _measurement(self, alarm):
         data = read_values(self.i2c)
         timestamp = utime.ticks_diff(self.start, utime.ticks_cpu())
-        data_string = "{\n"
-        value_no = 1
-        data_tuple = ustruct.unpack(FORMAT_STRING[:-1] , data)
-        for value in data_tuple:
-            data_string += "\t'Value" + str(value_no) + "':" + str(value) + "\n"
-            value_no += 1
-        data_string += "\t'Timestamp':" + str(timestamp) + "\n"
-        data_string += "}"
+        data_string = format_data(self.header_ts, [data, timestamp])
         self.client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
