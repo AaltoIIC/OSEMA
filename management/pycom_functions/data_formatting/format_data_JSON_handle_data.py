@@ -5,6 +5,7 @@ def format_data(header_ts, data):
     for data_tuple in data:
         data_string += "\t\t {"
         data_values = ustruct.unpack(FORMAT_STRING[:-1], data_tuple[0])
+        data_values = handle_data(data_values)
         i = 0
         max = len(VARIABLE_NAMES)
         for variable in VARIABLE_NAMES:
@@ -17,3 +18,6 @@ def format_data(header_ts, data):
     data_string += "\t]\n"
     data_string += "}\n"
     return data_string
+
+
+handle_data
