@@ -1,4 +1,4 @@
-from management.models import Sensor, Type_of_sensor, Wlan, Nb_iot, HTTP, HTTPS, Sample_rate, Sensitivity, Value_pair, MQTT
+from management.models import Sensor, Type_of_sensor, Wlan, Nb_iot, HTTP, HTTPS, Sample_rate, Sensitivity, Value_pair, MQTT, Data_format, Variable, Default_variable
 from rest_framework import serializers
 from generic_relations.relations import GenericRelatedField
 from management.utils import update_sensor, create_new_sensor
@@ -124,3 +124,18 @@ class ValuePairSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Value_pair
         fields = ('id', 'url', 'value1', 'value2')
+
+class DataFormatSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Data_format
+        fields = ('id', 'url', 'name')
+
+class VariableSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Variable
+        fields = ('id', 'url', 'name', 'unit', 'sensor')
+
+class DefaultVariableSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Default_variable
+        fields = ('id', 'url', 'name', 'unit', 'type_of_sensor')

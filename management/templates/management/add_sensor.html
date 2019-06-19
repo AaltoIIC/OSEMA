@@ -198,6 +198,24 @@
           </div>
           {% endfor %}
         </div>
+        <h4 class="mb-3">Data format settings</h4>
+        <div id="data_format_options">
+          <p>Pass</p>
+        </div>
+        <div id="variable_options"> //https://whoisnicoleharris.com/2015/01/06/implementing-django-formsets.html
+          {% for form in modify_variable_form %}
+          <div class="mb-3">
+            {{ field.label_tag }}<br>
+            {{ field }}
+            {% if field.help_text %}
+              <p style="color: grey; display:none;">{{ field.help_text }}</p>
+            {% endif %}
+            {% for error in field.errors %}
+              <p style="color: red">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
        {% if user.auth_level >= 2 %}
          <hr class="mb-4">
          <button class="btn btn-primary btn-lg btn-block" type="submit">Add Sensor to database</button>

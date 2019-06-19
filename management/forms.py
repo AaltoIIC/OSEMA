@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from management.models import User, Sensor, Type_of_sensor, Sample_rate, Wlan, Nb_iot, HTTP, HTTPS, MQTT
+from management.models import User, Sensor, Type_of_sensor, Sample_rate, Wlan, Nb_iot, HTTP, HTTPS, MQTT, Data_format, Variable, Default_variable
 from django.forms.widgets import PasswordInput, TextInput, Select, Textarea, ClearableFileInput
 from django.contrib import admin
 
@@ -205,3 +205,50 @@ class MQTTInfoForm(forms.ModelForm):
     class Meta:
         model = MQTT
         fields = ['name', 'user', 'key', 'topic', 'broker_url', 'broker_port']
+
+
+class ModifyDataFormatForm(forms.ModelForm):
+    name = forms.CharField(max_length=50, widget=TextInput(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = Data_format
+        fields = ['name']
+
+class DataFormatInfoForm(forms.ModelForm):
+    name = forms.CharField(max_length=50, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
+
+    class Meta:
+        model = Data_format
+        fields = ['name']
+
+class ModifyVariableForm(forms.ModelForm):
+    name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control'}))
+    unit = forms.CharField(max_length=10, widget=TextInput(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = Variable
+        fields = ['name', 'unit']
+
+class VariableInfoForm(forms.ModelForm):
+    name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
+    unit = forms.CharField(max_length=10, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
+
+    class Meta:
+        model = Variable
+        fields = ['name', 'unit']
+
+class ModifyDefaultVariableForm(forms.ModelForm):
+    name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control'}))
+    unit = forms.CharField(max_length=10, widget=TextInput(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = Default_variable
+        fields = ['name', 'unit']
+
+class DefaultVariableInfoForm(forms.ModelForm):
+    name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
+    unit = forms.CharField(max_length=10, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
+
+    class Meta:
+        model = Default_variable
+        fields = ['name', 'unit']

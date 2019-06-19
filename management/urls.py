@@ -31,6 +31,7 @@ urlpatterns = [
     path('sensors/modify/<int:sensor_id>', views.modify_sensor, name='modify_sensor'),
     path('sensors/modify/get_sample_rates/<str:sensor_model>', views.get_available_sample_rates, name='get_available_sample_rates'),
     path('sensors/modify/get_available_sensitivities/<int:sample_rate_id>', views.get_available_sensitivities, name='get_available_sensitivities'),
+    path('sensors/modify/get_default_variables/<str:sensor_model>', views.get_default_variables, name='get_default_variables'),
     path('get_communication_instances/<str:type>', views.get_communication_instances, name='get_communication_instances'),
     path('get_communication_technology_form/<str:type>/<int:id>', views.get_communication_technology_form, name='get_communication_technology_form'),
     path('get_communication_technology_form/<str:type>', views.get_communication_technology_form_blank, name='get_communication_technology_form_blank'),

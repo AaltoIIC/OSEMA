@@ -6,10 +6,12 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT
+from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT, Data_format, Variable, Default_variable
 from .forms import ModifySensorForm, ModifySensorFormLocked, AddSensorForm, SignUpForm, TypeOfSensorInfoLockedForm
 from .forms import ModifyWlanForm, ModifyNbIotForm, ModifyHTTPForm, ModifyHTTPSForm, ModifyMQTTForm
+from .forms import ModifyDataFormatForm, ModifyVariableForm, ModifyDefaultVariableForm
 from .forms import WlanInfoForm, NbIotInfoForm, HTTPInfoForm, HTTPSInfoForm, MQTTInfoForm
+from django.forms.formsets import formset_factory
 from management.utils import update_sensor, create_new_sensor, parse_date
 from .api_permissions import AuthLevel2Permission
 from rest_framework.decorators import api_view
@@ -32,7 +34,8 @@ except:
 
 
 
-from .serializers import SensorSerializer, ModelSerializer, NbIotSerializer, WlanSerializer, HTTPSerializer, MQTTSerializer, HTTPSSerializer, SampleRateSerializer, SensitivitySerializer, ValuePairSerializer
+from .serializers import SensorSerializer, ModelSerializer, NbIotSerializer, WlanSerializer, HTTPSerializer, MQTTSerializer
+from .serializers import HTTPSSerializer, SampleRateSerializer, SensitivitySerializer, ValuePairSerializer, DataFormatSerializer, VariableSerializer, DefaultVariableSerializer
 
 import json
 from itertools import chain
@@ -91,6 +94,21 @@ class SensitivityViewSet(viewsets.ModelViewSet):
 class ValuePairViewSet(viewsets.ModelViewSet):
     queryset = Value_pair.objects.all()
     serializer_class = ValuePairSerializer
+    permission_classes = [AuthLevel2Permission]
+
+class DataFormatViewSet(viewsets.ModelViewSet):
+    queryset = Data_format.objects.all()
+    serializer_class = DataFormatSerializer
+    permission_classes = [AuthLevel2Permission]
+
+class VariableViewSet(viewsets.ModelViewSet):
+    queryset = Variable.objects.all()
+    serializer_class = VariableSerializer
+    permission_classes = [AuthLevel2Permission]
+
+class DefaultVariableViewSet(viewsets.ModelViewSet):
+    queryset = Default_variable.objects.all()
+    serializer_class = DefaultVariableSerializer
     permission_classes = [AuthLevel2Permission]
 
 @api_view(['POST'])
@@ -273,6 +291,11 @@ def add_sensor(request):
     initial_sample_rate = available_sample_rates[0]
     available_sensitivities = initial_sample_rate.supported_sensitivities.all()
     initial_sensitivity = available_sensitivities[0]
+    default_variables = Default_variable.objects.filter(type_of_sensor=initial_sensor_type)
+    initial_data = [{'name': dv.name, 'unit': dv.unit}
+                    for dv in default_variables]
+    VariableFormSet = formset_factory(ModifyVariableForm)
+    modify_variable_form = VariableFormSet(initial=initial_data)
     if user.auth_level >= 2:
         if not errors_sensor_form:
             add_sensor_form = AddSensorForm(prefix='add_sensor')
@@ -298,7 +321,8 @@ def add_sensor(request):
                 'current_protocol_id': protocol_object.id,
                 'protocol_instances': protocol_instances,
                 'modify_protocol_form': modify_protocol_form,
-                'available_protocols': AVAILABLE_PROTOCOLS
+                'available_protocols': AVAILABLE_PROTOCOLS,
+                'modify_variable_form': modify_variable_form,
     }
     return render(request, 'management/add_sensor.html', context)
 
@@ -504,6 +528,15 @@ def get_available_sample_rates(request, sensor_model):
     for rate in available_sample_rates:
         rate_dict[rate.id] = rate.sample_rate
     return JsonResponse(json.dumps(rate_dict), safe=False)
+
+def get_default_variables(request, sensor_model):
+    sensor_model_obj = get_object_or_404(Type_of_sensor, pk=sensor_model)
+    default_variables = Default_variable.objects.filter(model=sensor_model)
+    initial_data = [{'name': dv.name, 'unit': dv.unit}
+                    for dv in default_variables]
+    VariableFormSet = formset_factory(ModifyVariableForm)
+    return VariableFormSet(initial=initial_data)
+
 
 """Used to get list of available sample rates to certain type of sensor. Used by ajax"""
 @login_required
