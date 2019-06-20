@@ -1,5 +1,5 @@
 def format_data(header_ts, data):
-    data_string = "Begin:{}\n".format(header_ts)
+    data_string = "Begin:{}\n".format(convert_to_epoch(eader_ts))
     data_string += "Variables:{"
     for variable in VARIABLE_NAMES:
         data_string += str(variable) + ", "

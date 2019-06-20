@@ -91,6 +91,10 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("UPDATE_CHECK_LIMIT = {}\n".format(sensor_object.update_check_limit))
     f.write("UPDATE_URL = '{}'\n".format(sensor_object.update_url))
     f.write("UPDATE_PORT = {}\n".format(sensor_object.update_port))
+    f.write("VARIABLE_NAMES = [")
+    for o in Variable.objects.filter(sensor=sensor_object):
+        f.write(o.name) + ","
+    f.write("]\n")
 
     # write setting from type of sensor object
     f.write("ADDRESS = {}\n".format(type_of_sensor_object.address))
@@ -166,15 +170,21 @@ def write_functions_always_needed(f):
     write_file_contents(f, "management/pycom_functions/in_every_program/sender.py")#sender
     write_file_contents(f, "management/pycom_functions/in_every_program/sync_rtc.py")#sync_rtc
     write_file_contents(f, "management/pycom_functions/in_every_program/check_update.py")#update check
+    write_file_contents(f, "management/pycom_functions/in_every_program/convert_to_epoch.py")#helper function to convert date tuple to epoch
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
     #If data needs to be handled spceifically (for example shifting bits)
     if sensor_object.model.handle_data_function:
-        write_file_contents(f, "management/pycom_functions/send_data_handle.py")#send data
         write_file_contents(f, sensor_object.model.handle_data_function.name)
+        if sensor_object.data_format.name = "JSON":
+            write_file_contents(f, "management/pycom_functions/data_formatting/format_data_JSON_handle_data.py")
+        elif sensor_object.data_format.name = "raw":
+            write_file_contents(f, "management/pycom_functions/data_formatting/format_data_raw_handle_data.py")
     else:
-        write_file_contents(f, "management/pycom_functions/send_data.py")#send data
-
+        if sensor_object.data_format.name = "JSON":
+            write_file_contents(f, "management/pycom_functions/data_formatting/format_data_JSON.py")
+        elif sensor_object.data_format.name = "raw":
+            write_file_contents(f, "management/pycom_functions/data_formatting/format_data_raw.py")
 
     #Write connect network
     if communication_object.__class__.__name__ == "Wlan":
