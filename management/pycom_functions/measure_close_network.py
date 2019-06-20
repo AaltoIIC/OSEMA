@@ -9,15 +9,12 @@ class Measure:
         self.data_with_ts = []
         self.current_no_of_measurements = 0
         self.no_of_measurements = int(round(DATA_SEND_RATE_S * SAMPLE_RATE_HZ))
-        self.rtc = RTC()
-        self.rtc.init((2018, 7, 17, 10, 30, 0, 0, 0))
         network = connect_network()
-        sync_rtc(self.rtc)
         close_network(network)
         self.length = calculate_length()
         self.start = utime.ticks_cpu()
-        self.header_ts = self.rtc.now()
-        self.new_header_ts = self.rtc.now()
+        self.header_ts = utime.time()
+        self.new_header_ts = utime.time()
         self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
@@ -30,8 +27,8 @@ class Measure:
             self.current_no_of_measurements += 1
             if self.current_no_of_measurements == self.no_of_measurements:
                 self.header_ts = self.new_header_ts
-                _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.length, self.header_ts, self.rtc))
-                self.new_header_ts = self.rtc.now()
+                _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.length, self.header_ts))
+                self.new_header_ts = utime.time()
                 self.data_with_ts = []
                 self.start = utime.ticks_cpu()
                 self.current_no_of_measurements = 0

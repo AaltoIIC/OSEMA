@@ -8,12 +8,9 @@ class Measure:
         self.client = MQTTClient(str(SENSOR_ID), BROKER_URL, user=USER, password=KEY, port=BROKER_PORT)
         self.client.connect()
         self.i2c = i2c
-        self.rtc = RTC()
-        self.rtc.init((2018, 7, 17, 10, 30, 0, 0, 0))
-        sync_rtc(self.rtc)
         self.length = calculate_length()
         self.start = utime.ticks_cpu()
-        self.header_ts = self.rtc.now()
+        self.header_ts = utime.time()
         self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.header = "BEGIN: " + str(SENSOR_ID) + ";" + SENSOR_KEY + ";" + FORMAT_STRING + ";" + str(self.header_ts)
         self.client.publish(topic=TOPIC, msg=self.header.encode("ascii"))

@@ -6,18 +6,15 @@ def measure(i2c):
 class Measure:
     def __init__(self, i2c):
         self.i2c = i2c
-        self.rtc = RTC()
-        self.rtc.init((2018, 7, 17, 10, 30, 0, 0, 0))
-        sync_rtc(self.rtc)
         self.length = calculate_length()
         self.start = utime.ticks_cpu()
-        self.header_ts = self.rtc.now()
+        self.header_ts = utime.time()
         self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
     #Called every period_time_us
     def _measurement(self, alarm):
-        self.header_ts = self.rtc.now()
+        self.header_ts = utime.time()
         data = read_values(self.i2c)
         timestamp = utime.ticks_diff(self.start, utime.ticks_cpu())
         try:

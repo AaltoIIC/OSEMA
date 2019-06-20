@@ -10,17 +10,12 @@ class Measure:
         self.i2c = i2c
         self.data_with_ts = []
         self.current_no_of_measurements = 0
-        self.reference_point = utime.ticks_ms()
-        self.sent = False
         self.no_of_measurements = int(round(BURST_LENGTH * SAMPLE_RATE_HZ)) #How many measurements is made
         self.data_send_rate = DATA_SEND_RATE_S
         self.burst_rate = BURST_RATE
-        self.rtc = RTC()
-        self.rtc.init((2018, 7, 17, 10, 30, 0, 0, 0))
-        sync_rtc(self.rtc)
         self.start = utime.ticks_cpu()
-        self.header_ts = self.rtc.now()
-        self.new_header_ts = self.rtc.now()
+        self.header_ts = utime.time()
+        self.new_header_ts = utime.time()
         self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
@@ -33,21 +28,12 @@ class Measure:
             self.current_no_of_measurements += 1
             if self.current_no_of_measurements == self.no_of_measurements:
                 alarm.cancel()
-                if utime.ticks_diff(self.reference_point, utime.ticks_ms()) > self.data_send_rate * 1000 and not self.sent:
-                    self.header_ts = self.new_header_ts
-                    _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.client, self.header_ts))
-                    self.sent = True
+                self.header_ts = self.new_header_ts
+                _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.client, self.header_ts))
                 utime.sleep(self.burst_rate)
-                if utime.ticks_diff(self.reference_point, utime.ticks_ms()) > self.data_send_rate * 1000 and not self.sent:
-                    self.header_ts = self.new_header_ts
-                    _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.client, self.header_ts))
-                    self.sent = True
-                if self.sent:
-                    self.data_with_ts = []
-                    self.start = utime.ticks_cpu()
-                    self.sent = False
-                    self.reference_point = utime.ticks_ms() #new reference point
-                    self.new_header_ts = self.rtc.now() #new header time stamp
+                self.data_with_ts = []
+                self.start = utime.ticks_cpu()
+                self.new_header_ts = utime.time() #new header time stamp
                 self.current_no_of_measurements = 0
                 self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
         except OSError as e:
