@@ -1,4 +1,4 @@
-from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update
+from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, Variable
 from sensor_management_platform.settings import FAILURE
 from requests.auth import HTTPBasicAuth
 import datetime
@@ -93,7 +93,7 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("UPDATE_PORT = {}\n".format(sensor_object.update_port))
     f.write("VARIABLE_NAMES = [")
     for o in Variable.objects.filter(sensor=sensor_object):
-        f.write(o.name) + ","
+        f.write("'" + o.name + "'" + ",")
     f.write("]\n")
 
     # write setting from type of sensor object
