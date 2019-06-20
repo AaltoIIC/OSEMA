@@ -11,8 +11,8 @@ class Measure:
         self.no_of_measurements = int(round(DATA_SEND_RATE_S * SAMPLE_RATE_HZ))
         self.length = calculate_length()
         self.start = utime.ticks_cpu()
-        self.header_ts = utime.time()
-        self.new_header_ts = utime.time()
+        self.header_ts = machine.RTC().now()
+        self.new_header_ts = machine.RTC().now()
         self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
@@ -26,7 +26,7 @@ class Measure:
             if self.current_no_of_measurements == self.no_of_measurements:
                 self.header_ts = self.new_header_ts
                 _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.length, self.header_ts))
-                self.new_header_ts = utime.time()
+                self.new_header_ts = machine.RTC().now()
                 self.start = utime.ticks_cpu()
                 self.data_with_ts = []
                 self.current_no_of_measurements = 0

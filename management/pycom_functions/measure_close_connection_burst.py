@@ -15,8 +15,8 @@ class Measure:
         self.burst_rate = BURST_RATE
         self.length = calculate_length()
         self.start = utime.ticks_cpu()
-        self.header_ts = utime.time()
-        self.new_header_ts = utime.time()
+        self.header_ts = machine.RTC().now()
+        self.new_header_ts = machine.RTC().now()
         self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
 
@@ -43,7 +43,7 @@ class Measure:
                     self.start = utime.ticks_cpu()
                     self.sent = False
                     self.reference_point = utime.ticks_ms() #new reference point
-                    self.new_header_ts = utime.time() #new header time stamp
+                    self.new_header_ts = machine.RTC().now() #new header time stamp
                 self.current_no_of_measurements = 0
                 self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
         except OSError as e:

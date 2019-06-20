@@ -10,7 +10,7 @@ class Measure:
         self.i2c = i2c
         self.length = calculate_length()
         self.start = utime.ticks_cpu()
-        self.header_ts = utime.time()
+        self.header_ts = machine.RTC().now()
         self.period_time_us = int(round((1/SAMPLE_RATE_HZ) * 1000000))
         self.burst_rate = BURST_RATE
         self.current_no_of_measurements = 0
