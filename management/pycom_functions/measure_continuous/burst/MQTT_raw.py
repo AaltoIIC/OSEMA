@@ -19,8 +19,8 @@ class Measure:
     #Called every period_time_us
     def _measurement(self, alarm):
         data = read_values(self.i2c)
-        data_string = format_data(machine.RTC().now(), [data, 0])
-        self.client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
+        data_string = format_data(machine.RTC().now(), [[data, 0]])
+        self.client.publish(topic=TOPIC, msg=data_string)
         self.current_no_of_measurements += 1
         if self.current_no_of_measurements == self.no_of_measurements:
             self.current_no_of_measurements = 0

@@ -1,10 +1,15 @@
 """This function takes care that correct messages are sent to server"""
 def communicate_with_server(data_with_ts, header_ts):
     try:
-        data_string = format_data(header_ts, data_with_ts)
         client = MQTTClient(str(SENSOR_ID), BROKER_URL, user=USER, password=KEY, port=BROKER_PORT)
         client.connect()
-        client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
+        header_ts = convert_to_epoch(header_ts)
+        for value_pair in data_with_ts:
+            data_values = ustruct.unpack(FORMAT_STRING[:-1], value_pair[0])
+            timestamp = header_ts + value_pair[1] / 1000
+            for i in range(len(VARIABLE_NAMES)):
+                data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + data_values[i]
+                client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
         client.disconnect()
     except OSError:
         print("OSError")

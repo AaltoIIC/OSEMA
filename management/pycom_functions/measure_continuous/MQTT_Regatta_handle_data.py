@@ -14,5 +14,10 @@ class Measure:
     #Called every period_time_us
     def _measurement(self, alarm):
         data = read_values(self.i2c)
-        data_string = format_data(machine.RTC().now(), [[data, 0]])
+        data = handle_data(data)
+        data_values = ustruct.unpack(FORMAT_STRING[:-1], data)
+        timestamp = convert_to_epoch(machine.RTC().now())
+        for i in range(len(VARIABLE_NAMES)):
+            data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + data_values[i]
+            self.client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
         self.client.publish(topic=TOPIC, msg=data_string)

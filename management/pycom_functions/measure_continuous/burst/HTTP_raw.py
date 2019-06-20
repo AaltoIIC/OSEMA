@@ -18,13 +18,12 @@ class Measure:
     #Called every period_time_us
     def _measurement(self, alarm):
         data = read_values(self.i2c)
-        data_string = format_data(machine.RTC().now(), [data, 0])
+        data_string = format_data(machine.RTC().now(), [[data, 0]])
         try:
-            content_length = len("sensor_id={}&sensor_key={}&Timestamp={}&data=".format(SENSOR_ID, SENSOR_KEY, self.header_ts))
-            content_length += len(data_string)
-            string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}&Timestamp={}&data={}\r\n\r\n""".format(PATH, DATA_SERVER_URL, content_length, SENSOR_ID, SENSOR_KEY, self.header_ts, data_string)
+            content_length = len(data_string)
+            string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/octet-stream\\r\nContent-Length: {}\r\n\r\n""".format(PATH, DATA_SERVER_URL, content_length)
             s = create_and_connect_socket(DATA_SERVER_URL, DATA_SERVER_PORT)
-            s.send(bytes(string, 'utf8'))
+            s.send(bytes(string, 'utf8') + data_string)
             s.close()
         except:
             print("Data couldn't be sended. Resetting board.")
