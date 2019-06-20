@@ -1,21 +1,11 @@
 """This function takes care that correct messages are sent to server"""
-def communicate_with_server(data_with_ts, length, header_ts):
+def communicate_with_server(data_with_ts, header_ts):
     try:
-        s = create_and_connect_socket(ip_address, port)
-        data_string = "[\n"
-        for value_pair in data_with_ts:
-            data_string += "{\n"
-            value_no = 1
-            data_tuple = ustruct.unpack(FORMAT_STRING[:-1], value_pair[0])
-            for value in data_tuple:
-                data_string += "\t'Value" + str(value_no) + "':" + str(value) + "\n"
-                value_no += 1
-            data_string += "\t'Timestamp':" + str(value_pair[1]) + "\n"
-            data_string += "},\n"
-        data_string += "]"
+        data_string = format_data(header_ts, data_with_ts)
         content_length = len("sensor_id={}&sensor_key={}&Timestamp={}&data=".format(SENSOR_ID, SENSOR_KEY, header_ts))
         content_length += len(data_string)
         string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}&Timestamp={}&data={}\r\n\r\n""".format(PATH, DATA_SERVER_URL, content_length, SENSOR_ID, SENSOR_KEY, header_ts, data_string)
+        s = create_and_connect_socket(ip_address, port)
         s.send(bytes(string, 'utf8'))
         s.close()
     except OSError:

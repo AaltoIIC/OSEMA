@@ -9,11 +9,9 @@ class Measure:
         self.data_with_ts = []
         self.current_no_of_measurements = 0
         self.reference_point = utime.ticks_ms()
-        self.sent = False
         self.no_of_measurements = int(round(BURST_LENGTH * SAMPLE_RATE_HZ)) #How many measurements is made
         self.data_send_rate = DATA_SEND_RATE_S
         self.burst_rate = BURST_RATE
-        self.length = calculate_length()
         self.start = utime.ticks_cpu()
         self.header_ts = machine.RTC().now()
         self.new_header_ts = machine.RTC().now()
@@ -29,21 +27,13 @@ class Measure:
             self.current_no_of_measurements += 1
             if self.current_no_of_measurements == self.no_of_measurements:
                 alarm.cancel()
-                if utime.ticks_diff(self.reference_point, utime.ticks_ms()) > self.data_send_rate * 1000 and not self.sent:
-                    self.header_ts = self.new_header_ts
-                    _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.length, self.header_ts))
-                    self.sent = True
+                self.header_ts = self.new_header_ts
+                _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.header_ts))
                 utime.sleep(self.burst_rate)
-                if utime.ticks_diff(self.reference_point, utime.ticks_ms()) > self.data_send_rate * 1000 and not self.sent:
-                    self.header_ts = self.new_header_ts
-                    _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.length, self.header_ts))
-                    self.sent = True
-                if self.sent:
-                    self.data_with_ts = []
-                    self.start = utime.ticks_cpu()
-                    self.sent = False
-                    self.reference_point = utime.ticks_ms() #new reference point
-                    self.new_header_ts = machine.RTC().now() #new header time stamp
+                self.data_with_ts = []
+                self.start = utime.ticks_cpu()
+                self.reference_point = utime.ticks_ms() #new reference point
+                self.new_header_ts = machine.RTC().now() #new header time stamp
                 self.current_no_of_measurements = 0
                 self.__alarm = Timer.Alarm(self._measurement, us=self.period_time_us, periodic=True)
         except OSError as e:

@@ -1,20 +1,9 @@
 """This function takes care that correct messages are sent to server"""
-def communicate_with_server(data_with_ts, length, header_ts):
+def communicate_with_server(data_with_ts, header_ts):
     try:
         network = connect_network() #Connect to network
         sync_rtc(machine.RTC())
-        header = "BEGIN: " + str(SENSOR_ID) + ";" + str(header_ts) + "\n"
-        data_string = header + "[\n"
-        for value_pair in data_with_ts:
-            data_string += "{\n"
-            value_no = 1
-            data_tuple = ustruct.unpack(FORMAT_STRING[:-1], value_pair[0])
-            for value in data_tuple:
-                data_string += "\t'Value" + str(value_no) + "':" + str(value) + "\n"
-                value_no += 1
-            data_string += "\t'Timestamp':" + str(value_pair[1]) + "\n"
-            data_string += "},\n"
-        data_string += "]"
+        data_string = format_data(header_ts, data_with_ts)
         client = MQTTClient(str(SENSOR_ID), DATA_SERVER_URL, user=USER, password=KEY, port=PORT)
         client.connect()
         client.publish(topic=TOPIC, msg=data_string.encode("ascii"))

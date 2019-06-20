@@ -9,7 +9,6 @@ class Measure:
         self.data_with_ts = []
         self.current_no_of_measurements = 0
         self.no_of_measurements = int(round(DATA_SEND_RATE_S * SAMPLE_RATE_HZ))
-        self.length = calculate_length()
         self.start = utime.ticks_cpu()
         self.header_ts = machine.RTC().now()
         self.new_header_ts = machine.RTC().now()
@@ -25,7 +24,7 @@ class Measure:
             self.current_no_of_measurements += 1
             if self.current_no_of_measurements == self.no_of_measurements:
                 self.header_ts = self.new_header_ts
-                _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.length, self.header_ts))
+                _thread.start_new_thread(communicate_with_server, (self.data_with_ts.copy(), self.header_ts))
                 self.new_header_ts = machine.RTC().now()
                 self.start = utime.ticks_cpu()
                 self.data_with_ts = []
