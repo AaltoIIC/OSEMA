@@ -18,7 +18,7 @@ Python version should be 3.6 or newer
 To install libraries run:
 
 ```
-sudo pip3 install Django==2.1.1 ntplib djangorestframework==3.9.4 rest-framework-generic-relations djangorestframework_simplejwt requests
+sudo pip3 install Django==2.1.8 ntplib djangorestframework==3.9.4 rest-framework-generic-relations djangorestframework_simplejwt requests
 ```
 
 ## Getting started
