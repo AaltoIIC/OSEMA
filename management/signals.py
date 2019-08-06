@@ -21,7 +21,7 @@ def delete_previous_file(sender, instance, **kwargs):
     if old_file:
         if old_file == new_file:
             os.rename(new_file.path, old_file.path)
-            new_file.name = old_file_name
+            new_file.name = old_file.name
         try:
             os.remove(old_file.path)
         except:
