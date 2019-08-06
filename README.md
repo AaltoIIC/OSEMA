@@ -49,9 +49,14 @@ Set DEBUG = False in sensor_management_platform/settings.py.
 
 Run server:
 ```
-python3 manage.py <ip_address>:<port>
+python3 manage.py runserver <ip_address>:<port>
 ```
 
+Go to <ip_address>:<port>/admin
+
+Select Users -> <Your username>
+
+From the bottom change auth level to admin
 
 ## Authors
 
