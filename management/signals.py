@@ -14,7 +14,7 @@ def delete_update_file(sender, instance, **kwargs):
 def delete_previous_file(sender, instance, **kwargs):
     try:
         tos = Type_of_sensor.objects.get(pk=instance.pk)
-    except DoesNotExist:
+    except:
         return #object not found
     old_file = tos.handle_data_function
     new_file = instance.handle_data_function
