@@ -18,6 +18,8 @@ def delete_previous_file(sender, instance, **kwargs):
         return #object not found
     old_file = tos.handle_data_function
     new_file = instance.handle_data_function
+    if not old_file == new_file:
+        os.remove(old_file.path)
     print("NEW", new_file)
     print("OLD", old_file)
     if old_file:
