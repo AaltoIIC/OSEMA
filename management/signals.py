@@ -12,8 +12,9 @@ def delete_update_file(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Type_of_sensor)
 def delete_previous_file(sender, instance, **kwargs):
-    #try:
-    tos = Type_of_sensor.objects.get(pk=instance.pk)
+    try:
+        tos = Type_of_sensor.objects.get(pk=instance.pk)
+    except management.models.DoesNotExist:
     if not tos:
         return
     old_file = tos.handle_data_function
