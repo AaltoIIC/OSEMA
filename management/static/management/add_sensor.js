@@ -1,7 +1,7 @@
 $( window ).on( "load", function() {
   // If user changes the sensor type, available sample rates and default variables must also be changed
   sensor_type_selection = document.getElementById("id_add_sensor-model");
-  sample_rate_selection = document.getElementById("id_add_sensor-sample_rate");
+  sample_rate_selection = document.getElementById("id_add-sample_rate");
   default_variable_table = document.getElementById("variable_table");
   sample_rate_selection.value = current_sample_rate; //set default value
   sensor_type_selection.onchange = function() //Change available sample rates if sensor type is changed
@@ -32,7 +32,7 @@ $( window ).on( "load", function() {
   };
 
   // When sample rate is selected only avaialable sensitivities are shown #template
-  sensitivity_selection = document.getElementById("id_add_sensor-sensitivity");
+  sensitivity_selection = document.getElementById("id_add-sensitivity");
   sensitivity_selection.value = current_sensitivity; //set default value
 
   function change_available_sensitivities() //Change available sensitivites if sample rate is changed
