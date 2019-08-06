@@ -21,7 +21,12 @@ DEBUG = True
 
 AUTH_USER_MODEL = 'management.User'
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ["127.0.0.1", "192.168.0.186"]
+=======
+
+ALLOWED_HOSTS = ["127.0.0.1", "rikki"]
+>>>>>>> 4ae43a4191153312f4881f00d7510a53e4ae571a
 
 # GLOBAL variables
 FAILURE = -1
