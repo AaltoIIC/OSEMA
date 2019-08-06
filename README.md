@@ -18,7 +18,7 @@ Python version should be 3.6 or newer
 To install libraries run:
 
 ```
-pip install django ntplib djangorestframework rest-framework-generic-relations djangorestframework_simplejwt requests
+pip3 install django ntplib djangorestframework rest-framework-generic-relations djangorestframework_simplejwt requests
 ```
 
 ## Getting started
