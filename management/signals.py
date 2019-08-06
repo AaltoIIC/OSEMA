@@ -20,10 +20,6 @@ def delete_previous_file(sender, instance, **kwargs):
     new_file = instance.handle_data_function
     if old_file:
         if old_file.path == new_file.path:
-            try:
-                os.remove(old_file.path)
-            except:
-                print("Old data handle_function couldn't be deleted.")
             os.rename(new_file.path, old_file.path)
             new_file.name = old_file.name
                 
