@@ -69,4 +69,5 @@ management/sensor_updates/
 management/migrations/
 management/pycom_functions/handle_data_functions/
 sensor_management_platform/settings.py
+/sensor_management_platform/settings.py
 create_superuser.py
