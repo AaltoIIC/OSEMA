@@ -89,16 +89,16 @@
          {% endfor %}
        </div>
        <div class="mb-3">
-         <label for="id_add_sensor-sample_rate">Sample rate (Hz):</label><br>
-          <select name="add_sensor-sample_rate" required id="id_add_sensor-sample_rate">
+         <label for="id_add-sample_rate">Sample rate (Hz):</label><br>
+          <select name="add-sample_rate" required id="id_add-sample_rate">
             {% for option in available_sample_rates %}
               <option value={{option.id}}> {{option.sample_rate}} </option>
             {% endfor %}
           </select>
         </div>
        <div class="mb-3">
-         <label for="id_add_sensor-sensitivity">Sensitivity:</label><br>
-          <select name="add_sensor-sensitivity" required id="id_add_sensor-sensitivity">
+         <label for="id_add-sensitivity">Sensitivity:</label><br>
+          <select name="add-sensitivity" required id="id_add-sensitivity">
            {% for option in available_sensitivities %}
              <option value={{option.id}}> {{option.sensitivity}} </option>
            {% endfor %}
