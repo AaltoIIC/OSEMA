@@ -52,11 +52,11 @@ Run server:
 python3 manage.py runserver <ip_address>:<port>
 ```
 
-Go to <ip_address>:<port>/admin
+Go to <ip_address_to_platform>/admin
 
-Select Users -> <Your username>
+Select Users and <Your username>
 
-From the bottom change auth level to admin
+From the bottom change auth level to admin.
 
 ## Authors
 
