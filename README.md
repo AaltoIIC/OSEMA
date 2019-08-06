@@ -25,18 +25,18 @@ pip3 install django ntplib djangorestframework rest-framework-generic-relations 
 
 First the database needs to be initialized:
 ```
-python manage.py makemigrations management
+python3 manage.py makemigrations management
 
-python manage.py migrate
+python3 manage.py migrate
 ```
 
 Run script add_objects_to_db.py:
 ```
-python add_objects_to_db.py
+python3 add_objects_to_db.py
 ```
 Create superuser:
 ```
-python manage.py createsuperuser
+python3 manage.py createsuperuser
 ```
 
 Configure your network to have either a public IP address or place all sensor nodes at the same local network.
@@ -49,7 +49,7 @@ Set DEBUG = False in sensor_management_platform/settings.py.
 
 Run server:
 ```
-python manage.py <ip_address>:<port>
+python3 manage.py <ip_address>:<port>
 ```
 
 
