@@ -199,7 +199,6 @@ def add_sensor(request):
             communication_technology = request.POST['communication_technology']
             protocol = request.POST['protocol']
             if add_sensor_form.is_valid():
-                print(add_sensor_form)
                 new_sensor = add_sensor_form.save()
                 new_sensor.sample_rate = Sample_rate.objects.get(id=request.POST['add-sample_rate'])
                 new_sensor.sensitivity = Sensitivity.objects.get(id=request.POST['add-sensitivity'])
