@@ -12,6 +12,7 @@ def delete_update_file(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Type_of_sensor)
 def delete_previous_file(sender, instance, **kwargs):
+    print("jo")
     try:
         tos = Type_of_sensor.objects.get(pk=instance.pk)
     except:
