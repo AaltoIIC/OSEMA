@@ -54,7 +54,7 @@ python3 manage.py runserver <ip_address>:<port>
 
 Go to <ip_address_to_platform>/admin
 
-Select Users and select your superuser
+Select Users and your superuser
 
 From the bottom change auth level to admin.
 
