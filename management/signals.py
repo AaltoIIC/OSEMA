@@ -15,14 +15,13 @@ def delete_previous_file(sender, instance, **kwargs):
     try:
         tos = Type_of_sensor.objects.get(pk=instance.pk)
     except management.models.DoesNotExist:
-    if not tos:
-        return
+        return #object not found
     old_file = tos.handle_data_function
     new_file = instance.handle_data_function
-    if not old_file == new_file:
-        os.remove(old_file.path)
-    else:
+    old_file_name = old_file.name
+    new_file_name = new_file.name
+    if old_file == new_file:
         os.rename(new_file.path, old_file.path)
         new_file.name = old_file.name
-    #except:
-    print("Update file couldn't be deleted. File:", instance.handle_data_function)
+    os.remove(old_file.path)
+    #print("Update file couldn't be deleted. File:", instance.handle_data_function)
