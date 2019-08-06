@@ -1,3 +1,4 @@
+y
 # Sensor Configurator Platform
 
 This is interface for controlling PyCom microcontroller boards
@@ -18,7 +19,7 @@ Python version should be 3.6 or newer
 To install libraries run:
 
 ```
-pip3 install django ntplib djangorestframework rest-framework-generic-relations djangorestframework_simplejwt requests
+pip3 install Django==2.1.1 ntplib djangorestframework==3.9.4 rest-framework-generic-relations djangorestframework_simplejwt requests
 ```
 
 ## Getting started
