@@ -1,7 +1,6 @@
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
-from management.models import Update, Type_of_sensor
-import management
+from management.models import Update, Type_of_sensor, DoesNotExist
 import os
 
 @receiver(pre_delete, sender=Update)
@@ -15,7 +14,7 @@ def delete_update_file(sender, instance, **kwargs):
 def delete_previous_file(sender, instance, **kwargs):
     try:
         tos = Type_of_sensor.objects.get(pk=instance.pk)
-    except management.models.DoesNotExist:
+    except DoesNotExist:
         return #object not found
     old_file = tos.handle_data_function
     new_file = instance.handle_data_function
