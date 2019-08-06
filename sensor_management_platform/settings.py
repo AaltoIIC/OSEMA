@@ -22,7 +22,7 @@ DEBUG = True
 AUTH_USER_MODEL = 'management.User'
 
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "rikki"]
 
 # GLOBAL variables
 FAILURE = -1
