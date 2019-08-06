@@ -16,7 +16,10 @@ def delete_previous_file(sender, instance, **kwargs):
         old_file = Type_of_sensor.objects.get(pk=instance.pk).handle_data_function
         new_file = instance.handle_data_function
         if not old_file == new_file:
-            os.remove(old_file.path)
+            try:
+                os.remove(old_file.path)
+            except:
+                print("Couldn't delete the old file.")
         os.rename(new_file.path, old_file.path)
         new_file.name = old_file.name
     except:
