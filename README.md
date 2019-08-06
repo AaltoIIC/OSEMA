@@ -1,4 +1,3 @@
-y
 # Sensor Configurator Platform
 
 This is interface for controlling PyCom microcontroller boards
