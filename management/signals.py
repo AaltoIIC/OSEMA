@@ -18,9 +18,8 @@ def delete_previous_file(sender, instance, **kwargs):
         return #object not found
     old_file = tos.handle_data_function
     new_file = instance.handle_data_function
-    old_file_name = old_file.name
+    os.remove(old_file.path)
     if old_file == new_file:
         os.rename(new_file.path, old_file.path)
         new_file.name = old_file_name
-    os.remove(old_file.path)
     #print("Update file couldn't be deleted. File:", instance.handle_data_function)
