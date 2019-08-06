@@ -1,6 +1,7 @@
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
 from management.models import Update, Type_of_sensor
+import management
 import os
 
 @receiver(pre_delete, sender=Update)
