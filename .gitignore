@@ -67,4 +67,5 @@ db.sqlite3
 # Platform specific
 management/sensor_updates/
 management/migrations/
+management/pycom_functions/handle_data_functions/
 create_superuser.py
