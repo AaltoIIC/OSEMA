@@ -200,8 +200,8 @@ def add_sensor(request):
             protocol = request.POST['protocol']
             if add_sensor_form.is_valid():
                 new_sensor = add_sensor_form.save()
-                new_sensor.sample_rate = Sample_rate.objects.get(id=request.POST['add-sample_rate'])
-                new_sensor.sensitivity = Sensitivity.objects.get(id=request.POST['add-sensitivity'])
+                new_sensor.sample_rate = Sample_rate.objects.get(id=request.POST['add_sensor-sample_rate'])
+                new_sensor.sensitivity = Sensitivity.objects.get(id=request.POST['add_sensor-sensitivity'])
                 if communication_technology ==  'Wlan':
                     instance = Wlan.objects.get(pk=request.POST['communication_instance'])
                     modified_wlan_form = ModifyWlanForm(request.POST, instance=instance, prefix='wlan')
