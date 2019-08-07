@@ -17,7 +17,7 @@ def format_data(header_ts, data):
             else:
                 data_string_list[i] += '\t\t{ "timestamp": {}, "values": [ {} ] }\n'.format(VARIABLE_NAMES[i], data_values[i])
         j += 1
-    for data_string = data_string_list:
+    for data_string in data_string_list:
         data_string += "\t]\n"
         data_string += "}\n"
     return data_string_list
