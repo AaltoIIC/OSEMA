@@ -6,6 +6,7 @@ def communicate_with_server(data_with_ts, header_ts):
         for data_string in data_string_list:
             content_length = len(data_string)
             string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}""".format(PATH, DATA_SERVER_URL, content_length, data_string)
+            utime.sleep(0.5) #not too many request in short time
             s.send(bytes(string, 'utf8'))
         s.close()
     except OSError:
