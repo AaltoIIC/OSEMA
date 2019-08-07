@@ -4,7 +4,7 @@ def communicate_with_server(data_with_ts, header_ts):
         data_string = format_data(header_ts, data_with_ts)
         client = MQTTClient(str(SENSOR_ID), BROKER_URL, user=USER, password=KEY, port=BROKER_PORT)
         client.connect()
-        client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
+        client.publish(topic=TOPIC, msg=data_string)
         client.disconnect()
     except OSError:
         print("OSError")

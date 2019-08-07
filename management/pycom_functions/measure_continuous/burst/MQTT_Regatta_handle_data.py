@@ -22,7 +22,7 @@ class Measure:
         timestamp = convert_to_epoch(machine.RTC().now()) + value_pair[1] / 1000
         for i in range(len(VARIABLE_NAMES)):
             data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + data_values[i]
-            self.client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
+            self.client.publish(topic=TOPIC, msg=data_string)
         self.current_no_of_measurements += 1
         if self.current_no_of_measurements == self.no_of_measurements:
             self.current_no_of_measurements = 0

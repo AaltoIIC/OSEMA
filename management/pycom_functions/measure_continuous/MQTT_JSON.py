@@ -15,4 +15,4 @@ class Measure:
     def _measurement(self, alarm):
         data = read_values(self.i2c)
         data_string = format_data(machine.RTC().now(), [[data, 0]])
-        self.client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
+        self.client.publish(topic=TOPIC, msg=data_string)

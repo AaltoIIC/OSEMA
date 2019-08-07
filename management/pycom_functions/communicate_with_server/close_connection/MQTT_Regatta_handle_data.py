@@ -10,7 +10,7 @@ def communicate_with_server(data_with_ts, header_ts):
             timestamp = header_ts + value_pair[1] / 1000
             for i in range(len(VARIABLE_NAMES)):
                 data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
-                client.publish(topic=TOPIC, msg=data_string.encode("ascii"))
+                client.publish(topic=TOPIC, msg=data_string)
         client.disconnect()
     except OSError:
         print("OSError")
