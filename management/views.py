@@ -120,6 +120,8 @@ def get_update(request):
         sensor_object.software_version = request.POST['software_version']
         if sensor_object.sensor_key == request.POST['sensor_key']:
             update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
+            print("current filename", request.POST['software_version'])
+            print("newest version", update.filename)
             if update.filename != request.POST['software_version']:
                 with open('management/sensor_updates/' + update.filename, 'r') as f:
                     content = f.read()
