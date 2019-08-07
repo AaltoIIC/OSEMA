@@ -11,7 +11,7 @@ def format_data(header_ts, data):
     for value_pair in data:
         data_values = ustruct.unpack(FORMAT_STRING[:-1], value_pair[0])
         for i in range(len(VARIABLE_NAMES)):
-            if j != j_max:
+            if j != max_j:
                 data_string_list[i] += '\t\t{ "timestamp": {}, "values": [ {} ] },\n'.format(VARIABLE_NAMES[i], data_values[i])
             else:
                 data_string_list[i] += '\t\t{ "timestamp": {}, "values": [ {} ] }\n'.format(VARIABLE_NAMES[i], data_values[i])
