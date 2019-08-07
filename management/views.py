@@ -118,6 +118,7 @@ def get_update(request):
     if request.method == 'POST':
         sensor_object = get_object_or_404(Sensor, pk=request.POST['sensor_id'])
         sensor_object.software_version = request.POST['software_version']
+        sensor_object.save()
         if sensor_object.sensor_key == request.POST['sensor_key']:
             update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
             if update.filename != request.POST['software_version']:
