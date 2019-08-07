@@ -14,7 +14,6 @@ def main():
         _thread.start_new_thread(keep_connection, (network,))
         _thread.start_new_thread(measure, (i2c,))
         _thread.start_new_thread(ask_updates, (UPDATE_CHECK_LIMIT, UPDATE_URL, int(UPDATE_PORT)))
-        _thread.start_new_thread(keep_rtc_synced, (rtc,))
 
     except OSError as e:
         print(e)
