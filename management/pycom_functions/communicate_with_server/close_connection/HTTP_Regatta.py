@@ -8,6 +8,9 @@ def communicate_with_server(data_with_ts, header_ts):
             string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}""".format(PATH, DATA_SERVER_URL, content_length, data_string)
             utime.sleep(0.5) #not too many request in short time
             s.send(bytes(string, 'utf8'))
+            utime.sleep(0.1)
+            s.close()
+            s = create_and_connect_socket(DATA_SERVER_URL, DATA_SERVER_PORT)
         s.close()
     except OSError:
         print("OSError")
