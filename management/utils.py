@@ -30,7 +30,7 @@ def write_file_contents(f, filename):
 def generate_file(sensor_object):
     time_string = time.strftime("%Y_%m_%d_%H_%M_%S")
     filename = str(sensor_object.sensor_id) + "_" + time_string + ".txt"
-    f = open("management/sensor_updates/" + filename, "w")
+    f = open(BASE_DIR + "/management/sensor_updates/" + filename, "w")
     type_of_sensor_object = sensor_object.model
     sample_rate_object = sensor_object.sample_rate
     sensitivity_object = sensor_object.sensitivity

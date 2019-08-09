@@ -6,7 +6,7 @@ import os
 @receiver(pre_delete, sender=Update)
 def delete_update_file(sender, instance, **kwargs):
     try:
-        os.remove("management/sensor_updates/" + instance.filename)
+        os.remove(BASE_DIR + "/management/sensor_updates/" + instance.filename)
     except:
         print("Update file couldn't be deleted.")
 

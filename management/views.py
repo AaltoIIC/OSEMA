@@ -924,11 +924,11 @@ def instructions_server(request):
 @login_required
 def download_instructions(request, file):
     if file == "main":
-        with open("management/static/management/instructions/" + "main.py", "r") as f:
+        with open(BASE_DIR + "/management/static/management/instructions/" + "main.py", "r") as f:
             list_of_lines = f.readlines()
             filename = "main.py"
     elif file == "boot":
-        with open("management/static/management/instructions/" + "boot.py", "r") as f:
+        with open(BASE_DIR + "/management/static/management/instructions/" + "boot.py", "r") as f:
             list_of_lines = f.readlines()
             filename = "boot.py"
     else:
