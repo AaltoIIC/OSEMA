@@ -402,7 +402,7 @@ def return_software_file(request, sensor_id):
         sensor_object = get_object_or_404(Sensor, pk=sensor_id)
         update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
         try:
-            with open(BASE_DIR + 'management/sensor_updates/' + update.filename, 'r') as f:
+            with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                 content = f.read()
                 response = HttpResponse(content, content_type='text/x-python')
                 response['Content-Disposition'] = 'attachment; filename={0}'.format("main.py")
