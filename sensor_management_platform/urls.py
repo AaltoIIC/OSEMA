@@ -20,7 +20,7 @@ from management.forms import CustomAuthForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login', auth_views.LoginView.as_view(template_name='registration/login.html', authentication_form=CustomAuthForm), name='login'),
+    path('login', auth_views.LoginView.as_view(template_name='management/registration/login.html', authentication_form=CustomAuthForm), name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('management.urls'))
 ]
