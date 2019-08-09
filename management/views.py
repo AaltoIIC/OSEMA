@@ -24,6 +24,8 @@ from rest_framework import viewsets
 
 import datetime
 
+import os
+
 import string
 
 try:
@@ -399,11 +401,14 @@ def return_software_file(request, sensor_id):
     if request.user.auth_level > 1:
         sensor_object = get_object_or_404(Sensor, pk=sensor_id)
         update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
-        with open('management/sensor_updates/' + update.filename, 'r') as f:
-            content = f.read()
-            response = HttpResponse(content, content_type='text/x-python')
-            response['Content-Disposition'] = 'attachment; filename={0}'.format("main.py")
-            return response
+        try:
+            with open('management/sensor_updates/' + update.filename, 'r') as f:
+                content = f.read()
+                response = HttpResponse(content, content_type='text/x-python')
+                response['Content-Disposition'] = 'attachment; filename={0}'.format("main.py")
+                return response
+            except:
+                raise Exception("PATH: ", os.getcwd())
     else:
         return render(request, 'management/error.html', {'title' : 'Not authorized', 'error_msg' : 'Ask rights to download sensor from admin.'})
 
