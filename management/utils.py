@@ -163,6 +163,7 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/sync_rtc.py")#sync_rtc
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update.py")#update check
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/convert_to_epoch.py")#helper function to convert date tuple to epoch
+    #write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket_ssl") #create socket with ssl
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
     #If data needs to be handled spceifically (for example shifting bits)

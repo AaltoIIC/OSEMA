@@ -4,6 +4,7 @@ def check_update(url, port):
         addr = socket.getaddrinfo(url, int(port))[0][-1]
         s = socket.socket()
         s.connect(addr)
+        s = ssl.wrap_socket(s)
         content_length = len("sensor_id={}&sensor_key={}&software_version={}".format(SENSOR_ID, SENSOR_KEY, SOFTWARE_VERSION))
         string = """POST /get_update HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}&software_version={}\r\n\r\n""".format(url, content_length, SENSOR_ID, SENSOR_KEY, SOFTWARE_VERSION)
         s.send(bytes(string, 'utf8'))
