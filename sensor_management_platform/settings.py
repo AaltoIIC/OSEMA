@@ -1,27 +1,38 @@
 import os
 import datetime
+import json
+
+""""
+print(os.getcwd())
+
+
+with open("/config.json") as config_file:
+    config = json.load(config_file)
+
+print("config file read!")
+"""
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 parent_dir = os.path.abspath(os.path.dirname(__file__) + '/..')
-MEDIA_ROOT = os.path.join(parent_dir, '')
-MEDIA_URL = '/'
+MEDIA_ROOT = os.path.join(parent_dir, 'media')
+MEDIA_URL = '/media/'
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'CHANGE_THIS!!!'
+SECRET_KEY = """hgfhfhhhfhfdhhfdhdf5454545config["SECRET_KEY"]"""
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 AUTH_USER_MODEL = 'management.User'
 
-ALLOWED_HOSTS = ["127.0.0.1", "192.168.0.186"]
+ALLOWED_HOSTS = ["127.0.0.1", "192.168.0.186", "86.50.143.154", "django-server", "localhost", "riku.digikaksonen.fi"]
 
 # GLOBAL variables
 FAILURE = -1
@@ -128,7 +139,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join( BASE_DIR, "static")
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES' : (
