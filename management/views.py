@@ -407,8 +407,8 @@ def return_software_file(request, sensor_id):
                 response = HttpResponse(content, content_type='text/x-python')
                 response['Content-Disposition'] = 'attachment; filename={0}'.format("main.py")
                 return response
-            except:
-                raise Exception("PATH: ", os.getcwd())
+        except:
+            raise Exception("PATH: ", os.getcwd())
     else:
         return render(request, 'management/error.html', {'title' : 'Not authorized', 'error_msg' : 'Ask rights to download sensor from admin.'})
 
