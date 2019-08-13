@@ -200,7 +200,7 @@ class MQTTInfoForm(forms.ModelForm):
     key = forms.CharField(max_length=50, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
     topic = forms.CharField(max_length=150, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
     broker_url = forms.CharField(max_length=150, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
-    broker_port = forms.IntegerField(widget=TextInput(attrs={'class':'form-control'}))
+    broker_port = forms.IntegerField(widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
 
     class Meta:
         model = MQTT
