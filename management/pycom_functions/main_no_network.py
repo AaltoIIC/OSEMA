@@ -12,6 +12,7 @@ def main():
         close_network(network)
 
         _thread.start_new_thread(measure, (i2c,))
+        _thread.stack_size(8192)
         _thread.start_new_thread(ask_updates, (UPDATE_CHECK_LIMIT, UPDATE_URL, int(UPDATE_PORT)))
     except OSError as e:
         print(e)
