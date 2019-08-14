@@ -15,30 +15,42 @@ def check_update(url, port):
                 data_read += data
             else:
                 break
-        s.close()
         decoded_data = data_read.decode('ascii')
         payload_begins = decoded_data.find("import") #Payload string always begins with an import statement
         if payload_begins == -1:
             if decoded_data.find("UP-TO-DATE") != -1:
                 print("Software up-to-date")
+                s.close()
                 return
             else:
                 print("There's an error with the server response")
         else:
             data = decoded_data[payload_begins:]
-            f = open("new_main.txt", "w")
-            f.write(data)
-            f.close()
-            print("Writing data succeed!")
+            # calculate hash
+            hash = uhashlib.sha256(decoded_data.encode("ascii")).digest()
             #Confirm that data is received
-            s = socket.socket()
-            s.connect(addr)
-            content_length = len("sensor_id={}&sensor_key={}".format(SENSOR_ID, SENSOR_KEY))
-            confirmation = """POST /confirm_update HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}\r\n\r\n""".format(url, content_length, SENSOR_ID, SENSOR_KEY)
+            content_length = len("sensor_id={}&sensor_key={}&hash={}".format(SENSOR_ID, SENSOR_KEY, hash))
+            confirmation = """POST /confirm_update HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}hash={}\r\n\r\n""".format(url, content_length, SENSOR_ID, SENSOR_KEY, hash)
             p = s.send(bytes(confirmation, 'utf8'))
+            data_read = b""
+            while True:
+                data_res = s.recv(MAXLINE)
+                if data_res:
+                    data_read += data_res
+                else:
+                    break
+            decoded_data = data_read.decode('ascii')
             s.close()
-            print("update confirmed")
-            utime.sleep(1)
-            machine.reset()
+            if decoded_data == "OK":
+                print("update confirmed")
+                f = open("new_main.txt", "w")
+                f.write(data)
+                f.close()
+                print("Writing data succeed!")
+                utime.sleep(1)
+                machine.reset()
+            else:
+                print("Software update failed. Hash doesn't match.")
+                check_update(url, port)
     except:
         print("Software update failed.")
