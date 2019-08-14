@@ -151,7 +151,7 @@ def confirm_update(request):
             with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                 data = f.read()
             #for testing
-            print("orig", hashlib.sha256(data.encode("ascii")), "reg", request.POST['hash'])
+            raise Exception("orig", hashlib.sha256(data.encode("ascii")), "reg", request.POST['hash'])
             if hashlib.sha256(data.encode("ascii")) == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.save()
