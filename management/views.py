@@ -24,6 +24,8 @@ from rest_framework import viewsets
 
 import datetime
 
+import hashlib
+
 import string
 
 try:
@@ -144,15 +146,33 @@ def confirm_update(request):
     if request.method == 'POST':
         sensor_object = get_object_or_404(Sensor, pk=request.POST['sensor_id'])
         if sensor_object.sensor_key == request.POST['sensor_key']:
-            sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-            sensor_object.save()
-            return HttpResponse("OK", content_type='text/plain')
+            #read file into string
+            update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
+            with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
+                data = f.read()
+            #for testing
+            print("orig", hashlib.sha256(data.encode("utf-8")), "reg", request.POST['hash'])
+            if hashlib.sha256(data.encode("utf-8")) == request.POST['hash']: #check if the file is similar to the actual file
+                sensor_object.status = Sensor.MEASURING_UP_TO_DATE
+                sensor_object.save()
+                return HttpResponse("OK", content_type='text/plain')
+            else:
+                return HttpResponse("ERR", content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
             alphabet = string.ascii_letters + string.digits
             sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password
-            sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-            sensor_object.save()
-            return HttpResponse("OK", content_type='text/plain')
+            #read file into string
+            update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
+            with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
+                data = f.read()
+            #for testing
+            print("orig", hashlib.sha256(data.encode("utf-8")), "reg", request.POST['hash'])
+            if hashlib.sha256(data.encode("utf-8")) == request.POST['hash']: #check if the file is similar to the actual file
+                sensor_object.status = Sensor.MEASURING_UP_TO_DATE
+                sensor_object.save()
+                return HttpResponse("OK", content_type='text/plain')
+            else:
+                return HttpResponse("ERR", content_type='text/plain')
         else:
             raise Http404("Page doesn't exist")
     else:
