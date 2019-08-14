@@ -151,13 +151,13 @@ def confirm_update(request):
             with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                 data = f.read()
             #for testing
-            raise Exception("orig", hashlib.sha256(data.encode("ascii")), "reg", request.POST['hash'])
+            print("orig", hashlib.sha256(data.encode("ascii")), "reg", request.POST['hash'])
             if hashlib.sha256(data.encode("ascii")) == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.save()
                 return HttpResponse("OK", content_type='text/plain')
             else:
-                return HttpResponse("ERR", content_type='text/plain')
+                return HttpResponse(hash, content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
             alphabet = string.ascii_letters + string.digits
             sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password
@@ -172,7 +172,7 @@ def confirm_update(request):
                 sensor_object.save()
                 return HttpResponse("OK", content_type='text/plain')
             else:
-                return HttpResponse("ERR", content_type='text/plain')
+                return HttpResponse(hash, content_type='text/plain')
         else:
             raise Http404("Page doesn't exist")
     else:
