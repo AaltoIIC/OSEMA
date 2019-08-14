@@ -151,8 +151,8 @@ def confirm_update(request):
             with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                 data = f.read()
             #for testing
-            print("orig", hashlib.sha256(data.encode("utf-8")), "reg", request.POST['hash'])
-            if hashlib.sha256(data.encode("utf-8")) == request.POST['hash']: #check if the file is similar to the actual file
+            print("orig", hashlib.sha256(data.encode("ascii")), "reg", request.POST['hash'])
+            if hashlib.sha256(data.encode("ascii")) == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.save()
                 return HttpResponse("OK", content_type='text/plain')
@@ -166,8 +166,8 @@ def confirm_update(request):
             with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                 data = f.read()
             #for testing
-            print("orig", hashlib.sha256(data.encode("utf-8")), "reg", request.POST['hash'])
-            if hashlib.sha256(data.encode("utf-8")) == request.POST['hash']: #check if the file is similar to the actual file
+            print("orig", hashlib.sha256(data.encode("ascii")), "reg", request.POST['hash'])
+            if hashlib.sha256(data.encode("ascii")) == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.save()
                 return HttpResponse("OK", content_type='text/plain')
