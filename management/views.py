@@ -172,9 +172,9 @@ def confirm_update(request):
             else:
                 return HttpResponse("ERR", content_type='text/plain')
         else:
-            raise Http404("Page doesn't exist")
+            return HttpResponse("ERR1", content_type='text/plain')
     else:
-        raise Http404("Page doesn't exist")
+        return HttpResponse("ERR2", content_type='text/plain')
 
 @api_view(['POST'])
 def failure(request):
