@@ -141,7 +141,7 @@ def get_update(request):
                 return HttpResponse(content, content_type='text/plain')
         raise Http404("Page doesn't exist")
 
-@api_view([])
+@api_view(['POST'])
 def confirm_update(request):
     if request.method == 'POST':
         sensor_object = get_object_or_404(Sensor, pk=request.POST['sensor_id'])
