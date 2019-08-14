@@ -155,9 +155,9 @@ def confirm_update(request):
             if hashlib.sha256(data.encode("ascii")).digest() == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.save()
-                return HttpResponse(h, content_type='text/plain')
+                return HttpResponse("OK", content_type='text/plain')
             else:
-                return HttpResponse(h, content_type='text/plain')
+                return HttpResponse("Server {},,,\n Hash: {}".format(h, request.POST['hash']), content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
             alphabet = string.ascii_letters + string.digits
             sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password
