@@ -44,7 +44,7 @@ def check_update(url, port):
                     break
             s.close()
             decoded_data_ans = data_read.decode('ascii')
-            if decoded_data.find("OK" + SENSOR_ID) != -1:
+            if decoded_data.find("OK" + str(SENSOR_ID)) != -1:
                 print("update confirmed")
                 f = open("new_main.txt", "w")
                 f.write(decoded_data[payload_begins:])
