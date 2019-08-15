@@ -167,7 +167,7 @@ def confirm_update(request):
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password to prevent usibg the old password twice
                 sensor_object.save()
-                return HttpResponse("OK", content_type='text/plain')
+                return HttpResponse("OK"+ request.POST['sensor_id'], content_type='text/plain')
             else:
                 return HttpResponse("ERR", content_type='text/plain')
         else:
