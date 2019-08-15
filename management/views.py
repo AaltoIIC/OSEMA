@@ -160,7 +160,7 @@ def confirm_update(request):
                 try:
                     return HttpResponse("ERR {} j {}".format(h, request.POST['hash'].decode('ascii')), content_type='text/plain')
                 except:
-                    return HttpResponse("errori"), content_type='text/plain')
+                    return HttpResponse("errori", content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
             #read file into string
             update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
