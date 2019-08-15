@@ -152,12 +152,15 @@ def confirm_update(request):
                 data = f.read()
             #for testing
             h = hashlib.sha256(data.encode("ascii")).hexdigest()
-            if hashlib.sha256(data.encode("ascii")).hexdigest() == request.POST['hash'].decode("ascii"): #check if the file is similar to the actual file
+            if hashlib.sha256(data.encode("ascii")).hexdigest() == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.save()
                 return HttpResponse("OK", content_type='text/plain')
             else:
-                return HttpResponse("ERR {} j {}".format(h, request.POST['hash'].decode('ascii')), content_type='text/plain')
+                try:
+                    return HttpResponse("ERR {} j {}".format(h, request.POST['hash'].decode('ascii')), content_type='text/plain')
+                except:
+                    return HttpResponse("errori"), content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
             #read file into string
             update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
