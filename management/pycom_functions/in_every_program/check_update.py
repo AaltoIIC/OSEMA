@@ -30,7 +30,7 @@ def check_update(url, port):
             s.connect(addr)
             s = ssl.wrap_socket(s)
             # calculate hash
-            hash = ubinascii.hexlify(uhashlib.sha256(decoded_data[payload_begins:].encode("ascii")).digest())
+            hash = ubinascii.hexlify(uhashlib.sha256(decoded_data[payload_begins:].encode("ascii")).digest()).decode("ascii")
             #Confirm that data is received
             content_length = len("sensor_id={}&sensor_key={}&hash={}".format(SENSOR_ID, SENSOR_KEY, hash))
             confirmation = """POST /confirm_update HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}&hash={}\r\n\r\n""".format(url, content_length, SENSOR_ID, SENSOR_KEY, hash)
@@ -42,9 +42,9 @@ def check_update(url, port):
                     data_read += data_res
                 else:
                     break
-            decoded_data_ans = data_read.decode('ascii')
             s.close()
-            if decoded_data_ans == "OK":
+            decoded_data_ans = data_read.decode('ascii')
+            if decoded_data.find("OK" + SENSOR_ID) != -1:
                 print("update confirmed")
                 f = open("new_main.txt", "w")
                 f.write(decoded_data[payload_begins:])
