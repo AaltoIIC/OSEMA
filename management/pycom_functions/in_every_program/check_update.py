@@ -33,7 +33,7 @@ def check_update(url, port):
             hash = ubinascii.hexlify(uhashlib.sha256(decoded_data[payload_begins:].encode("ascii")).digest())
             #Confirm that data is received
             content_length = len("sensor_id={}&sensor_key={}&hash={}".format(SENSOR_ID, SENSOR_KEY, hash))
-            confirmation = """POST /confirm_update HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}hash={}\r\n\r\n""".format(url, content_length, SENSOR_ID, SENSOR_KEY, hash)
+            confirmation = """POST /confirm_update HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}&hash={}\r\n\r\n""".format(url, content_length, SENSOR_ID, SENSOR_KEY, hash)
             s.send(bytes(confirmation, 'utf8'))
             data_read = b""
             while True:
