@@ -50,6 +50,7 @@ def generate_file(sensor_object):
 def write_imports(f, communication_object, protocol_object):
     f.write("import gc\n")
     f.write("import uhashlib\n")
+    f.write("import ubinascii\n")
     f.write("import pycom\n")
     f.write("import socket\n")
     f.write("import micropython\n")

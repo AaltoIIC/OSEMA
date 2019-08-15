@@ -15,6 +15,7 @@ def check_update(url, port):
                 data_read += data
             else:
                 break
+        s.close()
         decoded_data = data_read.decode('ascii')
         payload_begins = decoded_data.find("import") #Payload string always begins with an import statement
         if payload_begins == -1:
@@ -25,13 +26,15 @@ def check_update(url, port):
             else:
                 print("There's an error with the server response")
         else:
-            data = decoded_data[payload_begins:]
+            s = socket.socket()
+            s.connect(addr)
+            s = ssl.wrap_socket(s)
             # calculate hash
-            hash = uhashlib.sha256(decoded_data.encode("ascii")).digest()
+            hash = ubinascii.hexlify(uhashlib.sha256(decoded_data[payload_begins:].encode("ascii")).digest())
             #Confirm that data is received
             content_length = len("sensor_id={}&sensor_key={}&hash={}".format(SENSOR_ID, SENSOR_KEY, hash))
             confirmation = """POST /confirm_update HTTP/1.1\r\nHost: {}\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: {}\r\n\r\nsensor_id={}&sensor_key={}hash={}\r\n\r\n""".format(url, content_length, SENSOR_ID, SENSOR_KEY, hash)
-            p = s.send(bytes(confirmation, 'utf8'))
+            s.send(bytes(confirmation, 'utf8'))
             data_read = b""
             while True:
                 data_res = s.recv(MAXLINE)
@@ -39,12 +42,12 @@ def check_update(url, port):
                     data_read += data_res
                 else:
                     break
-            decoded_data = data_read.decode('ascii')
+            decoded_data_ans = data_read.decode('ascii')
             s.close()
-            if decoded_data == "OK":
+            if decoded_data_ans == "OK":
                 print("update confirmed")
                 f = open("new_main.txt", "w")
-                f.write(data)
+                f.write(decoded_data[payload_begins:])
                 f.close()
                 print("Writing data succeed!")
                 utime.sleep(1)

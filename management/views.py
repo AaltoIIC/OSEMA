@@ -151,22 +151,20 @@ def confirm_update(request):
             with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                 data = f.read()
             #for testing
-            h = hashlib.sha256(data.encode("ascii")).digest()
-            if hashlib.sha256(data.encode("ascii")).digest() == request.POST['hash']: #check if the file is similar to the actual file
+            if hashlib.sha256(data.encode("ascii")).hexdigest() == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
                 sensor_object.save()
                 return HttpResponse("OK", content_type='text/plain')
             else:
-                return HttpResponse("Server {},,,\n Hash: {}".format(h, request.POST['hash']), content_type='text/plain')
+                return HttpResponse("ERR".format(h, request.POST['hash']), content_type='text/plain')
         elif sensor_object.sensor_key_old == request.POST['sensor_key']:
-            alphabet = string.ascii_letters + string.digits
-            sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password
             #read file into string
             update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
             with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                 data = f.read()
-            if hashlib.sha256(data.encode("ascii")).digest() == request.POST['hash']: #check if the file is similar to the actual file
+            if hashlib.sha256(data.encode("ascii")).hexdigest() == request.POST['hash']: #check if the file is similar to the actual file
                 sensor_object.status = Sensor.MEASURING_UP_TO_DATE
+                sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password to prevent usibg the old password twice
                 sensor_object.save()
                 return HttpResponse("OK", content_type='text/plain')
             else:
