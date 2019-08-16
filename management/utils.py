@@ -63,10 +63,6 @@ def write_imports(f, communication_object, protocol_object):
     f.write("from machine import RTC, I2C, Timer\n")
     if communication_object.__class__.__name__ == "Wlan":
         f.write("from network import WLAN\n")
-    """
-    if protocol_object.__class__.__name__ == "HTTPS":
-        f.write("import ssl\n")
-    """
     if protocol_object.__class__.__name__ == "MQTT":
         f.write("from ubinascii import hexlify\n")
 
