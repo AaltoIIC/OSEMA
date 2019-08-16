@@ -60,6 +60,7 @@ urlpatterns = [
     path('get_update', views.get_update, name='get_update'),
     path('report_failure', views.failure, name='failure'),
     path('confirm_update', views.confirm_update, name='confirm_update'),
+    path('data/log', views.log_data, name='log_data'),
     path('signup', views.signup, name='signup'),
     path('profile', views.profile, name='profile'),
     path('api/v1.0/', include(router.urls)),
