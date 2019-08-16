@@ -6,6 +6,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
+from django.views.decorators.csrf import csrf_exempt
+
 from django.template.response import TemplateResponse
 
 from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT, Data_format, Variable, Default_variable
@@ -980,7 +982,7 @@ def signup(request):
     
 #Testing data logging
 @csrf_exempt
-def data(request):
+def log_data(request):
     with open(BASE_DIR + "/log.txt", "a") as f:
         f.write("[" + str(datetime.datetime.today()) + "] "+ request.method + " " + request.path + "\n" + str(request.body) + "\n")
     return HttpResponse(request)
