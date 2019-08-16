@@ -977,3 +977,12 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'management/signup.html', {'form': form})
+    
+#Testing data logging
+@csrf_exempt
+def data(request):
+    with open(BASE_DIR + "/log.txt", "a") as f:
+        f.write("[" + str(datetime.datetime.today()) + "] "+ request.method + " " + request.path + "\n" + str(request.body) + "\n")
+    return HttpResponse(request)
+
+
