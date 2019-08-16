@@ -164,7 +164,7 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/sync_rtc.py")#sync_rtc
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update.py")#update check
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/convert_to_epoch.py")#helper function to convert date tuple to epoch
-    #write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket_ssl") #create socket with ssl
+    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket.py")#Write create and connect socket
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
     #If data needs to be handled spceifically (for example shifting bits)
@@ -191,14 +191,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
     #Write close network
     if communication_object.__class__.__name__ == "Wlan":
         write_file_contents(f, BASE_DIR + "/management/pycom_functions/close_network_wlan.py")
-
-    #Write create and connect socket
-    if protocol_object.__class__.__name__ == "HTTP":
-        write_file_contents(f, BASE_DIR + "/management/pycom_functions/create_and_connect_socket.py")
-    elif protocol_object.__class__.__name__ == "HTTPS":
-        write_file_contents(f, BASE_DIR + "/management/pycom_functions/create_and_connect_socket_ssl.py")
-    elif protocol_object.__class__.__name__ == "MQTT":
-        write_file_contents(f, BASE_DIR + "/management/pycom_functions/create_and_connect_socket.py")
 
     #Write keep connection if NOT data_send_rate > Wlan.close_limit
     if sensor_object.data_send_rate < sensor_object.network_close_limit:
