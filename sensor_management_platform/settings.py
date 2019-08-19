@@ -28,7 +28,7 @@ MEDIA_URL = '/media/'
 SECRET_KEY = """hgfhfhhhfhfdhhfdhdf5454545config["SECRET_KEY"]"""
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 AUTH_USER_MODEL = 'management.User'
 
