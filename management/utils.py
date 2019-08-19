@@ -167,7 +167,7 @@ def write_functions_always_needed(f):
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
     #Helper function for reading data
-    if sensor_object.model.sensor_model = "Garmin LIDAR-Lite v3HP":
+    if sensor_object.model.sensor_model == "Garmin LIDAR-Lite v3HP":
         write_file_contents(f, BASE_DIR + "/management/pycom_functions/read_values_garmin_lidar_lite_v3HP.py")
     else:
         write_file_contents(f, BASE_DIR + "/management/pycom_functions/read_values.py")
