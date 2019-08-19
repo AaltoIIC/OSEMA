@@ -7,6 +7,7 @@ def add_objects():
     """Adding necessary value pairs"""
     p0_2 = add_value_pair(0, 2)
     p2_32 = add_value_pair(2, 32)
+    p2_ = add_value_pair(2, )
     p32_151 = add_value_pair(32, 151)
     p32_135 = add_value_pair(32, 135)
     p32_119 = add_value_pair(32, 119)
