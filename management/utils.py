@@ -159,7 +159,6 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/calculate_length.py") #calculate length
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/config_sensor.py") #config sensor
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/read_data.py")#read data
-    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/read_values.py")#read values
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/sender.py")#sender
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/sync_rtc.py")#sync_rtc
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update.py")#update check
@@ -167,6 +166,12 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket.py")#Write create and connect socket
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
+    #Helper function for reading data
+    if sensor_object.model.sensor_model = "Garmin LIDAR-Lite v3HP":
+        write_file_contents(f, BASE_DIR + "/management/pycom_functions/read_values_garmin_lidar_lite_v3HP.py")
+    else:
+        write_file_contents(f, BASE_DIR + "/management/pycom_functions/read_values.py")
+
     #If data needs to be handled spceifically (for example shifting bits)
     if sensor_object.model.handle_data_function:
         write_file_contents(f, sensor_object.model.handle_data_function.name)
