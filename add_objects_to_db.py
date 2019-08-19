@@ -7,7 +7,19 @@ def add_objects():
     """Adding necessary value pairs"""
     p0_2 = add_value_pair(0, 2)
     p2_32 = add_value_pair(2, 32)
-    p2_ = add_value_pair(2, )
+    p2_4 = add_value_pair(2, 4)
+    p2_29 = add_value_pair(2, 29)
+    p2_128 = add_value_pair(2, 128)
+    p2_255 = add_value_pair(2, 255)
+    p4_0 = add_value_pair(4, 0)
+    p4_1 = add_value_pair(4, 1)
+    p4_8 = add_value_pair(4, 8)
+    p15_2 = add_value_pair(15, 2)
+    p18_3 = add_value_pair(18, 3)
+    p18_5 = add_value_pair(18, 5)
+    p28_0 = add_value_pair(28, 0)
+    p28_128 = add_value_pair(28, 128)
+    p28_176 = add_value_pair(28, 176)
     p32_151 = add_value_pair(32, 151)
     p32_135 = add_value_pair(32, 135)
     p32_119 = add_value_pair(32, 119)
@@ -46,10 +58,13 @@ def add_objects():
     p49_8 = add_value_pair(49, 8)
     p50_6 = add_value_pair(50, 6)
     p56_0 = add_value_pair(56, 0)
+
     """Adding types of sensors"""
     seeed_grove_i2c_adc = add_type_of_sensor("seeed Grove i2C ADC", "http://wiki.seeedstudio.com/Grove-I2C_ADC/", 80, "seeed_Grove_i2C_ADC.py")
+    garmin_lidar_lite_v3HP = add_type_of_sensor("Garmin LIDAR-Lite v3HP", "https://buy.garmin.com/en-US/US/p/578152/pn/010-01722-10", 98, "garmin_lidar_lite_v3HP.py")
     lis3dsh = add_type_of_sensor("LIS3DSH", "Use the following divisors to get acceleration in unit g: \n +- 2g:  divisor = 16380\n +- 4g:  divisor = 8190\n +- 8g:  divisor = 4096\n +- 16g: divisor = 1365.33\n", 29)
     adxl345 = add_type_of_sensor("ADXL345", "https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL345.pdf", 83)
+
     """Adding senstivitys"""
     adxl345_2g = add_sensitivity(adxl345, "+-2g", write_values=[p49_8])
     adxl345_4g = add_sensitivity(adxl345, "+-4g", write_values=[p49_9])
@@ -61,6 +76,14 @@ def add_objects():
     lis3dsh_8g = add_sensitivity(lis3dsh, "+-8g", write_values=[p36_24])
     lis3dsh_16g = add_sensitivity(lis3dsh, "+-16g", write_values=[p36_32])
     seeed_grove_i2c_adc_12bit = add_sensitivity(seeed_grove_i2c_adc, "12 bit")
+    garmin_lidar_lite_v3HP_default_balanced = add_sensitivity(garmin_lidar_lite_v3HP, "Default, balanced", write_values=[p2_128, p4_8, p18_5, p28_0])
+    garmin_lidar_lite_v3HP_short_range_high_speed = add_sensitivity(garmin_lidar_lite_v3HP, "Short range, high speed", write_values=[p2_29, p4_8, p18_3, p28_0])
+    garmin_lidar_lite_v3HP_default_range_high_speed_short_range = add_sensitivity(garmin_lidar_lite_v3HP, "Default range, higher speed at short ranges", write_values=[p2_128, p4_0, p18_3, p28_0])
+    garmin_lidar_lite_v3HP_max_range = add_sensitivity(garmin_lidar_lite_v3HP, "Maximum range", write_values=[p2_255, p4_8, p18_5, p28_0])
+    garmin_lidar_lite_v3HP_high_sensitivity_high_error = add_sensitivity(garmin_lidar_lite_v3HP, "High sensitivity, high error", write_values=[p2_128, p4_8, p18_5, p28_128])
+    garmin_lidar_lite_v3HP_low_sensitivity_low_error = add_sensitivity(garmin_lidar_lite_v3HP, "Low sensitivity, low error", write_values=[p2_128, p4_8, p18_5, p28_0])
+    garmin_lidar_lite_v3HP_short_range_high_speed_high_error = add_sensitivity(garmin_lidar_lite_v3HP, "Short range, high speed, high error", write_values=[p2_4, p4_1, p18_3, p28_0])
+
     """Adding sample rates"""
     adxl345_0_1 = add_sample_rate(adxl345, [adxl345_2g, adxl345_4g, adxl345_8g, adxl345_16g], 0.1, [p50_6], [p44_0, p45_59, p56_0], 100000, "<hhhL")
     adxl345_0_2 = add_sample_rate(adxl345, [adxl345_2g, adxl345_4g, adxl345_8g, adxl345_16g], 0.2, [p50_6], [p44_1, p45_59, p56_0], 100000, "<hhhL")
@@ -98,14 +121,38 @@ def add_objects():
     seeed_grove_i2c_adc_400 = add_sample_rate(seeed_grove_i2c_adc, [seeed_grove_i2c_adc_12bit], 400, [p0_2], [p2_32], 100000, "<HL")
     seeed_grove_i2c_adc_800 = add_sample_rate(seeed_grove_i2c_adc, [seeed_grove_i2c_adc_12bit], 800, [p0_2], [p2_32], 100000, "<HL")
     seeed_grove_i2c_adc_1600 = add_sample_rate(seeed_grove_i2c_adc, [seeed_grove_i2c_adc_12bit], 1600, [p0_2], [p2_32], 100000, "<HL")
+    garmin_lidar_lite_v3HP_0_1 = add_sample_rate(garmin_lidar_lite_v3HP, [garmin_lidar_lite_v3HP_default_balanced, garmin_lidar_lite_v3HP_short_range_high_speed, \
+                                    garmin_lidar_lite_v3HP_default_range_high_speed_short_range, garmin_lidar_lite_v3HP_max_range, garmin_lidar_lite_v3HP_high_sensitivity_high_error, \
+                                    garmin_lidar_lite_v3HP_low_sensitivity_low_error, garmin_lidar_lite_v3HP_short_range_high_speed_high_error], 0.1, [p15_2], [], 100000, "<HL")
+    garmin_lidar_lite_v3HP_0_2 = add_sample_rate(garmin_lidar_lite_v3HP, [garmin_lidar_lite_v3HP_default_balanced, garmin_lidar_lite_v3HP_short_range_high_speed, \
+                                    garmin_lidar_lite_v3HP_default_range_high_speed_short_range, garmin_lidar_lite_v3HP_max_range, garmin_lidar_lite_v3HP_high_sensitivity_high_error, \
+                                    garmin_lidar_lite_v3HP_low_sensitivity_low_error, garmin_lidar_lite_v3HP_short_range_high_speed_high_error], 0.2, [p15_2], [], 100000, "<HL")
+    garmin_lidar_lite_v3HP_0_5 = add_sample_rate(garmin_lidar_lite_v3HP, [garmin_lidar_lite_v3HP_default_balanced, garmin_lidar_lite_v3HP_short_range_high_speed, \
+                                    garmin_lidar_lite_v3HP_default_range_high_speed_short_range, garmin_lidar_lite_v3HP_max_range, garmin_lidar_lite_v3HP_high_sensitivity_high_error, \
+                                    garmin_lidar_lite_v3HP_low_sensitivity_low_error, garmin_lidar_lite_v3HP_short_range_high_speed_high_error], 0.5, [p15_2], [], 100000, "<HL")
+    garmin_lidar_lite_v3HP_1 = add_sample_rate(garmin_lidar_lite_v3HP, [garmin_lidar_lite_v3HP_default_balanced, garmin_lidar_lite_v3HP_short_range_high_speed, \
+                                    garmin_lidar_lite_v3HP_default_range_high_speed_short_range, garmin_lidar_lite_v3HP_max_range, garmin_lidar_lite_v3HP_high_sensitivity_high_error, \
+                                    garmin_lidar_lite_v3HP_low_sensitivity_low_error, garmin_lidar_lite_v3HP_short_range_high_speed_high_error], 1.0, [p15_2], [], 100000, "<HL")
+    garmin_lidar_lite_v3HP_2 = add_sample_rate(garmin_lidar_lite_v3HP, [garmin_lidar_lite_v3HP_default_balanced, garmin_lidar_lite_v3HP_short_range_high_speed, \
+                                    garmin_lidar_lite_v3HP_default_range_high_speed_short_range, garmin_lidar_lite_v3HP_max_range, garmin_lidar_lite_v3HP_high_sensitivity_high_error, \
+                                    garmin_lidar_lite_v3HP_low_sensitivity_low_error, garmin_lidar_lite_v3HP_short_range_high_speed_high_error], 2.0, [p15_2], [], 100000, "<HL")
+    garmin_lidar_lite_v3HP_4 = add_sample_rate(garmin_lidar_lite_v3HP, [garmin_lidar_lite_v3HP_default_balanced, garmin_lidar_lite_v3HP_short_range_high_speed, \
+                                    garmin_lidar_lite_v3HP_default_range_high_speed_short_range, garmin_lidar_lite_v3HP_max_range, garmin_lidar_lite_v3HP_high_sensitivity_high_error, \
+                                    garmin_lidar_lite_v3HP_low_sensitivity_low_error, garmin_lidar_lite_v3HP_short_range_high_speed_high_error], 4.0, [p15_2], [], 100000, "<HL")
+    garmin_lidar_lite_v3HP_10 = add_sample_rate(garmin_lidar_lite_v3HP, [garmin_lidar_lite_v3HP_default_balanced, garmin_lidar_lite_v3HP_short_range_high_speed, \
+                                    garmin_lidar_lite_v3HP_default_range_high_speed_short_range, garmin_lidar_lite_v3HP_max_range, garmin_lidar_lite_v3HP_high_sensitivity_high_error, \
+                                    garmin_lidar_lite_v3HP_low_sensitivity_low_error, garmin_lidar_lite_v3HP_short_range_high_speed_high_error], 10.0, [p15_2], [], 100000, "<HL")
+
+
     """Add default variables to sensors"""
-    add_default_variable("analog_signal", "", seeed_grove_i2c_adc)
     add_default_variable("acceleration_x", "mg", adxl345)
     add_default_variable("acceleration_y", "mg", adxl345)
     add_default_variable("acceleration_z", "mg", adxl345)
     add_default_variable("acceleration_x", "mg", lis3dsh)
     add_default_variable("acceleration_y", "mg", lis3dsh)
     add_default_variable("acceleration_z", "mg", lis3dsh)
+    add_default_variable("analog_signal", "unit", seeed_grove_i2c_adc)
+    add_default_variable("distance", "cm", garmin_lidar_lite_v3HP)
 
     """Adding Http"""
     http_example = add_http("HTTP", "domain.com", 80, "/path")
@@ -160,6 +207,12 @@ def add_http(name, data_server_url, port, path):
     h = HTTP.objects.get_or_create(name=name, path=path, data_server_url=data_server_url, data_server_port=port)
     if PRINT:
         print("HTTP: {} created.".format(name))
+    return h
+
+def add_https(name, data_server_url, port, path):
+    h = HTTPS.objects.get_or_create(name=name, path=path, data_server_url=data_server_url, data_server_port=port)
+    if PRINT:
+        print("HTTPS: {} created.".format(name))
     return h
 
 def add_mqtt(name, topic, broker_url, broker_port=1883, user="", key=""):
