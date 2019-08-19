@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericRelation
-from django.core.files.storage import FileSystemStorage
 
 from sensor_management_platform.settings import BASE_DIR
 
@@ -13,7 +12,8 @@ import string
 import random
 
 def data_handle_function_filename(instance, filename):
-    return '{}'.format(BASE_DIR + "/management/pycom_functions/handle_data_functions/" + instance.sensor_model + ".py")
+    # file will be uploaded to MEDIA_ROOT
+    return '{}'.format("/management/pycom_functions/handle_data_functions/" + instance.sensor_model + ".py")
 
 try:
     import secrets
