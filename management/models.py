@@ -13,7 +13,7 @@ import random
 
 def data_handle_function_filename(instance, filename):
     # file will be uploaded to MEDIA_ROOT
-    return '{}'.format("/management/pycom_functions/handle_data_functions/" + instance.sensor_model + ".py")
+    return '{}'.format(BASE_DIR + "/management/pycom_functions/handle_data_functions/" + instance.sensor_model + ".py")
 
 try:
     import secrets
