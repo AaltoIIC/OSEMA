@@ -174,7 +174,7 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
 
     #If data needs to be handled spceifically (for example shifting bits)
     if sensor_object.model.handle_data_function:
-        write_file_contents(f, sensor_object.model.handle_data_function.name)
+        write_file_contents(f, BASE_DIR + sensor_object.model.handle_data_function.name)
         if sensor_object.data_format.name == "JSON":
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_JSON_handle_data.py")
         elif sensor_object.data_format.name == "raw":
