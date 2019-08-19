@@ -6,12 +6,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.files.storage import FileSystemStorage
 
+from sensor_management_platform.settings import BASE_DIR
+
 from django.contrib import admin
 import string
 import random
 
 def data_handle_function_filename(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return '{}'.format(BASE_DIR + "/management/pycom_functions/handle_data_functions/" + instance.sensor_model + ".py")
 
 try:
