@@ -20,4 +20,3 @@ class Measure:
         for i in range(len(VARIABLE_NAMES)):
             data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
             self.client.publish(topic=TOPIC, msg=data_string)
-        self.client.publish(topic=TOPIC, msg=data_string)
