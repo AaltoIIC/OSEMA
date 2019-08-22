@@ -164,6 +164,7 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update.py")#update check
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/convert_to_epoch.py")#helper function to convert date tuple to epoch
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket.py")#Write create and connect socket
+    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/measure_loop.py")#Write create and connect socket
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
     #Helper function for reading data

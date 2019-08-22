@@ -1,7 +1,7 @@
 """Loop measurement and control often data is sent to server"""
 def measure(i2c):
     print("measure continuous")
-    m = Measure(i2c)
+    measure_loop(i2c)
 
 class Measure:
     def __init__(self, i2c):
