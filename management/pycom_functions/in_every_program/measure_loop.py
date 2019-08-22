@@ -4,6 +4,7 @@ def measure_loop(i2c):
     zero_exp_counter = 60 #10 mintues
     while True:
         try:
+            print("Start measurement")
             m = Measure(i2c)
             count = 0
             while True:
@@ -15,6 +16,7 @@ def measure_loop(i2c):
         except Exception as e:
             exp_count += 1
             if exp_count == exp_count_max:
+                print(exp_count_max, "subsequent errors in measurmeent loop, resetting board.")
                 machine.reset() #if exp_count_max exceptions reset board
             print(e)
             gc.collect()
