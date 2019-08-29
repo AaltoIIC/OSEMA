@@ -15,4 +15,7 @@ class Measure:
     def _measurement(self, alarm):
         data = read_values(self.i2c)
         data_string = format_data(machine.RTC().now(), [[data, 0]])
-        self.client.publish(topic=TOPIC, msg=data_string)
+        try:
+            self.client.publish(topic=TOPIC, msg=data_string)
+        except:
+            print("Data couldn't be published, resetting board!")

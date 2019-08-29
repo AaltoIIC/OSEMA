@@ -21,7 +21,10 @@ class Measure:
         timestamp = convert_to_epoch(machine.RTC().now())
         for i in range(len(VARIABLE_NAMES)):
             data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
-            self.client.publish(topic=TOPIC, msg=data_string)
+            try:
+                self.client.publish(topic=TOPIC, msg=data_string)
+            except:
+                print("Data couldn't be published, resetting board!")
         self.current_no_of_measurements += 1
         if self.current_no_of_measurements == self.no_of_measurements:
             self.current_no_of_measurements = 0
