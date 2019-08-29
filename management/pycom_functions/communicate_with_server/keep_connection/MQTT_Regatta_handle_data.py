@@ -11,3 +11,4 @@ def communicate_with_server(data_with_ts, client, header_ts):
                 client.publish(topic=TOPIC, msg=data_string)
             except:
                 print("Data couldn't be published, resetting board!")
+                machine.reset()

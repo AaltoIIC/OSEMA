@@ -25,6 +25,7 @@ class Measure:
                 self.client.publish(topic=TOPIC, msg=data_string)
             except:
                 print("Data couldn't be published, resetting board!")
+                machine.reset()
         self.current_no_of_measurements += 1
         if self.current_no_of_measurements == self.no_of_measurements:
             self.current_no_of_measurements = 0

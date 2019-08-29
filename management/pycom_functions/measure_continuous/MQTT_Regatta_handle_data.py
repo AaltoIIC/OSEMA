@@ -23,3 +23,4 @@ class Measure:
                 self.client.publish(topic=TOPIC, msg=data_string)
             except:
                 print("Data couldn't be published, resetting board!")
+                machine.reset()
