@@ -17,7 +17,7 @@ class Measure:
             content_length = len(data_string)
             string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}""".format(PATH, DATA_SERVER_URL, content_length, data_string)
             s = create_and_connect_socket(DATA_SERVER_URL, DATA_SERVER_PORT)
-            s = ssl.wrap_socket(s)
+            s = ssl.wrap_socket(s, cert_reqs=ssl.CERT_REQUIRED)
             s.send(bytes(string, 'utf8'))
             s.close()
         except:
