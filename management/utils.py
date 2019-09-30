@@ -83,6 +83,7 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("SUCCESS = 1\n")
     f.write("SENSOR_ID = {}\n".format(sensor_object.sensor_id))
     f.write("SENSOR_KEY = '{}'\n".format(sensor_object.sensor_key))
+    f.write("SHARED_SECRET = \n".format(sensor_object.shared_secret))
     f.write("SOFTWARE_VERSION = '{}'\n".format(filename))
 
     # write settings from sensor object

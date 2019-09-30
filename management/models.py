@@ -11,6 +11,8 @@ from django.contrib import admin
 import string
 import random
 
+from Crypto.Random import get_random_bytes
+
 def data_handle_function_filename(instance, filename):
     # file will be uploaded to MEDIA_ROOT
     return '{}'.format("management/pycom_functions/handle_data_functions/" + instance.sensor_model + ".py")
@@ -22,6 +24,11 @@ try:
 except:
     def generate_password(length=20):
         return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length))
+
+def generate_key(no_bytes=16):
+    return get_random_bytes(no_bytes)
+
+
 # Create your models here.
 
 #Using custom user model
@@ -106,6 +113,7 @@ class Sensor(models.Model):
     latest_modifier = models.ForeignKey(User, related_name="latest_modifier", on_delete=models.PROTECT, blank=True, null=True)
     sensor_key = models.CharField(max_length=50, default=generate_password) #generate random 20-character alphanumeric password
     sensor_key_old = models.CharField(max_length=50, default=generate_password) #generate random 20-character alphanumeric password
+    shared_secret = models.BinaryField(max_length=128, default=generate_key) #generate random 128-bit key
     MEASURING_UP_TO_DATE = 1
     MEASURING_WAITING_FOR_UPDATE = 2
     WAITING_FOR_UPDATE = 3

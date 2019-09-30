@@ -62,14 +62,11 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Sensor
-        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_check_url', 'update_check_port', 'communication_object', 'protocol_object')
+        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'data_format', 'communication_object', 'protocol_object')
 
     def create(self, validated_data):
         s = Sensor.objects.create(  sensor_name = validated_data['sensor_name'],
                         model = validated_data['model'],
-                        description = validated_data['description'],
-                        location = validated_data['location'],
-                        sensor_key = validated_data['sensor_key'],
                         status = validated_data['status'],
                         sample_rate = validated_data['sample_rate'],
                         sensitivity = validated_data['sensitivity'],
@@ -81,18 +78,30 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
                         update_check_limit = validated_data['update_check_limit'],
                         update_url = validated_data['update_url'],
                         update_port = validated_data['update_port'],
+                        data_format = validated_data['data_format'],
                         communication_object = validated_data['communication_object'],
                         protocol_object = validated_data['protocol_object']
         )
+        #add optional parameters to sensor
+        try:
+            s.description = validated_data['description']
+        except KeyError:
+            pass
+        try:
+            s.location = validated_data['location']
+        except KeyError:
+            pass
+        try:
+            s.sensor_key = validated_data['sensor_key']
+        except KeyError:
+            pass
+        s.save()
         create_new_sensor(s)
         return s
 
     def update(self, instance, validated_data):
         instance.sensor_name = validated_data['sensor_name']
         instance.model = validated_data['model']
-        instance.description = validated_data['description']
-        instance.location = validated_data['location']
-        instance.sensor_key = validated_data['sensor_key']
         instance.status = validated_data['status']
         instance.sample_rate = validated_data['sample_rate']
         instance.sensitivity = validated_data['sensitivity']
@@ -106,7 +115,21 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
         instance.update_port = validated_data['update_port']
         instance.communication_object = validated_data['communication_object']
         instance.protocol_object = validated_data['protocol_object']
-        intance.save()
+
+        #add optional parameters to sensor
+        try:
+            instance.description = validated_data['description']
+        except KeyError:
+            pass
+        try:
+            instance.location = validated_data['location']
+        except KeyError:
+            pass
+        try:
+            instance.sensor_key = validated_data['sensor_key']
+        except KeyError:
+            pass
+        instance.save()
         update_sensor(instance)
         return instance
 
