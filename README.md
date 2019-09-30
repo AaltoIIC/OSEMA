@@ -14,11 +14,12 @@ Python version should be 3.6 or newer
 * [SimpleJWT](https://github.com/davesque/django-rest-framework-simplejwt) 
 * [Rest Framework Generic Relations](https://github.com/Ian-Foote/rest-framework-generic-relations)
 * [Requests](http://docs.python-requests.org/en/master/)
+* [PyCryptodome](https://pycryptodome.readthedocs.io/en/latest/src/introduction.html)
 
 To install libraries run:
 
 ```
-sudo pip3 install Django==2.1.8 ntplib djangorestframework==3.9.4 rest-framework-generic-relations djangorestframework_simplejwt requests
+sudo pip3 install Django==2.1.8 ntplib djangorestframework==3.9.4 rest-framework-generic-relations djangorestframework_simplejwt requests pycryptodome==3.9.0
 ```
 
 ## Getting started
