@@ -392,6 +392,12 @@ def create_new_sensor(sensor_object):
     update = Update.objects.create(filename=filename, sensor=sensor_object)
     sensor_object.status = Sensor.WAITING_FOR_UPDATE
 
+def decrypt_payload(payload):
+    pass
+
+def encrypt_payload(payload):
+    pass
+
 #Parse date from string and return datetime object
 #Time string is in form: '2018-09-03 10:40:37.302390+0000'
 def parse_date(date_string):
