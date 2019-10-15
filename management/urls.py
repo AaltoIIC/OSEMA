@@ -60,7 +60,6 @@ urlpatterns = [
     path('instructions/download/<str:file>', views.download_instructions, name='download_instructions'),
     path('get_update/<int:sensor_id>', views.get_update, name='get_update'),
     path('report_failure', views.failure, name='failure'),
-    path('confirm_update', views.confirm_update, name='confirm_update'),
     path('data/log', views.log_data, name='log_data'),
     path('signup', views.signup, name='signup'),
     path('profile', views.profile, name='profile'),
