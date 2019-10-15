@@ -164,6 +164,7 @@ def add_objects():
     JSON = add_dataformat("JSON")
     raw = add_dataformat("raw")
     Regatta = add_dataformat("Regatta")
+    add_superuser("admin")
 
 def add_value_pair(value1, value2):
     p = Value_pair.objects.get_or_create(value1=value1, value2=value2)[0]
@@ -248,6 +249,10 @@ def add_dataformat(name):
     if PRINT:
         print("Data format {} created.".format(name))
     return d
+    
+def add_superuser(name):
+    u = User.objects.create_superuser(name, 'admin@example.com', 'pas12345')
+    
 
 # Start execution here!
 if __name__ == '__main__':
