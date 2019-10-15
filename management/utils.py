@@ -4,7 +4,7 @@ from requests.auth import HTTPBasicAuth
 import datetime
 import requests
 import json
-
+from Crypto.Cipher import AES
 import time
 import os
 
@@ -60,6 +60,8 @@ def write_imports(f, communication_object, protocol_object):
     f.write("import ustruct\n")
     f.write("import uos\n")
     f.write("import ssl\n")
+    f.write("from crypto import AES\n")
+    f.write("import crypto\n")
     f.write("from machine import RTC, I2C, Timer\n")
     if communication_object.__class__.__name__ == "Wlan":
         f.write("from network import WLAN\n")
@@ -79,11 +81,10 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     #These are always needed
     f.write("CONNECTION_BROKEN = -1\n")
     f.write("MAXLINE = 1024 #maximum number of bytes read with one recv command\n")
-    f.write("FAILURE = -1\n")
-    f.write("SUCCESS = 1\n")
+    f.write("MAX_SOFTWARE_SIZE = 50000#bytes, prevents memory overflow \n")
     f.write("SENSOR_ID = {}\n".format(sensor_object.sensor_id))
     f.write("SENSOR_KEY = '{}'\n".format(sensor_object.sensor_key))
-    f.write("SHARED_SECRET = \n".format(sensor_object.shared_secret))
+    f.write("SHARED_SECRET = '{}'\n".format(sensor_object.shared_secret))
     f.write("SOFTWARE_VERSION = '{}'\n".format(filename))
 
     # write settings from sensor object
@@ -393,12 +394,6 @@ def create_new_sensor(sensor_object):
     update = Update.objects.create(filename=filename, sensor=sensor_object)
     sensor_object.status = Sensor.WAITING_FOR_UPDATE
 
-def decrypt_payload(payload):
-    pass
-
-def encrypt_payload(payload):
-    pass
-
 #Parse date from string and return datetime object
 #Time string is in form: '2018-09-03 10:40:37.302390+0000'
 def parse_date(date_string):
@@ -407,3 +402,47 @@ def parse_date(date_string):
         return datetime.datetime.strptime(date_string, format)
     except:
         return "No date available"
+
+def decrypt_msg(encrypted_msg, key, n=16):
+    encrypted_msg_list = [encrypted_msg[i:i+n] for i in range(0, len(encrypted_msg), n)]
+    cipher = AES.new(key, AES.MODE_CBC, iv=encrypted_msg_list[0])
+
+    msg = ""
+    for block in encrypted_msg_list[1:]:
+    	decrypted_msg = cipher.decrypt(block)
+    	msg += decrypted_msg.decode()
+    	cipher = AES.new(key, AES.MODE_CBC, iv=block)
+    return msg
+
+def encrypt_msg(plain_text, key, n=16):
+    padded_text = plain_text + (len(plain_text) % n) * " "
+    text_list = [padded_text[i:i+n] for i in range(0, len(padded_text), n)]
+
+    cipher = AES.new(key, AES.MODE_CBC)
+    encrypted_string = cipher.iv
+
+    #encryption
+    for block in text_as_list:
+    	ciphertext = cipher.encrypt(block.encode())
+    	encrypted_string += ciphertext
+    	cipher = AES.new(key, AES.MODE_CBC, iv=ciphertext)
+
+    return encrypted_string
+
+def construct_software_response_update(sensor_object, session_key):
+    response = str(sensor_object.sensor_id) + "|"
+    response += session_key + "|"
+    update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
+    with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
+        data = f.read()
+    response += hashlib.sha256(data.encode("ascii")).hexdigest() + "|"
+    response += data
+    return encrypt_msg(response, sensor_object.shared_secret)
+
+
+
+def construct_software_response_up_to_date(sensor_object, session_key):
+    response = str(sensor_object.sensor_id) + "|"
+    response += session_key + "|"
+    reponse += "UP-TO-DATE"
+    return encrypt_msg(response, sensor_object.shared_secret)

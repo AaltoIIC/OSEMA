@@ -16,7 +16,7 @@ from .forms import ModifyWlanForm, ModifyNbIotForm, ModifyHTTPForm, ModifyHTTPSF
 from .forms import ModifyDataFormatForm, ModifyVariableForm, ModifyDefaultVariableForm
 from .forms import WlanInfoForm, NbIotInfoForm, HTTPInfoForm, HTTPSInfoForm, MQTTInfoForm, VariableInfoForm
 from django.forms.formsets import formset_factory
-from management.utils import update_sensor, create_new_sensor, parse_date
+from management.utils import update_sensor, create_new_sensor, parse_date, decrypt_msg, encrypt_msg, construct_software_response_update, construct_software_response_up_to_date
 from .api_permissions import AuthLevel2Permission
 from rest_framework.decorators import api_view
 
@@ -27,6 +27,8 @@ from rest_framework import viewsets
 import datetime
 
 import hashlib
+
+from Crypto.Cipher import AES
 
 import string
 
@@ -118,31 +120,50 @@ class DefaultVariableViewSet(viewsets.ModelViewSet):
     permission_classes = [AuthLevel2Permission]
 
 @api_view(['POST'])
-def get_update(request):
+def get_update(request, sensor_id):
     if request.method == 'POST':
-        sensor_object = get_object_or_404(Sensor, pk=request.POST['sensor_id'])
-        sensor_object.software_version = request.POST['software_version']
-        sensor_object.save()
-        if sensor_object.sensor_key == request.POST['sensor_key']:
-            update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
-            if update.filename != request.POST['software_version']:
+        sensor_object = get_object_or_404(Sensor, pk=sensor_id)
+
+        #decrypt message
+        key = sensor_object.shared_secret
+        encrypted_msg = request.body
+        print(encrypted_msg)
+        msg = decrypt_msg(encrypted_msg, key)
+        print(msg)
+        try:
+            msg_dict = json.loads(msg)
+        except:
+            print("Parsing message failed")
+            raise Http404("Page doesn't exist")
+
+        try:
+            if sensor_object.sensor_key == msg_dict["sensor_key"]:
+                sensor_object.software_version = msg_dict["software_version"]
+                sensor_object.save()
+                update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
+                if update.filename != msg_dict["software_version"]:
+                    with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
+                        content = f.read()
+                        return HttpResponse(construct_software_response_update(sensor_object, msg_dict["session_key"]), content_type='text/plain')
+                elif update.filename == msg_dict["software_version"]:
+                    if sensor_object.status != Sensor.MEASURING_UP_TO_DATE:
+                        sensor_object.software_version = update.filename
+                        sensor_object.status = Sensor.MEASURING_UP_TO_DATE
+                        sensor_object.save()
+                    return HttpResponse(construct_software_response_up_to_date(sensor_object, msg_dict["session_key"]), content_type='text/plain')
+            elif sensor_object.sensor_key_old == msg_dict["sensor_key"]:
+                sensor_object.software_version = msg_dict["software_version"]
+                sensor_object.save()
+                update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
                 with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                     content = f.read()
-                    return HttpResponse(content, content_type='text/plain')
-            elif update.filename == request.POST['software_version']:
-                print("sensor_id", sensor_object.sensor_id,"status", sensor_object.status)
-                if sensor_object.status != Sensor.MEASURING_UP_TO_DATE:
-                    sensor_object.software_version = update.filename
-                    sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-                    sensor_object.save()
-                return HttpResponse("UP-TO-DATE", content_type='text/plain')
-        elif sensor_object.sensor_key_old == request.POST['sensor_key']:
-            update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
-            with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
-                content = f.read()
-                return HttpResponse(content, content_type='text/plain')
-        raise Http404("Page doesn't exist")
+                    return HttpResponse(construct_software_response_update(sensor_object, msg_dict["session_key"]), content_type='text/plain')
+            raise Http404("Page doesn't exist")
+        except KeyError:
+            print("Something wrong with parsed JSON")
+            raise Http404("Page doesn't exist")
 
+"""
 @api_view(['POST'])
 def confirm_update(request):
     if request.method == 'POST':
@@ -176,6 +197,7 @@ def confirm_update(request):
             raise Http404("Page doesn't exist")
     else:
         raise Http404("Page doesn't exist")
+"""
 
 @api_view(['POST'])
 def failure(request):
@@ -979,12 +1001,10 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'management/signup.html', {'form': form})
-    
+
 #Testing data logging
 @csrf_exempt
 def log_data(request):
     with open(BASE_DIR + "/log.txt", "a") as f:
         f.write("[" + str(datetime.datetime.today()) + "] "+ request.method + " " + request.path + "\n" + str(request.body) + "\n")
     return HttpResponse(request)
-
-
