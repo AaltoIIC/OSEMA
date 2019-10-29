@@ -249,3 +249,11 @@ class Default_variable(models.Model):
 
     def __str__(self):
         return '{}: {} {}'.format(self.type_of_sensor.sensor_model, self.name, self.unit)
+
+class Server(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30, default="This server")
+    identifier = models.BinaryField(max_length=128, default=generate_key) #generate random 128-bit identifier
+
+    def __str__(self):
+        return '{}: {}'.format(self.name, self.identifier)

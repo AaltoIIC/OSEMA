@@ -62,7 +62,7 @@ def check_update(url, port):
 
     #handle data
     payload_list = msg.split("|")
-    if not (payload_list[0] == SENSOR_KEY and payload_list[1] == session_key):
+    if not (payload_list[0] == SERVER_ID and payload_list[1] == session_key):
         print("invalid response from update server")
         return #invalid response from the server
     hash_r = payload_list[2]

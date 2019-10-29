@@ -1,4 +1,4 @@
-from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, Variable
+from .models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, Variable, Server
 from sensor_management_platform.settings import FAILURE, BASE_DIR
 from requests.auth import HTTPBasicAuth
 import datetime
@@ -88,6 +88,7 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("SENSOR_KEY = '{}'\n".format(sensor_object.sensor_key))
     f.write("SHARED_SECRET = {}\n".format(sensor_object.shared_secret))
     f.write("SOFTWARE_VERSION = '{}'\n".format(filename))
+    f.write("SERVER_ID = '{}'\n".format(binascii.hexlify(Server.objects.all()[0].identifier).decode("ascii")))
 
     # write settings from sensor object
     f.write("DATA_SEND_RATE_S = {}\n".format(sensor_object.data_send_rate))
@@ -434,7 +435,7 @@ def encrypt_msg(plain_text, key, n=16):
     return encrypted_string
 
 def construct_software_response_update(sensor_object, session_key):
-    response = str(sensor_object.sensor_key) + "|"
+    response = binascii.hexlify(Server.objects.all()[0].identifier).decode('ascii') + "|"
     response += session_key + "|"
     update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
     with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
@@ -447,7 +448,7 @@ def construct_software_response_update(sensor_object, session_key):
 
 
 def construct_software_response_up_to_date(sensor_object, session_key):
-    response = str(sensor_object.sensor_key) + "|"
+    response = binascii.hexlify(Server.objects.all()[0].identifier).decode('ascii')  + "|"
     response += session_key + "|"
     response += "UP-TO-DATE"
     return encrypt_msg(response, sensor_object.shared_secret)

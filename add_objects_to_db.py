@@ -164,7 +164,10 @@ def add_objects():
     JSON = add_dataformat("JSON")
     raw = add_dataformat("raw")
     Regatta = add_dataformat("Regatta")
+    """Add superuser"""
     add_superuser("admin")
+    """Add server"""
+    add_server()
 
 def add_value_pair(value1, value2):
     p = Value_pair.objects.get_or_create(value1=value1, value2=value2)[0]
@@ -231,12 +234,16 @@ def add_wlan(name, ssid, security, key, username=""):
     Wlan.WPA2
     Wlan.WPA2_ENT
     """
-    w = Wlan.objects.get_or_create(name=name, ssid=ssid, security=security, key=key)
-    if username != "":
-        w.username = username
-    if PRINT:
-        print("Wlan: {} created.".format(name))
-    return w
+    try:
+        w = Wlan.objects.get_or_create(name=name, ssid=ssid, security=security, key=key)
+        if username != "":
+            w.username = username
+        if PRINT:
+            print("Wlan: {} created.".format(name))
+        return w
+    except:
+        if PRINT:
+            print("Wlan with similar name already exists")
 
 def add_default_variable(name, unit, type_of_sensor):
     d = Default_variable.objects.get_or_create(name=name, unit=unit, type_of_sensor=type_of_sensor)
@@ -249,10 +256,22 @@ def add_dataformat(name):
     if PRINT:
         print("Data format {} created.".format(name))
     return d
-    
+
 def add_superuser(name):
-    u = User.objects.create_superuser(name, 'admin@example.com', 'pas12345')
-    
+    try:
+        u = User.objects.create_superuser(name, 'admin@example.com', 'pas12345')
+        if PRINT:
+            print("Superuser", name, "created.")
+    except:
+        if PRINT:
+            print("Superuser exists.")
+
+def add_server():
+    s = Server.objects.get_or_create()
+    print("Server", s[0].name)
+    if PRINT:
+        print("Server {} created.".format(s.name))
+
 
 # Start execution here!
 if __name__ == '__main__':
@@ -260,7 +279,7 @@ if __name__ == '__main__':
     print("Starting database population script...")
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sensor_management_platform.settings')
     django.setup()
-    from management.models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT, Data_format, Variable, Default_variable
+    from management.models import User, Sensor, Type_of_sensor, Value_pair, Sensitivity, Sample_rate, Sensor, Wlan, Nb_iot, HTTP, HTTPS, Update, MQTT, Data_format, Variable, Default_variable, Server
     from django.core.files import File
     add_objects()
     print("Population script finished")
