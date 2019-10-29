@@ -127,9 +127,7 @@ def get_update(request, sensor_id):
         #decrypt message
         key = sensor_object.shared_secret
         encrypted_msg = request.body
-        print(encrypted_msg)
         msg = decrypt_msg(encrypted_msg, key)
-        print(msg)
         try:
             msg_dict = json.loads(msg)
         except:
@@ -535,7 +533,6 @@ def modify_sensor(request, sensor_id):
                         modified_sensor.sensor_key_old = old_key
                     modified_sensor_form.save()
                     if modified_sensor.status != Sensor.WAITING_FOR_UPDATE:
-                        print("meni tanne vaikkei pitanyt")
                         modified_sensor.status = Sensor.MEASURING_WAITING_FOR_UPDATE
                     modified_sensor.latest_modifier = user
                     modified_sensor.date_modified = datetime.datetime.now()

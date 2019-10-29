@@ -7,6 +7,8 @@ import json
 from Crypto.Cipher import AES
 import time
 import os
+import binascii
+import hashlib
 
 """Update clock from internet"""
 def update_time():
@@ -84,7 +86,7 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("MAX_SOFTWARE_SIZE = 50000#bytes, prevents memory overflow \n")
     f.write("SENSOR_ID = {}\n".format(sensor_object.sensor_id))
     f.write("SENSOR_KEY = '{}'\n".format(sensor_object.sensor_key))
-    f.write("SHARED_SECRET = '{}'\n".format(sensor_object.shared_secret))
+    f.write("SHARED_SECRET = {}\n".format(sensor_object.shared_secret))
     f.write("SOFTWARE_VERSION = '{}'\n".format(filename))
 
     # write settings from sensor object
@@ -404,37 +406,40 @@ def parse_date(date_string):
         return "No date available"
 
 def decrypt_msg(encrypted_msg, key, n=16):
+    encrypted_msg = binascii.unhexlify(encrypted_msg)
     encrypted_msg_list = [encrypted_msg[i:i+n] for i in range(0, len(encrypted_msg), n)]
     cipher = AES.new(key, AES.MODE_CBC, iv=encrypted_msg_list[0])
 
     msg = ""
     for block in encrypted_msg_list[1:]:
     	decrypted_msg = cipher.decrypt(block)
-    	msg += decrypted_msg.decode()
+    	msg += decrypted_msg.decode("ascii")
     	cipher = AES.new(key, AES.MODE_CBC, iv=block)
     return msg
 
 def encrypt_msg(plain_text, key, n=16):
-    padded_text = plain_text + (len(plain_text) % n) * " "
-    text_list = [padded_text[i:i+n] for i in range(0, len(padded_text), n)]
+    padded_text = plain_text + (n - (len(plain_text) % n)) * " "
+    text_as_list = [padded_text[i:i+n] for i in range(0, len(padded_text), n)]
 
     cipher = AES.new(key, AES.MODE_CBC)
     encrypted_string = cipher.iv
 
     #encryption
     for block in text_as_list:
-    	ciphertext = cipher.encrypt(block.encode())
+    	ciphertext = cipher.encrypt(block.encode("ascii"))
     	encrypted_string += ciphertext
     	cipher = AES.new(key, AES.MODE_CBC, iv=ciphertext)
 
+    encrypted_string = binascii.hexlify(encrypted_string)
     return encrypted_string
 
 def construct_software_response_update(sensor_object, session_key):
-    response = str(sensor_object.sensor_id) + "|"
+    response = str(sensor_object.sensor_key) + "|"
     response += session_key + "|"
     update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
     with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
         data = f.read()
+    data = data.rstrip()
     response += hashlib.sha256(data.encode("ascii")).hexdigest() + "|"
     response += data
     return encrypt_msg(response, sensor_object.shared_secret)
@@ -442,7 +447,7 @@ def construct_software_response_update(sensor_object, session_key):
 
 
 def construct_software_response_up_to_date(sensor_object, session_key):
-    response = str(sensor_object.sensor_id) + "|"
+    response = str(sensor_object.sensor_key) + "|"
     response += session_key + "|"
-    reponse += "UP-TO-DATE"
+    response += "UP-TO-DATE"
     return encrypt_msg(response, sensor_object.shared_secret)
