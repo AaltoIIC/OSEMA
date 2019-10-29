@@ -3,7 +3,7 @@ def check_update(url, port):
     addr = socket.getaddrinfo(url, int(port))[0][-1]
     s = socket.socket()
     s.connect(addr)
-    #s = ssl.wrap_socket(s)
+    s = ssl.wrap_socket(s)
     session_key = ubinascii.hexlify(crypto.getrandbits(128)).decode("ascii")
 
     content = '{\n'
