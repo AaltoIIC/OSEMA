@@ -268,9 +268,8 @@ def add_superuser(name):
 
 def add_server():
     s = Server.objects.get_or_create()
-    print("Server", s[0].name)
     if PRINT:
-        print("Server {} created.".format(s.name))
+        print("Server {} created.".format(s[0].name))
 
 
 # Start execution here!
