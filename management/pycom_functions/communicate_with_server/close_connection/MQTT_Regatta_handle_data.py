@@ -8,9 +8,10 @@ def communicate_with_server(data_with_ts, header_ts):
             value_pair[0] = handle_data(value_pair[0])
             data_values = ustruct.unpack(FORMAT_STRING[:-1], value_pair[0])
             timestamp = header_ts + int(value_pair[1] / 1000)
+            data_string = str(timestamp)
             for i in range(len(VARIABLE_NAMES)):
-                data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
-                client.publish(topic=TOPIC, msg=data_string)
+                data_string += "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
+            client.publish(topic=TOPIC, msg=data_string)
         client.disconnect()
     except OSError:
         print("OSError")

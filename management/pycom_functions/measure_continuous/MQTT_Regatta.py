@@ -16,10 +16,11 @@ class Measure:
         data = read_values(self.i2c)
         data_values = ustruct.unpack(FORMAT_STRING[:-1], data)
         timestamp = convert_to_epoch(machine.RTC().now())
+        data_string = str(timestamp)
         for i in range(len(VARIABLE_NAMES)):
-            data_string = str(timestamp) + "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
-            try:
-                self.client.publish(topic=TOPIC, msg=data_string)
-            except:
-                print("Data couldn't be published, resetting board!")
-                machine.reset()
+            data_string += "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
+        try:
+            self.client.publish(topic=TOPIC, msg=data_string)
+        except:
+            print("Data couldn't be published, resetting board!")
+            machine.reset()
