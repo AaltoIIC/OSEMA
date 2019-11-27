@@ -73,10 +73,10 @@ When asking an update, sensor nodes sends the following JSON string, which is en
 }'
 ```
 The explanations of parameters:
-sensor_id is the unique id of a sensor node. It is given to the node in the creation and can't be changed afterwards. For example: "13"
-sensor_key is alphanumeric 20-character string used to verify the identity of the sensor node. Keep this secret. For example: "J422bQm4VBaxTvIIlFm3"
-software_version is the current software versio, which sensor node is using. Basically, this is the id of the sensor + timestamp of the creation of software. For example: "10_2019_11_22_11_02_01.txt"
-session_key is random 128-bit key used to prevent replay attacks. For example: "8f2da3bdb400c8fc522258f07ead70e6" (as hex).
+* sensor_id is the unique id of a sensor node. It is given to the node in the creation and can't be changed afterwards. For example: "13"
+* sensor_key is alphanumeric 20-character string used to verify the identity of the sensor node. Keep this secret. For example: "J422bQm4VBaxTvIIlFm3"
+* software_version is the current software versio, which sensor node is using. Basically, this is the id of the sensor + timestamp of the creation of software. For example: "10_2019_11_22_11_02_01.txt"
+* session_key is random 128-bit key used to prevent replay attacks. For example: "8f2da3bdb400c8fc522258f07ead70e6" (as hex).
 
 
 
