@@ -8,10 +8,10 @@ Python version should be 3.6 or newer
 
 ### Needed libraries
 
-* [Django 2.1](https://www.djangoproject.com/) 
+* [Django 2.1](https://www.djangoproject.com/)
 * [ntplib](https://pypi.org/project/ntplib/)
 * [Django REST framework](https://www.django-rest-framework.org/)
-* [SimpleJWT](https://github.com/davesque/django-rest-framework-simplejwt) 
+* [SimpleJWT](https://github.com/davesque/django-rest-framework-simplejwt)
 * [Rest Framework Generic Relations](https://github.com/Ian-Foote/rest-framework-generic-relations)
 * [Requests](http://docs.python-requests.org/en/master/)
 * [PyCryptodome](https://pycryptodome.readthedocs.io/en/latest/src/introduction.html)
@@ -61,9 +61,12 @@ From the bottom change auth level to admin.
 
 ## Software update process
 
-Updates are asked periodically by a sensor node. The interval is defined by Update check limit. All messages are sent over HTTPS. However, because of the limited support for certificate checking, 12
+Updates are asked periodically by a sensor node. The interval is defined by Update check limit. All messages are sent over HTTPS. However, because of the limited support for certificate checking, HTTPS does not provide sufficient level of security.
+Therefore, all messages are encrypted using AES 128-bit CBC. This encryption method is itself secure, so messages can be sent also using HTTP.
 
-When asking an update, sensor nodes sends the following JSON string, which is encyrpted with AES 128-bit CBC.
+TODO: Allow getting updates over HTTP.
+
+When asking an update, sensor nodes sends the following JSON string.
 ```
 '{
     "sensor_id":"<sensor_id>",
@@ -76,12 +79,19 @@ Explanation of parameters:
 * sensor_id is the unique id of a sensor node. It is given to the node in the creation and can't be changed afterwards. For example: "13"
 * sensor_key is alphanumeric 20-character string used to verify the identity of the sensor node. Keep this secret. For example: "J422bQm4VBaxTvIIlFm3"
 * software_version is the current software versio, which sensor node is using. Basically, this is the id of the sensor + timestamp of the creation of software. For example: "10_2019_11_22_11_02_01.txt"
+* session_key is random 128-bit key used to prevent replay attacks. A fresh session key generated each time updates are asked. For example: "8f2da3bdb400c8fc522258f07ead70e6" (as hex).
+
+Server then compares the received software version to the one in the database. If the software versions match, node's software is up-to-date and server responds to this message as follows:
+```
+"<server_identifier>|<session_key>|UP-TO-DATE"
+```
+
+If the software version received does not match to the one in the server database, server responds as follows:
+```
+"<server_identifier>|<session_key>|<software_hash>|<software>"
+```
+Explanation of parameters:
+* server_identifier is 128-bit identifier of the server. Keep this secret. Can only be accessed from the admin page. For example: "8f2da3bdb400c8fc522258f07ead70e6" (as hex).
+* session_key is used to verify that the server is responding to the recently sent update. For example: "8f2da3bdb400c8fc522258f07ead70e6" (as hex).
+* software_hash is Sha-256 hash calculated from the software, which is used to verify that software has not been modified. For example: "82d9b82c978e0b484c91ac30e989ed123124b0813637629ebb0f503579c74c02" (as hex).
 * session_key is random 128-bit key used to prevent replay attacks. For example: "8f2da3bdb400c8fc522258f07ead70e6" (as hex).
-
-Server then responds to this message by the following messaging, which is also 128-bit AES 
-
-
-
-
-
-
