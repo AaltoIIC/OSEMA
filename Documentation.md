@@ -40,6 +40,11 @@ Create superuser:
 python3 manage.py createsuperuser
 ```
 
+You can test locally by running (you can change from sensor_managent_platform/settings.py DEBUG=True to serve static files):
+```
+python3 manage.py runserver
+```
+
 Configure your network to have either a public IP address or place all sensor nodes at the same local network.
 
 Change the ALLOWED_HOSTS in sensor_management_platform/settings.py to match your network settings.
