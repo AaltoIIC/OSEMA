@@ -86,9 +86,9 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("MAX_SOFTWARE_SIZE = 50000#bytes, prevents memory overflow \n")
     f.write("SENSOR_ID = {}\n".format(sensor_object.sensor_id))
     f.write("SENSOR_KEY = '{}'\n".format(sensor_object.sensor_key))
-    f.write("SHARED_SECRET = {}\n".format(sensor_object.shared_secret))
+    f.write("SHARED_SECRET_UPDATES = '{}'\n".format(sensor_object.shared_secret_updates))
     f.write("SOFTWARE_VERSION = '{}'\n".format(filename))
-    f.write("SERVER_ID = '{}'\n".format(binascii.hexlify(Server.objects.all()[0].identifier).decode("ascii")))
+    f.write("SERVER_ID = '{}'\n".format(Server.objects.all()[0].identifier))
 
     # write settings from sensor object
     f.write("DATA_SEND_RATE_S = {}\n".format(sensor_object.data_send_rate))
@@ -160,6 +160,8 @@ def write_write(f, sample_rate_object, sensitivity_object):
         f.write("WRITE_DICT['{}'] = {}\n".format(object.value1, object.value2))
 
 def write_functions_always_needed(f):
+    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/decrypt_msg.py") #decrypt messages
+    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/encrypt_msg.py") #encrypt messages
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/send_error_msg.py") #send error message to the UI
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/calculate_length.py") #calculate length
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/config_sensor.py") #config sensor
@@ -407,6 +409,7 @@ def parse_date(date_string):
         return "No date available"
 
 def decrypt_msg(encrypted_msg, key, n=16):
+    key = binascii.unhexlify(key)
     encrypted_msg = binascii.unhexlify(encrypted_msg)
     encrypted_msg_list = [encrypted_msg[i:i+n] for i in range(0, len(encrypted_msg), n)]
     cipher = AES.new(key, AES.MODE_CBC, iv=encrypted_msg_list[0])
@@ -419,6 +422,7 @@ def decrypt_msg(encrypted_msg, key, n=16):
     return msg
 
 def encrypt_msg(plain_text, key, n=16):
+    key = binascii.unhexlify(key)
     padded_text = plain_text + (n - (len(plain_text) % n)) * " "
     text_as_list = [padded_text[i:i+n] for i in range(0, len(padded_text), n)]
 
@@ -435,7 +439,7 @@ def encrypt_msg(plain_text, key, n=16):
     return encrypted_string
 
 def construct_software_response_update(sensor_object, session_key):
-    response = binascii.hexlify(Server.objects.all()[0].identifier).decode('ascii') + "|"
+    response = Server.objects.all()[0].identifier + "|"
     response += session_key + "|"
     update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
     with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
@@ -443,12 +447,12 @@ def construct_software_response_update(sensor_object, session_key):
     data = data.rstrip()
     response += hashlib.sha256(data.encode("ascii")).hexdigest() + "|"
     response += data
-    return encrypt_msg(response, sensor_object.shared_secret)
+    return encrypt_msg(response, sensor_object.shared_secret_updates)
 
 
 
 def construct_software_response_up_to_date(sensor_object, session_key):
-    response = binascii.hexlify(Server.objects.all()[0].identifier).decode('ascii')  + "|"
+    response = Server.objects.all()[0].identifier  + "|"
     response += session_key + "|"
     response += "UP-TO-DATE"
-    return encrypt_msg(response, sensor_object.shared_secret)
+    return encrypt_msg(response, sensor_object.shared_secret_updates)

@@ -125,7 +125,7 @@ def get_update(request, sensor_id):
         sensor_object = get_object_or_404(Sensor, pk=sensor_id)
 
         #decrypt message
-        key = sensor_object.shared_secret
+        key = sensor_object.shared_secret_updates
         encrypted_msg = request.body
         msg = decrypt_msg(encrypted_msg, key)
         try:
