@@ -103,3 +103,7 @@ Explanation of parameters:
 
 If the software is up-to-date, a sensor node returns from the function. Otherwise, the node writes new software to its memory and reboots.
 In the boot-up the saved file is renamed to main.py. Immediately after boot, the sensor node call check_update function.
+
+## Encryption of data
+Currently, the data can be sent enrypted with AWS 128-bit CBC if data format is set to JSON.
+
