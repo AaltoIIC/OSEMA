@@ -105,6 +105,10 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     # write setting from type of sensor object
     f.write("ADDRESS = {}\n".format(type_of_sensor_object.address))
 
+    # If data is encrypted write encryption key
+    if sensor_object.encrypt_data:
+        f.write("SHARED_SECRET_DATA = '{}'\n".format(sensor_object.shared_secret_data))
+
     # write settings from sample rate
     f.write("SAMPLE_RATE_HZ = {}\n".format(sample_rate_object.sample_rate))
     f.write("BAUDRATE = {}\n".format(sample_rate_object.baudrate))
@@ -168,12 +172,17 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/read_data.py")#read data
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/sender.py")#sender
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/sync_rtc.py")#sync_rtc
-    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update.py")#update check
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/convert_to_epoch.py")#helper function to convert date tuple to epoch
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket.py")#Write create and connect socket
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/measure_loop.py")#Write create and connect socket
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
+    #Updates use HTTPS
+    if sensor_object.update_https:
+        write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update_HTTPS.py")#update check
+    else:
+        write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update_HTTP.py")#update check
+
     #Helper function for reading data
     if sensor_object.model.sensor_model == "Garmin LIDAR-Lite v3HP":
         write_file_contents(f, BASE_DIR + "/management/pycom_functions/read_values_garmin_lidar_lite_v3HP.py")
@@ -189,6 +198,8 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_raw_handle_data.py")
         elif sensor_object.data_format.name == "Regatta" and protocol_object.__class__.__name__ == "HTTP":
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_Regatta_handle_data_HTTP.py")
+        elif sensor_object.data_format.name == "Regatta" and protocol_object.__class__.__name__ == "MQTT":
+            write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_Regatta_handle_data_MQTT.py")
     else:
         if sensor_object.data_format.name == "JSON":
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_JSON.py")
@@ -196,6 +207,8 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_raw.py")
         elif sensor_object.data_format.name == "Regatta" and protocol_object.__class__.__name__ == "HTTP":
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_Regatta_HTTP.py")
+        elif sensor_object.data_format.name == "Regatta" and protocol_object.__class__.__name__ == "MQTT":
+            write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_Regatta_MQTT.py")
 
     #Write connect network
     if communication_object.__class__.__name__ == "Wlan":
@@ -260,8 +273,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/keep_connection/MQTT_JSON.py")
             elif sensor_object.data_format.name == "raw":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/keep_connection/MQTT_raw.py")
-            elif sensor_object.data_format.name == "Regatta" and sensor_object.model.handle_data_function:
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/keep_connection/MQTT_Regatta_handle_data.py")
             elif sensor_object.data_format.name == "Regatta":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/keep_connection/MQTT_Regatta.py")
         elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit: #close connection
@@ -269,8 +280,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/MQTT_JSON.py")
             elif sensor_object.data_format.name == "raw":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/MQTT_raw.py")
-            elif sensor_object.data_format.name == "Regatta" and sensor_object.model.handle_data_function:
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/MQTT_Regatta_handle_data.py")
             elif sensor_object.data_format.name == "Regatta":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/MQTT_Regatta.py")
         elif sensor_object.data_send_rate > sensor_object.network_close_limit: #close network
@@ -278,8 +287,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/MQTT_JSON.py")
             elif sensor_object.data_format.name == "raw":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/MQTT_raw.py")
-            elif sensor_object.data_format.name == "Regatta" and sensor_object.model.handle_data_function:
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/MQTT_Regatta_handle_data.py")
             elif sensor_object.data_format.name == "Regatta":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/MQTT_Regatta.py")
     else:
@@ -350,8 +357,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/burst/MQTT_JSON.py")
                 elif sensor_object.data_format.name == "raw":
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/burst/MQTT_raw.py")
-                elif sensor_object.data_format.name == "Regatta" and sensor_object.model.handle_data_function:
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/burst/MQTT_Regatta_handle_data.py")
                 elif sensor_object.data_format.name == "Regatta":
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/burst/MQTT_Regatta.py")
             elif sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #keep connection
@@ -366,8 +371,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/MQTT_JSON.py")
                 elif sensor_object.data_format.name == "raw":
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/MQTT_raw.py")
-                elif sensor_object.data_format.name == "Regatta" and sensor_object.model.handle_data_function:
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/MQTT_Regatta_handle_data.py")
                 elif sensor_object.data_format.name == "Regatta":
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/MQTT_Regatta.py")
             elif sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #keep connection

@@ -121,6 +121,7 @@ class Sensor(models.Model):
     sensor_key_old = models.CharField(max_length=50, default=generate_password) #generate random 20-character alphanumeric password
     shared_secret_updates = models.CharField(max_length=128, default=generate_key) #generate random 128-bit key
     shared_secret_data = models.CharField(max_length=128, default=generate_key) #generate random 128-bit key
+    encrypt_data = models.BooleanField(default=False)
     MEASURING_UP_TO_DATE = 1
     MEASURING_WAITING_FOR_UPDATE = 2
     WAITING_FOR_UPDATE = 3
@@ -146,6 +147,7 @@ class Sensor(models.Model):
     update_check_limit = models.FloatField(default=3600)
     update_url = models.CharField(max_length=150, default="example.com")
     update_port = models.IntegerField(default=8000)
+    update_https = models.BooleanField(default=True)
 
     #Each communication type has it's own class
     communication_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name="communication_technology", blank=True, null=True)

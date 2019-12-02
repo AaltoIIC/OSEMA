@@ -96,6 +96,16 @@
         {% endfor %}
       </div>
       <div class="mb-3">
+        {{ modify_sensor_form.update_https.label_tag }}
+        {{ modify_sensor_form.update_https }}
+        {% if modify_sensor_form.update_https.help_text %}
+          <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.update_https.help_text }}</p>
+        {% endif %}
+        {% for error in modify_sensor_form.update_https.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </div>
+      <div class="mb-3">
         {{ modify_sensor_form.update_check_limit.label_tag }}<br>
         {{ modify_sensor_form.update_check_limit }}
         {% if modify_sensor_form.update_check_limit.help_text %}
@@ -288,6 +298,26 @@
               {% endfor %}
             <tbody>
           </table>
+        </div>
+        <div class="mb-3">
+          {{ modify_sensor_form.encrypt_data.label_tag }}
+          {{ modify_sensor_form.encrypt_data }}
+          {% if modify_sensor_form.encrypt_data.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.encrypt_data.help_text }}</p>
+          {% endif %}
+          {% for error in modify_sensor_form.encrypt_data.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ modify_sensor_form.shared_secret_data.label_tag }}<br>
+          {{ modify_sensor_form.shared_secret_data }}
+          {% if modify_sensor_form.shared_secret_data.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ modify_sensor_form.shared_secret_data.help_text }}</p>
+          {% endif %}
+          {% for error in modify_sensor_form.shared_secret_data.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
         </div>
        {% if user.auth_level >= 2 %}
          <hr class="mb-4">

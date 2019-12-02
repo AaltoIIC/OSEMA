@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from management.models import User, Sensor, Type_of_sensor, Sample_rate, Wlan, Nb_iot, HTTP, HTTPS, MQTT, Data_format, Variable, Default_variable
-from django.forms.widgets import PasswordInput, TextInput, Select, Textarea, ClearableFileInput
+from django.forms.widgets import PasswordInput, TextInput, Select, Textarea, ClearableFileInput, CheckboxInput
 from django.contrib import admin
 
 class ModifySensorForm(forms.ModelForm):
@@ -18,10 +18,13 @@ class ModifySensorForm(forms.ModelForm):
     update_check_limit = forms.FloatField(help_text="How often update check is done in seconds.", widget=TextInput(attrs={'class':'form-control'}))
     update_url = forms.CharField(help_text="The URL or IP-address of the server, where updates are fetched. Usually the same address as the address of this page. Insert the address in form: 255.255.255.255 or example.com", max_length=150, widget=TextInput(attrs={'class':'form-control'}))
     update_port = forms.IntegerField(widget=TextInput(attrs={'class':'form-control'}))
+    update_https = forms.BooleanField(label="Update over HTTPS ", help_text="Check this, if HTTPS is used instead of HTTP to fetch updates", required=False, widget=CheckboxInput())
+    encrypt_data = forms.BooleanField(help_text="Check this, if data is encrypted with AES 128-bitg ecryption using Shared secret data as key.", required=False, widget=CheckboxInput())
+    shared_secret_data = forms.CharField(label="Key to encrypt data", help_text="This is the key used to encrypt data. Contain exactly 32 hex numbers (128-bit).", required=False, max_length=50, widget=TextInput(attrs={'class':'form-control'}))
 
     class Meta:
         model = Sensor
-        fields = ['sensor_name', 'sensor_id', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'data_format']
+        fields = ['sensor_name', 'sensor_id', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'update_https', 'encrypt_data', 'shared_secret_data', 'data_format']
 
 class ModifySensorFormLocked(forms.ModelForm):
     sensor_name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
@@ -41,10 +44,13 @@ class ModifySensorFormLocked(forms.ModelForm):
     update_check_limit = forms.FloatField(widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
     update_url = forms.CharField(max_length=150, widget=TextInput(attrs={'class':'form-control', 'title':'Data server URL', 'disabled':'True'}))
     update_port = forms.IntegerField(widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
+    update_https = forms.BooleanField(label="Update over HTTPS ", help_text="Check this, if HTTPS is used instead of HTTP to fetch updates", widget=CheckboxInput(attrs={'disabled':'True'}))
+    encrypt_data = forms.BooleanField(help_text="Check this, if data is encrypted with AES 128-bitg ecryption using Shared secret data as key.", widget=CheckboxInput(attrs={'disabled':'True'}))
+    shared_secret_data = forms.CharField(label="Key to encrypt data", help_text="This is the key used to encrypt data. Contain exactly 32 hex numbers (128-bit).", max_length=50, widget=TextInput(attrs={'class':'form-control', 'disabled':'True'}))
 
     class Meta:
         model = Sensor
-        fields = ['sensor_name', 'sensor_id', 'sensor_key', 'adder', 'latest_modifier', 'model', 'status', 'software_version', 'description', 'location', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'software_version', 'adder', 'latest_modifier', 'data_format']
+        fields = ['sensor_name', 'sensor_id', 'sensor_key', 'adder', 'latest_modifier', 'model', 'status', 'software_version', 'description', 'location', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'software_version', 'adder', 'latest_modifier', 'update_https', 'encrypt_data', 'data_format']
 
 class AddSensorForm(forms.ModelForm):
     sensor_name = forms.CharField(max_length=30, widget=TextInput(attrs={'class':'form-control'}))
@@ -56,10 +62,13 @@ class AddSensorForm(forms.ModelForm):
     burst_rate = forms.FloatField(help_text="Time between bursts in seconds. Time is measured form the end of the burst until the beginning of the next burst. For example, if burst length = 5 and burst rate = 10, the measurement takes 5 seconds and then program waits 10 second before it starts measuring again. Use '.' as a decimal separator.", widget=TextInput(attrs={'class':'form-control'}), required=False, initial=0)
     update_url = forms.CharField(help_text="The URL or IP-address of the server, where updates are fetched. Usually the same address as the address of this page. Insert the address in form: 255.255.255.255 or example.com", max_length=150, widget=TextInput(attrs={'class':'form-control'}))
     update_port = forms.IntegerField(widget=TextInput(attrs={'class':'form-control'}))
+    update_https = forms.BooleanField(label="Update over HTTPS ", help_text="Check this, if HTTPS is used instead of HTTP to fetch updates", required=False, widget=CheckboxInput())
+    encrypt_data = forms.BooleanField(help_text="Check this, if data is encrypted with AES 128-bitg ecryption using Shared secret data as key.", required=False, widget=CheckboxInput())
+    shared_secret_data = forms.CharField(label="Key to encrypt data", help_text="This is the key used to encrypt data. Contain exactly 32 hex numbers (128-bit).", required=False, max_length=50, widget=TextInput(attrs={'class':'form-control'}))
 
     class Meta:
         model = Sensor
-        fields = ['sensor_name', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'update_url', 'update_port', 'data_format']
+        fields = ['sensor_name', 'model', 'description', 'location', 'sensor_key', 'data_send_rate', 'burst_length', 'burst_rate', 'update_url', 'update_port', 'update_https', 'encrypt_data', 'shared_secret_data', 'data_format']
 
 
 class SignUpForm(UserCreationForm):

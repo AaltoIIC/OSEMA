@@ -77,6 +77,16 @@
            <p style="color: red">{{ error }}</p>
          {% endfor %}
        </div>
+       <div class="mb-3">
+         {{ add_sensor_form.update_https.label_tag }}
+         {{ add_sensor_form.update_https }}
+         {% if add_sensor_form.update_https.help_text %}
+           <p class="help_text" style="color: grey;display: none">{{ add_sensor_form.update_https.help_text }}</p>
+         {% endif %}
+         {% for error in add_sensor_form.update_https.errors %}
+           <p style="color: red">{{ error }}</p>
+         {% endfor %}
+       </div>
        <h4 class="mb-3">Measurement settings</h4>
        <div class="mb-3">
          {{ add_sensor_form.model.label_tag }}*<br>
@@ -129,6 +139,7 @@
         <div class="mb-3">
           {{ add_sensor_form.data_send_rate.label_tag }}<br>
           {{ add_sensor_form.data_send_rate }}
+
           {% if add_sensor_form.data_send_rate.help_text %}
             <p class="help_text" style="color: grey;display: none">{{ add_sensor_form.data_send_rate.help_text }}</p>
           {% endif %}
@@ -242,6 +253,26 @@
               {% endfor %}
             <tbody>
           </table>
+        </div>
+        <div class="mb-3">
+          {{ add_sensor_form.encrypt_data.label_tag }}
+          {{ add_sensor_form.encrypt_data }}
+          {% if add_sensor_form.encrypt_data.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ add_sensor_form.encrypt_data.help_text }}</p>
+          {% endif %}
+          {% for error in add_sensor_form.encrypt_data.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          {{ add_sensor_form.shared_secret_data.label_tag }}<br>
+          {{ add_sensor_form.shared_secret_data }}
+          {% if add_sensor_form.shared_secret_data.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ add_sensor_form.shared_secret_data.help_text }}</p>
+          {% endif %}
+          {% for error in add_sensor_form.shared_secret_data.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
         </div>
        {% if user.auth_level >= 2 %}
          <hr class="mb-4">

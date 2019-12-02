@@ -62,7 +62,7 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Sensor
-        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'data_format', 'communication_object', 'protocol_object')
+        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'update_https', 'encrypt_data', 'shared_secret_data', 'data_format', 'communication_object', 'protocol_object')
 
     def create(self, validated_data):
         s = Sensor.objects.create(  sensor_name = validated_data['sensor_name'],
@@ -78,6 +78,9 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
                         update_check_limit = validated_data['update_check_limit'],
                         update_url = validated_data['update_url'],
                         update_port = validated_data['update_port'],
+                        update_https = validated_data['update_https'],
+                        encrypt_data = validated_data['encrypt_data'],
+                        shared_secret_data = validated_data['shared_secret_data'],
                         data_format = validated_data['data_format'],
                         communication_object = validated_data['communication_object'],
                         protocol_object = validated_data['protocol_object']
@@ -112,7 +115,11 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
         instance.network_close_limit = validated_data['network_close_limit']
         instance.update_check_limit = validated_data['update_check_limit']
         instance.update_url = validated_data['update_url']
+        instance.update_https = validated_data['update_https']
         instance.update_port = validated_data['update_port']
+        instance.encrypt_data = validated_data['encrypt_data']
+        instance.shared_secret_data = validated_data['shared_secret_data']
+        instance.data_format = validated_data['data_format']
         instance.communication_object = validated_data['communication_object']
         instance.protocol_object = validated_data['protocol_object']
 

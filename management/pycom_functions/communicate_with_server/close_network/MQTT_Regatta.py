@@ -7,11 +7,8 @@ def communicate_with_server(data_with_ts, header_ts):
         client.connect()
         header_ts = convert_to_epoch(header_ts)
         for value_pair in data_with_ts:
-            data_values = ustruct.unpack(FORMAT_STRING[:-1], value_pair[0])
             timestamp = header_ts + int(value_pair[1] / 1000)
-            data_string = str(timestamp)
-            for i in range(len(VARIABLE_NAMES)):
-                data_string += "," + VARIABLE_NAMES[i] + ":" + str(data_values[i])
+            data_string = format_data(timestamp, value_pair[0])
             client.publish(topic=TOPIC, msg=data_string)
         client.disconnect()
     except OSError:

@@ -99,6 +99,16 @@
           {% endfor %}
         </div>
         <div class="mb-3">
+          {{ sensor_form.update_https.label_tag }}<br>
+          {{ sensor_form.update_https }}
+          {% if sensor_form.update_https.help_text %}
+            <p class="help_text" style="color: grey;display: none">{{ sensor_form.update_https.help_text }}</p>
+          {% endif %}
+          {% for error in sensor_form.update_https.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
           {{ sensor_form.update_check_limit.label_tag }}<br>
           {{ sensor_form.update_check_limit }}
           {% if sensor_form.update_check_limit.help_text %}
@@ -270,6 +280,16 @@
              {% endfor %}
            <tbody>
          </table>
+       </div>
+       <div class="mb-3">
+         {{ sensor_form.encrypt_data.label_tag }}
+         {{ sensor_form.encrypt_data }}
+         {% if sensor_form.encrypt_data.help_text %}
+           <p class="help_text" style="color: grey;display: none">{{ sensor_form.encrypt_data.help_text }}</p>
+         {% endif %}
+         {% for error in sensor_form.encrypt_data.errors %}
+           <p style="color: red">{{ error }}</p>
+         {% endfor %}
        </div>
      </form>
    </div>
