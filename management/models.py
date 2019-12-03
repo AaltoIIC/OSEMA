@@ -245,7 +245,7 @@ class Variable(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30)
     unit = models.CharField(max_length=10)
-    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+    sensor = models.ForeignKey(Sensor, related_name="variables", on_delete=models.CASCADE)
 
     def __str__(self):
         return '{}: {}'.format(self.name, self.unit)

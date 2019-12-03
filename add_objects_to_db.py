@@ -60,8 +60,8 @@ def add_objects():
     p56_0 = add_value_pair(56, 0)
 
     """Adding types of sensors"""
-    seeed_grove_i2c_adc = add_type_of_sensor("seeed Grove i2C ADC", "http://wiki.seeedstudio.com/Grove-I2C_ADC/", 80, "seeed_Grove_i2C_ADC.py")
-    garmin_lidar_lite_v3HP = add_type_of_sensor("Garmin LIDAR-Lite v3HP", "https://buy.garmin.com/en-US/US/p/578152/pn/010-01722-10", 98, "garmin_lidar_lite_v3HP.py")
+    seeed_grove_i2c_adc = add_type_of_sensor("seeed_Grove_i2C_ADC", "http://wiki.seeedstudio.com/Grove-I2C_ADC/", 80, "seeed_Grove_i2C_ADC.py")
+    garmin_lidar_lite_v3HP = add_type_of_sensor("Garmin_LIDAR_Lite_v3HP", "https://buy.garmin.com/en-US/US/p/578152/pn/010-01722-10", 98, "garmin_lidar_lite_v3HP.py")
     lis3dsh = add_type_of_sensor("LIS3DSH", "Use the following divisors to get acceleration in unit g: \n +- 2g:  divisor = 16380\n +- 4g:  divisor = 8190\n +- 8g:  divisor = 4096\n +- 16g: divisor = 1365.33\n", 29)
     adxl345 = add_type_of_sensor("ADXL345", "https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL345.pdf", 83)
 

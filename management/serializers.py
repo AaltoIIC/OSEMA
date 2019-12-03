@@ -3,6 +3,15 @@ from rest_framework import serializers
 from generic_relations.relations import GenericRelatedField
 from management.utils import update_sensor, create_new_sensor
 
+class VariableSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Variable
+        fields = ('id', 'url', 'name', 'unit', 'sensor')
+
+class DefaultVariableSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Default_variable
+        fields = ('id', 'url', 'name', 'unit', 'type_of_sensor')
 
 class WlanSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,10 +68,11 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
                 view_name='mqtt-detail',
             ),
         })
+    variables = VariableSerializer(many=True)
 
     class Meta:
         model = Sensor
-        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'update_https', 'encrypt_data', 'shared_secret_data', 'data_format', 'communication_object', 'protocol_object')
+        fields = ('sensor_id', 'url', 'sensor_name', 'model', 'status', 'description', 'location', 'sensor_key', 'sample_rate', 'sensitivity', 'data_send_rate', 'burst_length', 'burst_rate', 'connection_close_limit', 'network_close_limit', 'update_check_limit', 'update_url', 'update_port', 'update_https', 'encrypt_data', 'shared_secret_data', 'data_format', 'variables', 'communication_object', 'protocol_object')
 
     def create(self, validated_data):
         s = Sensor.objects.create(  sensor_name = validated_data['sensor_name'],
@@ -85,6 +95,11 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
                         communication_object = validated_data['communication_object'],
                         protocol_object = validated_data['protocol_object']
         )
+        #add variables to sensor
+        variables = validated_data.pop('variables')
+        for variable_data in variables:
+            Variable.objects.create(sensor=s, **variable_data)
+
         #add optional parameters to sensor
         try:
             s.description = validated_data['description']
@@ -123,6 +138,11 @@ class SensorSerializer(serializers.HyperlinkedModelSerializer):
         instance.communication_object = validated_data['communication_object']
         instance.protocol_object = validated_data['protocol_object']
 
+        #add variables to sensor
+        variables = validated_data.pop('variables')
+        for variable_data in variables:
+            Variable.objects.create(sensor=s, **variable_data)
+
         #add optional parameters to sensor
         try:
             instance.description = validated_data['description']
@@ -159,13 +179,3 @@ class DataFormatSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Data_format
         fields = ('id', 'url', 'name')
-
-class VariableSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Variable
-        fields = ('id', 'url', 'name', 'unit', 'sensor')
-
-class DefaultVariableSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Default_variable
-        fields = ('id', 'url', 'name', 'unit', 'type_of_sensor')
