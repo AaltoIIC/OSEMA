@@ -105,5 +105,14 @@ If the software is up-to-date, a sensor node returns from the function. Otherwis
 In the boot-up the saved file is renamed to main.py. Immediately after boot, the sensor node call check_update function.
 
 ## Encryption of data
-Currently, the data can be sent enrypted with AWS 128-bit CBC if data format is set to JSON.
+The measurment data can be enrypted with AES 128-bit CBC.
+
+Currently, this is only implmented for JSON data format.
+
+## Adding new sensor model
+* Do not use spaces in the name of the sensor model. Otherwise, it won't work with API.
+* The name can't ba changed afterwards, because it is used as a primary key in the database. 
+
+
+
 
