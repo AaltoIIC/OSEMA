@@ -38,7 +38,7 @@ def generate_file(sensor_object):
     sensitivity_object = sensor_object.sensitivity
     communication_object = sensor_object.communication_object
     protocol_object = sensor_object.protocol_object
-    write_imports(f, communication_object, protocol_object)
+    write_imports(f, sensor_object, communication_object, protocol_object)
     write_libraries(f, communication_object, protocol_object)
     write_global(f, sensor_object, type_of_sensor_object, sample_rate_object, sensitivity_object, communication_object, protocol_object, filename)
     #write_functions_used_by_functions_always_needed(f, sensor_object, protocol_object)
@@ -49,7 +49,7 @@ def generate_file(sensor_object):
     return filename
 
 
-def write_imports(f, communication_object, protocol_object):
+def write_imports(f, sensor_object, communication_object, protocol_object):
     f.write("import gc\n")
     f.write("import uhashlib\n")
     f.write("import ubinascii\n")
@@ -61,7 +61,6 @@ def write_imports(f, communication_object, protocol_object):
     f.write("import _thread\n")
     f.write("import ustruct\n")
     f.write("import uos\n")
-    f.write("import ssl\n")
     f.write("from crypto import AES\n")
     f.write("import crypto\n")
     f.write("from machine import RTC, I2C, Timer\n")
@@ -69,6 +68,8 @@ def write_imports(f, communication_object, protocol_object):
         f.write("from network import WLAN\n")
     if protocol_object.__class__.__name__ == "MQTT":
         f.write("from ubinascii import hexlify\n")
+    if protocol_object.__class__.__name__ == "HTTPS" or sensor_object.update_https:
+        f.write("import ssl\n")
 
 def write_libraries(f, communication_object, protocol_object):
     if protocol_object.__class__.__name__ == "MQTT":
@@ -82,6 +83,9 @@ def write_global(f, sensor_object, type_of_sensor_object, sample_rate_object, se
 def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, sensitivity_object, communication_object, protocol_object, filename):
     #These are always needed
     f.write("CONNECTION_BROKEN = -1\n")
+    f.write("FAILURE_MEM = 4\n")
+    f.write("FAILURE_OS = 5\n")
+    f.write("FAILURE_I2C = 6\n")
     f.write("MAXLINE = 1024 #maximum number of bytes read with one recv command\n")
     f.write("MAX_SOFTWARE_SIZE = 50000#bytes, prevents memory overflow \n")
     f.write("SENSOR_ID = {}\n".format(sensor_object.sensor_id))
@@ -97,6 +101,7 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("UPDATE_CHECK_LIMIT = {}\n".format(sensor_object.update_check_limit))
     f.write("UPDATE_URL = '{}'\n".format(sensor_object.update_url))
     f.write("UPDATE_PORT = {}\n".format(sensor_object.update_port))
+    f.write("UPDATE_HTTPS = {}\n".format(sensor_object.update_https))
     f.write("VARIABLE_NAMES = [")
     for o in Variable.objects.filter(sensor=sensor_object):
         f.write("'" + o.name + "'" + ",")
@@ -136,16 +141,19 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
         f.write("DATA_SERVER_URL = '{}'\n".format(protocol_object.data_server_url))
         f.write("DATA_SERVER_PORT = {}\n".format(protocol_object.data_server_port))
         f.write("PATH = '{}'\n".format(protocol_object.path))
+        f.write("USE_SSL_DATA_SERVER = False\n")
     elif protocol_object.__class__.__name__ == "HTTPS":
         f.write("DATA_SERVER_URL = '{}'\n".format(protocol_object.data_server_url))
         f.write("DATA_SERVER_PORT = {}\n".format(protocol_object.data_server_port))
         f.write("PATH = '{}'\n".format(protocol_object.path))
+        f.write("USE_SSL_DATA_SERVER = True\n")
     elif protocol_object.__class__.__name__ == "MQTT":
         f.write("USER = '{}'\n".format(protocol_object.user))
         f.write("KEY = '{}'\n".format(protocol_object.key))
         f.write("TOPIC = '{}'\n".format(protocol_object.topic))
         f.write("BROKER_URL = '{}'\n".format(protocol_object.broker_url))
         f.write("BROKER_PORT = {}\n".format(protocol_object.broker_port))
+        f.write("USE_SSL_DATA_SERVER = False\n")
 
 
 
@@ -175,13 +183,9 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/convert_to_epoch.py")#helper function to convert date tuple to epoch
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket.py")#Write create and connect socket
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/measure_loop.py")#Write create and connect socket
+    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update_HTTP.py")#update check
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
-    #Updates use HTTPS
-    if sensor_object.update_https:
-        write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update_HTTPS.py")#update check
-    else:
-        write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update_HTTP.py")#update check
 
     #Helper function for reading data
     if sensor_object.model.sensor_model == "Garmin LIDAR-Lite v3HP":
@@ -223,7 +227,7 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
         if communication_object.__class__.__name__ == "Wlan":
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/keep_connection_wlan.py")
 
-    if protocol_object.__class__.__name__ == "HTTP":
+    if protocol_object.__class__.__name__ == "HTTP" or protocol_object.__class__.__name__ == "HTTPS":
         if sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #Always close connection with HTTP
             if sensor_object.data_format.name == "JSON":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/HTTP_JSON.py")
@@ -245,28 +249,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/HTTP_raw.py")
             elif sensor_object.data_format.name == "Regatta":
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/HTTP_Regatta.py")
-    elif protocol_object.__class__.__name__ == "HTTPS":
-        if sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #Always close connection with HTTP
-            if sensor_object.data_format.name == "JSON":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/HTTPS_JSON.py")
-            elif sensor_object.data_format.name == "raw":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/HTTPS_raw.py")
-            elif sensor_object.data_format.name == "Regatta":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/HTTPS_Regatta.py")
-        elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit: #close connection
-            if sensor_object.data_format.name == "JSON":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/HTTPS_JSON.py")
-            elif sensor_object.data_format.name == "raw":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/HTTPS_raw.py")
-            elif sensor_object.data_format.name == "Regatta":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_connection/HTTPS_Regatta.py")
-        elif sensor_object.data_send_rate > sensor_object.network_close_limit: #close network
-            if sensor_object.data_format.name == "JSON":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/HTTPS_JSON.py")
-            elif sensor_object.data_format.name == "raw":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/HTTPS_raw.py")
-            elif sensor_object.data_format.name == "Regatta":
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/communicate_with_server/close_network/HTTPS_Regatta.py")
     elif protocol_object.__class__.__name__ == "MQTT":
         if sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #keep coonection
             if sensor_object.data_format.name == "JSON":
@@ -292,7 +274,7 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
     else:
         print("There's an error with protocol class.")
 
-    if protocol_object.__class__.__name__ == "HTTP":
+    if protocol_object.__class__.__name__ == "HTTP" or protocol_object.__class__.__name__ == "HTTPS":
         if sensor_object.burst_length > 0: #burst
             if sensor_object.data_send_rate == 0: #continuous sending
                 if sensor_object.data_format.name == "JSON":
@@ -315,35 +297,6 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/HTTP_raw.py")
                 elif sensor_object.data_format.name == "Regatta":
                     write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/HTTP_Regatta.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #Always close connection with HTTP
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_close_connection.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit: #close connection
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_close_connection.py")
-            elif sensor_object.data_send_rate > sensor_object.network_close_limit: #close network
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_close_network.py")
-    elif protocol_object.__class__.__name__ == "HTTPS":
-        if sensor_object.burst_length > 0: #burst
-            if sensor_object.data_send_rate == 0: #continuous sending
-                if sensor_object.data_format.name == "JSON":
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/burst/HTTPS_JSON.py")
-                elif sensor_object.data_format.name == "raw":
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/burst/HTTPS_raw.py")
-                elif sensor_object.data_format.name == "Regatta":
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/burst/HTTPS_Regatta.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #Always close connection with HTTP
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_close_connection_burst.py")
-            elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit: #close connection
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_close_connection_burst.py")
-            elif sensor_object.data_send_rate > sensor_object.network_close_limit: #close network
-                write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_close_network_burst.py")
-        else: #not burst
-            if sensor_object.data_send_rate == 0: #measure_continuous
-                if sensor_object.data_format.name == "JSON":
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/HTTPS_JSON.py")
-                elif sensor_object.data_format.name == "raw":
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/HTTPS_raw.py")
-                elif sensor_object.data_format.name == "Regatta":
-                    write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_continuous/HTTPS_Regatta.py")
             elif sensor_object.network_close_limit > sensor_object.data_send_rate and sensor_object.connection_close_limit > sensor_object.data_send_rate > 0: #Always close connection with HTTP
                 write_file_contents(f, BASE_DIR + "/management/pycom_functions/measure_close_connection.py")
             elif sensor_object.network_close_limit > sensor_object.data_send_rate > sensor_object.connection_close_limit: #close connection

@@ -16,7 +16,7 @@ class Measure:
             data_string = format_data(machine.RTC().now(), [[data, 0]])
             content_length = len(data_string)
             string = """POST {} HTTP/1.1\r\nHost: {}\r\nContent-Type: application/octet-stream\r\nContent-Length: {}\r\n\r\n""".format(PATH, DATA_SERVER_URL, content_length)
-            s = create_and_connect_socket(DATA_SERVER_URL, DATA_SERVER_PORT)
+            s = create_and_connect_socket(DATA_SERVER_URL, DATA_SERVER_PORT, USE_SSL_DATA_SERVER)
             s.send(bytes(string, 'utf8') + data_string)
             s.close()
         except:

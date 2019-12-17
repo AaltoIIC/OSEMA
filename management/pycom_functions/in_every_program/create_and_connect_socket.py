@@ -1,5 +1,5 @@
 """Creates socket and connects to it. Returns socket"""
-def create_and_connect_socket(url, port): #port is a string
+def create_and_connect_socket(url, port, use_ssl=False): #port is a string
     try:
         s = socket.socket()
     except OSError:
@@ -11,4 +11,6 @@ def create_and_connect_socket(url, port): #port is a string
             break
         except:
             pass
+    if use_ssl:
+        s = ssl.wrap_socket(s)
     return s

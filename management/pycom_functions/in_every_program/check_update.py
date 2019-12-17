@@ -1,8 +1,5 @@
 """Asks update from sensor configurator with HTTP request. If a new main.py is returned writes it to the new_main.py and reboots the board"""
 def check_update(url, port):
-    addr = socket.getaddrinfo(url, int(port))[0][-1]
-    s = socket.socket()
-    s.connect(addr)
     session_key = ubinascii.hexlify(crypto.getrandbits(128)).decode("ascii")
     shared_secret = ubinascii.unhexlify(SHARED_SECRET_UPDATES)
 
@@ -17,6 +14,7 @@ def check_update(url, port):
     #send data
     content_length = len(encrypted_string)
     msg = """POST /get_update/{} HTTP/1.1\r\nHost: {}\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}\r\n\r\n""".format(SENSOR_ID, url, content_length, encrypted_string)
+    s = create_and_connect_socket(url, port, UPDATE_HTTPS)
     s.send(bytes(msg, 'utf8'))
 
     #read response
