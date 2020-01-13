@@ -66,16 +66,13 @@ From the bottom change auth level to admin.
 
 ## Software update process
 
-Updates are asked periodically by a sensor node using check_update(url, port) function. The interval is defined by Update check limit. All messages are sent over HTTPS. However, because of the limited support for certificate checking, HTTPS does not provide sufficient level of security.
-Therefore, all messages are encrypted using AES 128-bit CBC. This encryption method is itself secure, so messages can be sent also using HTTP.
+Updates are asked periodically by a sensor node using check_update(url, port) function. The interval is defined by Update check limit. Messages can be sent over HTTP or HTTPS. Because of the limited support for certificate checking, HTTPS does not provide sufficient level of security.
+Therefore, all messages are encrypted using AES 128-bit CBC and HMAC is calculated (with SHA-256) to ensure authenticity and integrity of the message. This encryption method is itself secure, so messages can be sent also using HTTP. The format of HTTP message body is <message_encrypted>.<hmac_of_the_message>
 
-TODO: Allow getting updates over HTTP.
 
 When asking an update, sensor nodes sends the following JSON string.
 ```
 '{
-    "sensor_id":"<sensor_id>",
-    "sensor_key":"<sensor_key>",
     "software_version":"<software_version>",
     "session_key":"<session_key>"
 }'
@@ -88,12 +85,12 @@ Explanation of parameters:
 
 Server then compares the received software version to the one in the database. If the software versions match, node's software is up-to-date. Server then sets node's status as "Measuring" and responds to request as follows:
 ```
-"<server_identifier>|<session_key>|UP-TO-DATE"
+<session_key>|UP-TO-DATE"
 ```
 
 If the software version received does not match to the one in the server database, server responds as follows:
 ```
-"<server_identifier>|<session_key>|<software_hash>|<software>"
+<session_key>|<software>"
 ```
 Explanation of parameters:
 * server_identifier is 128-bit identifier of the server. Keep this secret. Can only be accessed from the admin page. For example: "8f2da3bdb400c8fc522258f07ead70e6" (as hex).
@@ -111,8 +108,4 @@ Currently, this is only implmented for JSON data format.
 
 ## Adding new sensor model
 * Do not use spaces in the name of the sensor model. Otherwise, it won't work with API.
-* The name can't ba changed afterwards, because it is used as a primary key in the database. 
-
-
-
-
+* The name can't ba changed afterwards, because it is used as a primary key in the database.
