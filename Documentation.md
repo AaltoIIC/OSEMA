@@ -106,6 +106,16 @@ The measurment data can be enrypted with AES 128-bit CBC.
 
 Currently, this is only implmented for JSON data format.
 
+## Data formats
+
+Sensor Management System is able to send data to a data server in three different data formats: JSON, Raw and Regatta A more detailed description for each of these formats can be found below.
+
+### JSON
+
+### Raw
+
+### 
+
 ## Adding new sensor model
 * Do not use spaces in the name of the sensor model. Otherwise, it won't work with API.
 * The name can't ba changed afterwards, because it is used as a primary key in the database.
