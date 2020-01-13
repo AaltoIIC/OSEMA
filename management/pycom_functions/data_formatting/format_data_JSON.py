@@ -11,8 +11,9 @@ def format_data(header_ts, data):
             if i == max:
                 data_string += "'time':{}".format(header_ts_epoch + value_pair[1])
             else:
-                data_string += "'{}':{} , ".format(VARIABLE_NAMES[i], data_values[i])
-        data_string += "}\n"
+                data_string += "'{}':{}, ".format(VARIABLE_NAMES[i], data_values[i])
+        data_string += "},\n"
+    data_string = data_string[:-1]
     data_string += "\t]\n"
     data_string += "}\n"
     return data_string
