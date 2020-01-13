@@ -112,9 +112,25 @@ Sensor Management System is able to send data to a data server in three differen
 
 ### JSON
 
+The data format is following with JSON:
+
+{
+    'Begin':<The starting time of measurement. Epoch (ms)>
+    'Data': [
+                {'<variable name>':<value>, '<variable name>':<value>, ... , 'time':<Epoch (ms)>},
+                {'<variable name>':<value>, '<variable name>':<value>, ... , 'time':<Epoch (ms)>},
+                ...
+                {'<variable name>':<value>, '<variable name>':<value>, ... , 'time':<Epoch (ms)>}
+    
+            ]
+}
+
+
 ### Raw
 
-### 
+
+
+### Regatta
 
 ## Adding new sensor model
 * Do not use spaces in the name of the sensor model. Otherwise, it won't work with API.
