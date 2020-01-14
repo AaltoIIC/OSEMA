@@ -114,6 +114,7 @@ Sensor Management System is able to send data to a data server in three differen
 
 The data format is following with JSON:
 
+```
 {
     'Begin':<The starting time of measurement. Epoch (ms)>
     'Data': [
@@ -124,6 +125,7 @@ The data format is following with JSON:
     
             ]
 }
+```
 
 
 ### Raw

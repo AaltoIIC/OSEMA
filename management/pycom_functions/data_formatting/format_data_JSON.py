@@ -12,12 +12,7 @@ def format_data(header_ts, data):
                 data_string += "'time':{}".format(header_ts_epoch + value_pair[1])
             else:
                 data_string += "'{}':{}, ".format(VARIABLE_NAMES[i], data_values[i])
-<<<<<<< HEAD
         data_string += "},\n"
-    data_string = data_string[:-1]
-=======
-        data_string += "}\n"
->>>>>>> 52a9f918922c1ed652be443b2f2eafa9bae29177
     data_string += "\t]\n"
     data_string += "}\n"
     return data_string
