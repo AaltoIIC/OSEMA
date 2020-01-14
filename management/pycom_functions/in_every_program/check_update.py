@@ -1,17 +1,19 @@
 """Asks update from sensor configurator with HTTP request. If a new main.py is returned writes it to the new_main.py and reboots the board"""
 def check_update(url, port):
     session_key = ubinascii.hexlify(crypto.getrandbits(128)).decode("ascii")
-    shared_secret = ubinascii.unhexlify(SHARED_SECRET_UPDATES)
+    shared_secret_binary = ubinascii.unhexlify(SHARED_SECRET_UPDATES)
+    sensor_key_binary = ubinascii.unhexlify(SENSOR_KEY)
+    server_key_binary = ubinascii.unhexlify(SERVER_KEY)
 
     content = '{\n'
     content += '\t"software_version":"{}",\n'.format(SOFTWARE_VERSION)
     content += '\t"session_key":"{}"\n'.format(session_key)
     content += '}'
 
-    encrypted_string = encrypt_msg(content, shared_secret)
+    encrypted_string = encrypt_msg(content, shared_secret_binary)
 
     #calculate hmac_msg
-    hmac_digest = HMAC(SENSOR_KEY, encrypted_string, uhashlib.sha256).digest()
+    hmac_digest = HMAC(sensor_key_binary, encrypted_string, uhashlib.sha256).digest()
     #append to msg
     encrypted_string = encrypted_string + "." + hmac_digest
     #send data
@@ -38,14 +40,14 @@ def check_update(url, port):
     msg, hmac_msg =payload.split(".")
 
     #compare hmac
-    hmac_digest = hmac.HMAC(SERVER_KEY, encrypted_string, uhashlib.sha256).digest()
+    hmac_digest = hmac.HMAC(server_key_binary, encrypted_string, uhashlib.sha256).digest()
     print("hmac_digest", hmac_digest)
     print("hmac_msg", hmac_msg)
     if hmac_digest != hmac_msg:
         print("invalid hmac")
         return
 
-    msg = decrypt_msg(msg, shared_secret)
+    msg = decrypt_msg(msg, shared_secret_binary)
 
     #handle data
     payload_list = msg.split("|")
