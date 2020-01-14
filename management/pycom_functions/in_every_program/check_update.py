@@ -11,7 +11,7 @@ def check_update(url, port):
     encrypted_string = encrypt_msg(content, shared_secret)
 
     #calculate hmac_msg
-    hmac_digest = hmac.HMAC(SENSOR_KEY, encrypted_string, uhashlib.sha256).digest()
+    hmac_digest = HMAC(SENSOR_KEY, encrypted_string, uhashlib.sha256).digest()
     #append to msg
     encrypted_string = encrypted_string + "." + hmac_digest
     #send data
@@ -49,22 +49,18 @@ def check_update(url, port):
 
     #handle data
     payload_list = msg.split("|")
-    if not (payload_list[0] == SERVER_ID and payload_list[1] == session_key):
+    if payload_list[0] != session_key:
         print("invalid response from update server")
         return #invalid response from the server
-    hash_r = payload_list[2]
-    if hash_r.rstrip() == "UP-TO-DATE":
+    software = payload_list[1]
+    if software.rstrip() == "UP-TO-DATE":
         print("Software up to date.")
         return
     else:
-        software = "|".join(payload_list[3:]).rstrip()
-        hash = ubinascii.hexlify(uhashlib.sha256(software).digest()).decode("ascii")
-        if hash == hash_r:
-            f = open("new_main.txt", "w")
-            f.write(software)
-            f.close()
-            print("Writing data succeed!")
-            utime.sleep(1)
-            machine.reset()
-        else:
-            print("software update failed. Hashes doesn't match")
+        software = "|".join(payload_list[1:]).rstrip()
+        f = open("new_main.txt", "w")
+        f.write(software)
+        f.close()
+        print("Writing data succeed!")
+        utime.sleep(1)
+        machine.reset()
