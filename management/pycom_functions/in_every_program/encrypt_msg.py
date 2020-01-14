@@ -1,8 +1,8 @@
 """Function used to decrypt message encrypted with AES 128-bit CBC. Returns message as hex-string"""
-def decrypt_msg(msg, key): #msg = string, key = 128-bit key as a byte-string
+def encrypt_msg(msg, key): #msg = string, key = 128-bit key as a byte-string
     #Encrypt content
     n = 16
-    padded_content = content + (n - (len(content) % n)) * " " #pad content
+    padded_content = msg + (n - (len(msg) % n)) * " " #pad content
     padded_content_list = [padded_content[i:i+n] for i in range(0, len(padded_content), n)] #divide into list
 
     iv = crypto.getrandbits(128) # hardware generated random IV (never reuse it)
