@@ -63,7 +63,6 @@ def write_imports(f, sensor_object, communication_object, protocol_object):
     f.write("import uos\n")
     f.write("from crypto import AES\n")
     f.write("import crypto\n")
-    f.write("import hmac\n")
     f.write("from machine import RTC, I2C, Timer\n")
     if communication_object.__class__.__name__ == "Wlan":
         f.write("from network import WLAN\n")
@@ -73,6 +72,7 @@ def write_imports(f, sensor_object, communication_object, protocol_object):
         f.write("import ssl\n")
 
 def write_libraries(f, communication_object, protocol_object):
+    write_file_contents(f, BASE_DIR + "/management/pycom_functions/hmac.py") #hmac library
     if protocol_object.__class__.__name__ == "MQTT":
         write_file_contents(f, BASE_DIR + "/management/pycom_functions/mqtt.py") #MQTT library
 
