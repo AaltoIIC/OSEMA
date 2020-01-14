@@ -117,10 +117,10 @@ class Sensor(models.Model):
     adder = models.ForeignKey(User, related_name="adder", on_delete=models.PROTECT, blank=True, null=True)
     date_modified = models.DateTimeField(default=timezone.now)
     latest_modifier = models.ForeignKey(User, related_name="latest_modifier", on_delete=models.PROTECT, blank=True, null=True)
-    sensor_key = models.CharField(max_length=50, default=generate_password) #generate random 20-character alphanumeric password
-    sensor_key_old = models.CharField(max_length=50, default=generate_password) #generate random 20-character alphanumeric password
-    shared_secret_updates = models.CharField(max_length=128, default=generate_key) #generate random 128-bit key
-    shared_secret_data = models.CharField(max_length=128, default=generate_key) #generate random 128-bit key
+    sensor_key = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
+    sensor_key_old = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
+    shared_secret_updates = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
+    shared_secret_data = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
     encrypt_data = models.BooleanField(default=False)
     MEASURING_UP_TO_DATE = 1
     MEASURING_WAITING_FOR_UPDATE = 2
@@ -262,7 +262,7 @@ class Default_variable(models.Model):
 class Server(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30, default="This server")
-    identifier = models.CharField(max_length=128, default=generate_key) #generate random 128-bit identifier
+    server_key = models.CharField(max_length=128, default=generate_key) #generate random 128-bit identifier
 
     def __str__(self):
         return '{}: {}'.format(self.name, self.identifier)

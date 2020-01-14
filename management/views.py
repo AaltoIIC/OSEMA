@@ -27,6 +27,7 @@ from rest_framework import viewsets
 import datetime
 
 import hashlib
+import hmac
 
 from Crypto.Cipher import AES
 
@@ -123,95 +124,64 @@ class DefaultVariableViewSet(viewsets.ModelViewSet):
 def get_update(request, sensor_id):
     if request.method == 'POST':
         sensor_object = get_object_or_404(Sensor, pk=sensor_id)
+        #check integrity and autheticity of the message
+        encrypted_msg, hmac_msg = request.body.split(".")
+        h = hmac.new(sensor_object.sensor_key, encrypted_msg, hashlib.sha256)
+        if h.digest() != binascii.hexlify(hmac_msg):
+            h = hmac.new(sensor_object.sensor_key_old, encrypted_msg, hashlib.sha256)
+            if h.digest() != binascii.hexlify(hmac_msg):
+                raise Http404("Page doesn't exist")
 
         #decrypt message
         key = sensor_object.shared_secret_updates
-        encrypted_msg = request.body
         msg = decrypt_msg(encrypted_msg, key)
         try:
             msg_dict = json.loads(msg)
         except:
             print("Parsing message failed")
             raise Http404("Page doesn't exist")
-
         try:
-            if sensor_object.sensor_key == msg_dict["sensor_key"]:
-                sensor_object.software_version = msg_dict["software_version"]
-                sensor_object.save()
-                update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
-                if update.filename != msg_dict["software_version"]:
-                    with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
-                        content = f.read()
-                        return HttpResponse(construct_software_response_update(sensor_object, msg_dict["session_key"]), content_type='text/plain')
-                elif update.filename == msg_dict["software_version"]:
-                    if sensor_object.status != Sensor.MEASURING_UP_TO_DATE:
-                        sensor_object.software_version = update.filename
-                        sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-                        sensor_object.save()
-                    return HttpResponse(construct_software_response_up_to_date(sensor_object, msg_dict["session_key"]), content_type='text/plain')
-            elif sensor_object.sensor_key_old == msg_dict["sensor_key"]:
-                sensor_object.software_version = msg_dict["software_version"]
-                sensor_object.save()
-                update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
+            sensor_object.software_version = msg_dict["software_version"]
+            sensor_object.save()
+            update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
+            if update.filename == msg_dict["software_version"]:
+                if sensor_object.status != Sensor.MEASURING_UP_TO_DATE:
+                    sensor_object.software_version = update.filename
+                    sensor_object.status = Sensor.MEASURING_UP_TO_DATE
+                    sensor_object.save()
+                return HttpResponse(construct_software_response_up_to_date(sensor_object, msg_dict["session_key"]), content_type='text/plain')
+            else:
                 with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
                     content = f.read()
                     return HttpResponse(construct_software_response_update(sensor_object, msg_dict["session_key"]), content_type='text/plain')
-            raise Http404("Page doesn't exist")
         except KeyError:
             print("Something wrong with parsed JSON")
             raise Http404("Page doesn't exist")
 
-"""
 @api_view(['POST'])
-def confirm_update(request):
+def report_failure(request):
     if request.method == 'POST':
         sensor_object = get_object_or_404(Sensor, pk=request.POST['sensor_id'])
+        #check integrity and autheticity of the message
+        encrypted_msg, hmac_msg = request.body.split("|")
+        h = hmac.new(sensor_object.sensor_key, encrypted_msg, hashlib.sha256)
+        if h.digest() != binascii(hmac_msg):
+            raise Http404("Page doesn't exist")
+        #decrypt message
+        key = sensor_object.shared_secret_updates
+        msg = decrypt_msg(encrypted_msg, key)
         if sensor_object.sensor_key == request.POST['sensor_key']:
-            #read file into string
-            update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
-            with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
-                data = f.read()
-            #for testing
-            h = hashlib.sha256(data.encode("ascii")).hexdigest()
-            if hashlib.sha256(data.encode("ascii")).hexdigest() == request.POST['hash']: #check if the file is similar to the actual file
-                sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-                sensor_object.save()
-                return HttpResponse("OK" + request.POST['sensor_id'], content_type='text/plain')
-            else:
-                return HttpResponse("ERR", content_type='text/plain')
-        elif sensor_object.sensor_key_old == request.POST['sensor_key']:
-            #read file into string
-            update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
-            with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
-                data = f.read()
-            if hashlib.sha256(data.encode("ascii")).hexdigest() == request.POST['hash']: #check if the file is similar to the actual file
-                sensor_object.status = Sensor.MEASURING_UP_TO_DATE
-                sensor_object.sensor_key_old = ''.join(generate_password(20)) #generate random 20-character alphanumeric password to prevent usibg the old password twice
-                sensor_object.save()
-                return HttpResponse("OK"+ request.POST['sensor_id'], content_type='text/plain')
-            else:
-                return HttpResponse("ERR", content_type='text/plain')
+            print("Status", request.POST['status'])
+            if request.POST['status'] == "OSError":
+                sensor_object.status = Sensor.FAILURE_OS
+            elif request.POST['status'] == "MemoryError":
+                sensor_object.status = Sensor.FAILURE_MEM
+            elif request.POST['status'] == "I2CError":
+                sensor_object.status = Sensor.FAILURE_I2C
+            sensor_object.save()
+            return HttpResponse("OK", content_type='text/plain')
         else:
             raise Http404("Page doesn't exist")
-    else:
-        raise Http404("Page doesn't exist")
-"""
-
-@api_view(['POST'])
-def failure(request):
-    sensor_object = get_object_or_404(Sensor, pk=request.POST['sensor_id'])
-    if sensor_object.sensor_key == request.POST['sensor_key']:
-        print("Status", request.POST['status'])
-        if request.POST['status'] == "OSError":
-            sensor_object.status = Sensor.FAILURE_OS
-        elif request.POST['status'] == "MemoryError":
-            sensor_object.status = Sensor.FAILURE_MEM
-        elif request.POST['status'] == "I2CError":
-            sensor_object.status = Sensor.FAILURE_I2C
-        sensor_object.save()
-        return HttpResponse("OK", content_type='text/plain')
-    else:
-        raise Http404("Page doesn't exist")
 
 
 #main page

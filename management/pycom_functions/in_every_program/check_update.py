@@ -4,13 +4,16 @@ def check_update(url, port):
     shared_secret = ubinascii.unhexlify(SHARED_SECRET_UPDATES)
 
     content = '{\n'
-    content += '\t"sensor_id":"{}",\n'.format(SENSOR_ID)
-    content += '\t"sensor_key":"{}",\n'.format(SENSOR_KEY)
     content += '\t"software_version":"{}",\n'.format(SOFTWARE_VERSION)
     content += '\t"session_key":"{}"\n'.format(session_key)
     content += '}'
 
     encrypted_string = encrypt_msg(content, shared_secret)
+
+    #calculate hmac_msg
+    hmac_digest = hmac.HMAC(SENSOR_KEY, encrypted_string, uhashlib.sha256).digest()
+    #append to msg
+    encrypted_string = encrypted_string + "." + hmac_digest
     #send data
     content_length = len(encrypted_string)
     msg = """POST /get_update/{} HTTP/1.1\r\nHost: {}\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}\r\n\r\n""".format(SENSOR_ID, url, content_length, encrypted_string)
@@ -32,7 +35,17 @@ def check_update(url, port):
     s.close()
 
     payload = ubinascii.unhexlify(bytes(data_read.decode("ascii").split("\r\n")[-1], "ascii"))
-    msg = decrypt_msg(payload, shared_secret)
+    msg, hmac_msg =payload.split(".")
+
+    #compare hmac
+    hmac_digest = hmac.HMAC(SERVER_KEY, encrypted_string, uhashlib.sha256).digest()
+    print("hmac_digest", hmac_digest)
+    print("hmac_msg", hmac_msg)
+    if hmac_digest != hmac_msg:
+        print("invalid hmac")
+        return
+
+    msg = decrypt_msg(msg, shared_secret)
 
     #handle data
     payload_list = msg.split("|")

@@ -63,6 +63,7 @@ def write_imports(f, sensor_object, communication_object, protocol_object):
     f.write("import uos\n")
     f.write("from crypto import AES\n")
     f.write("import crypto\n")
+    f.write("import hmac\n")
     f.write("from machine import RTC, I2C, Timer\n")
     if communication_object.__class__.__name__ == "Wlan":
         f.write("from network import WLAN\n")
@@ -92,7 +93,7 @@ def write_settings(f, sensor_object, type_of_sensor_object, sample_rate_object, 
     f.write("SENSOR_KEY = '{}'\n".format(sensor_object.sensor_key))
     f.write("SHARED_SECRET_UPDATES = '{}'\n".format(sensor_object.shared_secret_updates))
     f.write("SOFTWARE_VERSION = '{}'\n".format(filename))
-    f.write("SERVER_ID = '{}'\n".format(Server.objects.all()[0].identifier))
+    f.write("SERVER_KEY = '{}'\n".format(Server.objects.all()[0].server_key))
 
     # write settings from sensor object
     f.write("DATA_SEND_RATE_S = {}\n".format(sensor_object.data_send_rate))
@@ -183,7 +184,7 @@ def write_functions_always_needed(f):
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/convert_to_epoch.py")#helper function to convert date tuple to epoch
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/create_and_connect_socket.py")#Write create and connect socket
     write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/measure_loop.py")#Write create and connect socket
-    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update_HTTP.py")#update check
+    write_file_contents(f, BASE_DIR + "/management/pycom_functions/in_every_program/check_update.py")#update check
 
 def write_optional_functions(f, sensor_object, communication_object, protocol_object):
 
@@ -395,7 +396,6 @@ def encrypt_msg(plain_text, key, n=16):
     return encrypted_string
 
 def construct_software_response_update(sensor_object, session_key):
-    response = Server.objects.all()[0].identifier + "|"
     response += session_key + "|"
     update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
     with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
@@ -403,12 +403,16 @@ def construct_software_response_update(sensor_object, session_key):
     data = data.rstrip()
     response += hashlib.sha256(data.encode("ascii")).hexdigest() + "|"
     response += data
-    return encrypt_msg(response, sensor_object.shared_secret_updates)
-
+    ecrypted_msg = encrypt_msg(response, sensor_object.shared_secret_updates)
+    h = hmac.new(Server.objects.all()[0].server_key, encrypted_msg, hashlib.sha256)
+    hmac_msg = ubinascii.hexlify(h.digest())
+    return encrypt_msg + "." + hmac_msg
 
 
 def construct_software_response_up_to_date(sensor_object, session_key):
-    response = Server.objects.all()[0].identifier  + "|"
     response += session_key + "|"
     response += "UP-TO-DATE"
-    return encrypt_msg(response, sensor_object.shared_secret_updates)
+    ecrypted_msg = encrypt_msg(response, sensor_object.shared_secret_updates)
+    h = hmac.new(Server.objects.all()[0].server_key, encrypted_msg, hashlib.sha256)
+    hmac_msg = ubinascii.hexlify(h.digest())
+    return encrypt_msg + "." + hmac_msg
