@@ -11,7 +11,8 @@ def communicate_with_server(data_with_ts, header_ts):
         s.close()
         close_network(network)
     except OSError:
-        print("OSError")
+        print("OSError, communicate_with_server")
+        utime.sleep(5)
         try:
             if s:
                 s.close()

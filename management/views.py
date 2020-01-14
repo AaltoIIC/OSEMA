@@ -32,6 +32,7 @@ import hmac
 from Crypto.Cipher import AES
 
 import string
+import binascii
 
 try:
     import secrets
@@ -125,9 +126,9 @@ def get_update(request, sensor_id):
     if request.method == 'POST':
         sensor_object = get_object_or_404(Sensor, pk=sensor_id)
         #check integrity and autheticity of the message
-        encrypted_msg, hmac_msg = request.body.split(".")
-        h = hmac.new(sensor_object.sensor_key, encrypted_msg, hashlib.sha256)
-        if h.digest() != binascii.hexlify(hmac_msg):
+        encrypted_msg, hmac_msg = request.body.decode("ascii").split(".")
+        h = hmac.new(binascii.unhexlify(sensor_object.sensor_key), encrypted_msg.encode('ascii'), hashlib.sha256)
+        if h.digest() != binascii.unhexlify(hmac_msg):
             h = hmac.new(sensor_object.sensor_key_old, encrypted_msg, hashlib.sha256)
             if h.digest() != binascii.hexlify(hmac_msg):
                 raise Http404("Page doesn't exist")

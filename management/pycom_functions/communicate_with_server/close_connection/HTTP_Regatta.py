@@ -11,7 +11,8 @@ def communicate_with_server(data_with_ts, header_ts):
             utime.sleep(0.1)
         s.close()
     except OSError:
-        print("OSError")
+        print("OSError, communicate_with_server")
+        utime.sleep(5)
         try:
             if s:
                 s.close()

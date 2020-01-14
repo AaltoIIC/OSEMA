@@ -9,6 +9,7 @@ import time
 import os
 import binascii
 import hashlib
+import hmac
 
 """Update clock from internet"""
 def update_time():
@@ -396,23 +397,22 @@ def encrypt_msg(plain_text, key, n=16):
     return encrypted_string
 
 def construct_software_response_update(sensor_object, session_key):
-    response += session_key + "|"
+    response = session_key + "|"
     update = Update.objects.filter(sensor=sensor_object).order_by('-date')[0]
     with open(BASE_DIR + '/management/sensor_updates/' + update.filename, 'r') as f:
         data = f.read()
     data = data.rstrip()
-    response += hashlib.sha256(data.encode("ascii")).hexdigest() + "|"
     response += data
-    ecrypted_msg = encrypt_msg(response, sensor_object.shared_secret_updates)
-    h = hmac.new(Server.objects.all()[0].server_key, encrypted_msg, hashlib.sha256)
-    hmac_msg = ubinascii.hexlify(h.digest())
-    return encrypt_msg + "." + hmac_msg
+    encrypted_msg = encrypt_msg(response, sensor_object.shared_secret_updates)
+    h = hmac.new(binascii.unhexlify(Server.objects.all()[0].server_key), encrypted_msg, hashlib.sha256)
+    hmac_msg = binascii.hexlify(h.digest())
+    return encrypted_msg.decode("ascii") + "." + hmac_msg.decode("ascii")
 
 
 def construct_software_response_up_to_date(sensor_object, session_key):
-    response += session_key + "|"
+    response = session_key + "|"
     response += "UP-TO-DATE"
-    ecrypted_msg = encrypt_msg(response, sensor_object.shared_secret_updates)
-    h = hmac.new(Server.objects.all()[0].server_key, encrypted_msg, hashlib.sha256)
-    hmac_msg = ubinascii.hexlify(h.digest())
-    return encrypt_msg + "." + hmac_msg
+    encrypted_msg = encrypt_msg(response, sensor_object.shared_secret_updates)
+    h = hmac.new(binascii.unhexlify(Server.objects.all()[0].server_key), encrypted_msg, hashlib.sha256)
+    hmac_msg = binascii.hexlify(h.digest())
+    return encrypted_msg.decode("ascii") + "." + hmac_msg.decode("ascii")
