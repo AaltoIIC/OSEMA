@@ -13,7 +13,8 @@ def format_data(header_ts, data):
             else:
                 data_string += '"{}":{}, '.format(VARIABLE_NAMES[i], data_values[i])
         data_string += '},\n'
-    data_string = data_string[:-1]
+    data_string = data_string[:-2]
+    data_string += '\n'
     data_string += '\t]\n'
     data_string += '}\n'
     return encrypt_msg(data_string, SHARED_SECRET_DATA)

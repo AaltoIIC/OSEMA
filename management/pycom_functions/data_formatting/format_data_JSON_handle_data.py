@@ -14,7 +14,8 @@ def format_data(header_ts, data):
             else:
                 data_string += '"{}":{}, '.format(VARIABLE_NAMES[i], data_values[i])
         data_string += '},\n'
-    data_string = data_string[:-1]
+    data_string = data_string[:-2]
+    data_string += '\n'
     data_string += '\t]\n'
     data_string += '}\n'
     return data_string
