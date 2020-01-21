@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container-fluid">
   <div class="w-75 p-3" style="margin: 0 auto;">
-    <h3 id="adding-new-sensor" class="mb-3">Adding new sensor</h1>
+    <h3 id="adding-new-sensor" class="mb-3">Adding new sensor</h3>
     <h4 id="connect-sensor-to-pycom-microcontroller" class="mb-3">Connect sensor to PyCom-microcontroller</h4>
     <ul>
       <li class="mb-3">If you are using an expansion board <b> G16 = SDA </b> and <b> G18 = SCL </b></li>
@@ -44,13 +44,13 @@
     <ul>
       <li>Download boot.py file</li>
       <button type="button" onclick="location.href='download/boot';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">boot.py</button>
-      <li>Download main.py (sensor specific) by going to <a href="/sensors/browse">Browse sensors</a>, clicking <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button> button next to previously created sensor and selecting <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Download software</button> below Software version.</li></li>
+      <li>Download main.py (sensor specific) by going to <a href="/sensors/browse">Browse sensors</a>, clicking <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button> button next to previously created sensor and selecting <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Download software</button> below Software version.</li>
     </ul>
     <h4 id="move-the-initial-files-to-microcontroller" class="mb-3">Move the initial files to microcontroller</h4>
     <ul>
       <li>The easiest way is to use FTP. Use for example <a href="https://winscp.net/">WinSCP</a></li>
       <li>First you need to connect to microcontroller via Wifi</li>
-      <li>Wifi password = www.pycom.io</li>
+      <li>Wifi password: www.pycom.io</li>
       <li>The name of PyCom microcontroller is in form boardtype-wifi-randomcode</li>
       <figure>
         <img src="{% static 'management/instructions/wifi_gpy.png' %}" alt="Connect to microcontroller via Wifi">
