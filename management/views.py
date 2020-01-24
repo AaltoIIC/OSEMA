@@ -926,6 +926,11 @@ def delete_protocols(request, type, id):
 def instructions_add_sensor(request):
     return render(request, 'management/instructions_add_sensor.html')
 
+#instructions
+@login_required
+def instructions_add_sensor_mmd(request):
+    return render(request, 'management/instructions_add_sensor_mmd.html')
+
 @login_required
 def instructions_server(request):
     return render(request, 'management/instructions_server.html')
