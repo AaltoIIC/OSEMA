@@ -66,7 +66,6 @@
         <li>Port: 21</li>
         <li>User name: micro</li>
         <li>Password: python</li>
-      </ul>
       <figure>
         <img src="{% static 'management/instructions/ftp_settings.PNG' %}" alt="Settings for FTP connection">
       </figure>
@@ -75,6 +74,9 @@
         <figure>
           <img src="{% static 'management/instructions/ftp_drag_n_drop.PNG' %}" alt="Settings for FTP connection">
         </figure>
+    </ul>
+    <h4 id="move-the-initial-files-to-microcontroller" class="mb-3">Restart microcontroller</h4>
+    <ul>
       <li>Detach usb-cable and connect powerbank to the microcontroller.</li>
       <li>After the status of the device changes from <span style="color:orange;">Waiting-for-update</span> to <span style="color:green;">Measuring</span> in the <a href="{% url 'browse_sensors' %}">Browse sensors</a> page the sensor has started measuring and operates correctly. (Refresh page to update status). </li>
       <li>If the status doesn't change in 30 seconds, there's an error with the system. You can try updating the firmware again.</li>
