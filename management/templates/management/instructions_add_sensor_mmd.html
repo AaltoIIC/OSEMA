@@ -23,6 +23,7 @@
       <figure>
         <img src="{% static 'management/instructions/pycom_settings_2.PNG' %}" style="width:auto;height:auto;" alt="Pycom Firmware Update settings 2">
       </figure>
+      <li>Wait until firmaware update process is complete (this takes approximately 1 minute)</li>
     </ul>
     <h4 id="create-sensor-instance-to-user-interface" class="mb-3">Create a new sensor instance from user interface</h4>
     <ul>
@@ -45,15 +46,15 @@
     <ul>
       <li>The easiest way is to use FTP. Start WinSCP software. </li>
       <figure>
-        <img src="{% static 'management/instructions/.png' %}" alt="Connect to microcontroller via Wifi">
+        <img src="{% static 'management/instructions/win_scp.png' %}" alt="Start WinSCP software">
       </figure>
       <li>First you need to connect to microcontroller via Wifi</li>
       <li>Wifi password: www.pycom.io</li>
-      <li>The name of PyCom microcontroller is in form boardtype-wifi-randomcode. For example, wipy-wifi-818c</li>
+      <li>The name of PyCom microcontroller is in form boardtype-wlan-XXXX. For example, wipy-wifi-818c</li>
       <figure>
-        <img src="{% static 'management/instructions/win_scp.png' %}" alt="Start WinSCP software">
+        <img src="{% static 'management/instructions/wifi_gpy.png' %}" alt="Connect to microcontroller via Wifi">
       </figure>
-      <li>If the device's WIFI-network can't be found, erase flash file system with firmware update tool and reset the microcontroller</li>
+      <li>If the device's WIFI-network can't be found and erase flash file system with firmware update tool.</li>
       <li>Open WinSCP and use the following settings</li>
       <ul>
         <li>Protocol: FTP</li>
@@ -65,18 +66,14 @@
       <figure>
         <img src="{% static 'management/instructions/ftp_settings.PNG' %}" alt="Settings for FTP connection">
       </figure>
-      <li>Replace boot.py and main.py from flash folder</li>
-      <li><b>Be careful: you can't remove or rename files so you need to actually replace the main.py and boot.py files</b></li>
+      <li>Replace boot.py and main.py from flash folder. <strong>The filenames should be exactly main.py and boot.py</strong>. Please, rename files if they are not. </li>
+      <li><b>Be careful: you can't remove or rename files located in the microcontroller. If you upload wrong files, you need to run Firmware Update tool again and erase flash file system. </b></li>
         <figure>
           <img src="{% static 'management/instructions/ftp_drag_n_drop.PNG' %}" alt="Settings for FTP connection">
         </figure>
-      <li>Reset microcontroller by pressing reset button. The microcontroller doesn't indicate reset any way.</li>
-      <figure>
-        <img src="{% static 'management/instructions/reset_button.jpg' %}" alt="Reset button">
-        <figcaption>The location of the reset button.</figcaption>
-      </figure>
+      <li>Detach usb-cable and connect powerbank to the microcontroller.</li>
       <li>After the status of the device changes from <span style="color:orange;">Waiting-for-update</span> to <span style="color:green;">Measuring</span> in the <a href="{% url 'browse_sensors' %}">Browse sensors</a> page the sensor has started measuring and operates correctly. (Refresh page to update status). </li>
-      <li>If the status doesn't change in 15 seconds, there's an error with the system. Check that main.py has the information in correct form.</li>
+      <li>If the status doesn't change in 15 seconds, there's an error with the system. You can try updating the firmware again.</li>
     </ul>
   </div>
 </div>
