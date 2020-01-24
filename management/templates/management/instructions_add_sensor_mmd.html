@@ -23,7 +23,7 @@
       <figure>
         <img src="{% static 'management/instructions/pycom_settings_2.PNG' %}" style="width:auto;height:auto;" alt="Pycom Firmware Update settings 2">
       </figure>
-      <li>Wait until firmaware update process is complete (this takes approximately 1 minute)</li>
+      <li>Wait until firmware update process is complete (this takes approximately 1 minute)</li>
     </ul>
     <h4 id="create-sensor-instance-to-user-interface" class="mb-3">Create a new sensor instance from user interface</h4>
     <ul>
@@ -44,15 +44,15 @@
     </ul>
     <h4 id="move-the-initial-files-to-microcontroller" class="mb-3">Move the initial files to microcontroller</h4>
     <ul>
-      <h5>Connect your computer to microcontroller via Wifi</h5>
-      <li>The name of PyCom microcontroller is in form boardtype-wlan-XXXX. For example, wipy-wifi-818c</li>
+      <h5 class="mb-3">Connect your computer to microcontroller via Wifi</h5>
+      <li>The name of PyCom microcontroller is in form boardtype-wlan-XXXX. For example, wipy-wlan-818c</li>
       <li>Wifi password: www.pycom.io</li>
-      <li><strong>Please note that you Internet connection is lost! </strong></li>
+      <li><strong>Please note that you Internet connection is lost</strong> after you have connected to the microcontroller</li>
       <figure>
         <img src="{% static 'management/instructions/wifi_gpy.png' %}" alt="Connect to microcontroller via Wifi">
       </figure>
       <li>If the device's WIFI-network can't be found and erase flash file system with firmware update tool.</li>
-      <h5>Move files to microcontroller using FTP</h5>
+      <h5 class="mb-3">Move files to microcontroller using FTP</h5>
       <li>Start WinSCP software. </li>
       <figure>
         <img src="{% static 'management/instructions/win_scp.png' %}" alt="Start WinSCP software">
