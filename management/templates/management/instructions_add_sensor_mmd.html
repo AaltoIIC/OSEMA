@@ -68,6 +68,7 @@
       <figure>
         <img src="{% static 'management/instructions/ftp_settings.PNG' %}" alt="Settings for FTP connection">
       </figure>
+      <li>After you have given the settings, press <i>Login</i>.</li>
       <li>Replace boot.py and main.py from flash folder. <strong>The filenames should be exactly main.py and boot.py</strong>. Please, rename files if they are not. </li>
       <li><b>Be careful: you can't remove or rename files located in the microcontroller. If you upload files with wrong file names, you need to run Firmware Update tool again and erase flash file system. </b></li>
         <figure>
@@ -78,7 +79,7 @@
     <ul>
       <li>Disconnect from the wifi of microcontroller and connect to a normal wifi. </li>
       <li>Detach usb-cable</li>
-      <li>connect powerbank to the microcontroller. (Located next to the microcontroller).</li>
+      <li>Connect powerbank to the microcontroller. (Located next to the microcontroller).</li>
       <li>After the status of the device changes from <span style="color:orange;">Waiting-for-update</span> to <span style="color:green;">Measuring</span> in the <a href="{% url 'browse_sensors' %}">Browse sensors</a> page the sensor has started measuring and operates correctly. (Refresh page to update status). </li>
       <li>If the status doesn't change in 30 seconds, there's an error with the system. You can try updating the firmware again.</li>
     </ul>
