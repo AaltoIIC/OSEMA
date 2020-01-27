@@ -38,9 +38,8 @@
     </ul>
     <h4 id="update-the-initial-main.py-file" class="mb-3">Download initial files</h4>
     <ul>
-      <li>Download boot.py file</li>
-      <button type="button" onclick="location.href='download/boot';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">boot.py</button>
-      <li>Download main.py (sensor specific) by going to <a href="/sensors/browse">Browse sensors</a>, clicking <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button> button next to previously created sensor and selecting <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Download software</button> below Software version.</li>
+      <li><a href="download/boot">Download</a> boot.py file</li>
+      <li>Download main.py (sensor specific) by going to <a href="/sensors/browse" target="_blank">Browse sensors</a>, clicking <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button> button next to previously created sensor and selecting <button type="button" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Download software</button> below Software version.</li>
     </ul>
     <h4 id="move-the-initial-files-to-microcontroller" class="mb-3">Move the initial files to microcontroller</h4>
     <h5 class="mb-3">Connect your computer to microcontroller via Wifi</h5>
@@ -78,7 +77,8 @@
     <h4 id="move-the-initial-files-to-microcontroller" class="mb-3">Restart microcontroller</h4>
     <ul>
       <li>Disconnect from the wifi of microcontroller and connect to a normal wifi. </li>
-      <li>Detach usb-cable and connect powerbank to the microcontroller.</li>
+      <li>Detach usb-cable</li>
+      <li>connect powerbank to the microcontroller. (Located next to the microcontroller).</li>
       <li>After the status of the device changes from <span style="color:orange;">Waiting-for-update</span> to <span style="color:green;">Measuring</span> in the <a href="{% url 'browse_sensors' %}">Browse sensors</a> page the sensor has started measuring and operates correctly. (Refresh page to update status). </li>
       <li>If the status doesn't change in 30 seconds, there's an error with the system. You can try updating the firmware again.</li>
     </ul>
