@@ -59,6 +59,7 @@ urlpatterns = [
     path('protocols/delete/<str:type>/<int:id>', views.delete_protocols, name='delete_protocols'),
     path('instructions/add_sensor', views.instructions_add_sensor, name='instructions_add_sensor'),
     path('instructions/add_sensor_mmd', views.instructions_add_sensor_mmd, name='instructions_add_sensor_mmd'),
+    path('instructions/sensor_settings_mmd', views.sensor_settings_mmd, name='sensor_settings_mmd'),
     path('instructions/server', views.instructions_server, name='instructions_server'),
     path('instructions/download/<str:file>', views.download_instructions, name='download_instructions'),
     path('get_update/<int:sensor_id>', views.get_update, name='get_update'),
