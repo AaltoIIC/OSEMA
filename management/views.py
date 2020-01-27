@@ -934,7 +934,7 @@ def instructions_add_sensor_mmd(request):
 #settings mmd
 @login_required
 def sensor_settings_mmd(request):
-    return render(request, 'management/settings_mmd.html')
+    return render(request, 'management/sensor_settings_mmd.html')
 
 @login_required
 def instructions_server(request):
