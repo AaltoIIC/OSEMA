@@ -27,11 +27,10 @@
     </ul>
     <h4 id="create-sensor-instance-to-user-interface" class="mb-3">Create a new sensor</h4>
     <ul>
-      <li>Select <i>Add sensor</i> or <a href="{% url 'sensor_settings_mmd' %}">click here</a> to add sensor. Open this page in a new tab. </li>
+      <li>Select <i>Add sensor</i> or <a href="{% url 'add_sensor' %}">click here</a> to add sensor. Open this page in a new tab. Use the following <a href="{% url 'sensor_settings_mmd' %}">settings</a></li>
       <figure>
         <img src="{% static 'management/instructions/add_sensor.png' %}" alt="Add sensor">
       </figure>
-      <li>Use the following settings <a href="{% url 'add_sensor' %}">click here</a> to add sensor.</li>
       <li>Remeber to add sensor to database after you have configured the settings</li>
       <figure>
         <img src="{% static 'management/instructions/add_sensor_to_database.png' %}" alt="Add sensor to database">
