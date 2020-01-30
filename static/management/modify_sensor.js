@@ -193,8 +193,8 @@ var password = document.getElementById("id_modify_sensor-sensor_key");
 var generate_password_btn = document.getElementById("generate_pass_btn");
 generate_password_btn.onclick = function() {
   var new_pass = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (var i = 0; i < 20; i++)
+  var possible = "0123456789abcdef";
+  for (var i = 0; i < 32; i++)
     new_pass += possible.charAt(Math.floor(Math.random() * possible.length));
     password.value = new_pass;
   }
