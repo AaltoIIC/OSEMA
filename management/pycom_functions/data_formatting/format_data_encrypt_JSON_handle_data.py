@@ -18,4 +18,11 @@ def format_data(header_ts, data):
     data_string += '\n'
     data_string += '\t]\n'
     data_string += '}\n'
-    return encrypt_msg(data_string, SHARED_SECRET_DATA)
+    encrypted_string = encrypt_msg(data_string, SHARED_SECRET_DATA)
+    #calculate hmac
+    hmac_digest = HMAC(sensor_key_binary, encrypted_string, uhashlib.sha256).digest()
+    hmac_digest_str = ubinascii.hexlify(hmac_digest).decode('ascii')
+    #append to msg
+    encrypted_string = encrypted_string + "." + hmac_digest_str
+    return encrypted_string
+
