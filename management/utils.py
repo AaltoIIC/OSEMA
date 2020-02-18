@@ -199,7 +199,10 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
     if sensor_object.model.handle_data_function:
         write_file_contents(f, BASE_DIR + "/" + sensor_object.model.handle_data_function.name)
         if sensor_object.data_format.name == "JSON":
-            write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_JSON_handle_data.py")
+            if sensor_object.encrypt_data:
+                write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_encrypt_JSON_handle_data.py")
+            else:
+                write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_JSON_handle_data.py")
         elif sensor_object.data_format.name == "raw":
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_raw_handle_data.py")
         elif sensor_object.data_format.name == "Regatta" and protocol_object.__class__.__name__ == "HTTP":
@@ -208,7 +211,10 @@ def write_optional_functions(f, sensor_object, communication_object, protocol_ob
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_Regatta_handle_data_MQTT.py")
     else:
         if sensor_object.data_format.name == "JSON":
-            write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_JSON.py")
+            if sensor_object.encrypt_data:
+                write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_encrypt_JSON.py")
+            else:
+                write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_JSON.py")
         elif sensor_object.data_format.name == "raw":
             write_file_contents(f, BASE_DIR + "/management/pycom_functions/data_formatting/format_data_raw.py")
         elif sensor_object.data_format.name == "Regatta" and protocol_object.__class__.__name__ == "HTTP":
