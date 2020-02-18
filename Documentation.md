@@ -72,10 +72,10 @@ Therefore, all messages are encrypted using AES 128-bit CBC and HMAC is calculat
 
 When asking an update, sensor nodes sends the following JSON string.
 ```
-'{
+{
     "software_version":"<software_version>",
     "session_key":"<session_key>"
-}'
+}
 ```
 Explanation of parameters:
 * sensor_id is the unique id of a sensor node. It is given to the node in the creation and can't be changed afterwards. For example: "13"
