@@ -1,4 +1,4 @@
-# Sensor Configurator Platform
+# OSEMA: Open Sensor Manager
 
 This is interface for controlling PyCom microcontroller boards
 
