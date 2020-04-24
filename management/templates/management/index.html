@@ -1,0 +1,12 @@
+{% extends "management/base.html" %}
+
+{% block content %}
+<div class="jumbotron text-center">
+  <h1>Welcome To Sensor Configurator Platform</h1>
+  {% if user.is_authenticated %}
+  <p class="lead">You can add, modify and remove sensor nodes.</p>
+  {% else %}
+  <p class="lead">Please <a href='/login'>login</a> or <a href="/signup">signup</a>!</p>
+  {% endif %}
+</div>
+{% endblock %}

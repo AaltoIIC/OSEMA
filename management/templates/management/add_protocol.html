@@ -1,0 +1,57 @@
+{% extends "management/base.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="container">
+ <div class="row">
+   <div class="col-md-8 order-md-1">
+    <br>
+    {% if user.auth_level >= 2 %}
+      <h4 class="mb-3">Add instance</h4>
+    {% else %}
+      <h4 class="mb-3">You are not authorized to add protocol instances</h4>
+    {% endif %}
+     <form class="needs-validation" method="POST">
+       {% csrf_token %}
+          <label for="id_protocol">Select protocol:</label><br>
+            <div>
+             <select name="protocol" required id="id_protocol">
+               {% for option in available_protocols %}
+                {% if option == initial_protocol %}
+                  <option value={{option}} selected> {{option}} </option>
+                {% else %}
+                  <option value={{option}}> {{option}} </option>
+                {% endif %}
+               {% endfor %}
+             </select>
+             <br>
+             <br>
+         </div>
+         <div id="protocol_options">
+           {% for field in protocol_form %}
+           <div class="mb-3">
+             {{ field.label_tag }}<br>
+             {{ field }}
+             {% if field.help_text %}
+               <small style="color: grey">{{ field.help_text }}</small>
+             {% endif %}
+             {% for error in field.errors %}
+               <p style="color: red">{{ error }}</p>
+             {% endfor %}
+           </div>
+           {% endfor %}
+         </div>
+       {% if user.auth_level >= 2 %}
+         <hr class="mb-4">
+         <button class="btn btn-primary btn-lg btn-block" id="submit_button" type="submit">Add to database</button>
+       {% endif %}
+     </form>
+  <br>
+  </div>
+ </div>
+</div>
+
+<script src="{% static "management/add_protocol.js" %}"></script>
+
+{% endblock %}

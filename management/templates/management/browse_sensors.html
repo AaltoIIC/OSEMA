@@ -1,0 +1,64 @@
+{% extends "management/base.html" %}
+{% load static %}
+
+{% block content %}
+<h2 style="margin-left: 10px; margin-top: 10px;" class="mb-3">Browse sensors</h2>
+<form class="form-inline">
+    <p style="margin-left: 10px;"> Order by:
+    <select name="sensor_order" id="sensor_order_option">
+        <option value="sensor_id">Id</option>
+        <option value="name">Name</option>
+        <option value="model">Model</option>
+        <option value="location">Location</option>
+        <option value="date_added">Date added</option>
+        <option value="last_modified">Last modified</option>
+        <option value="status">Status</option>
+    </select>
+    <input type="checkbox" name="order_inverse" id="sensor_order_inverse">Inverse </p>
+</form>
+<form class="form-inline" action="#">
+  <p style="margin-left: 10px;">Search by keyword: <input type="text" id="sensor_keyword"> </p>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width: 2%">Id</th>
+            <th style="width: 10%">Name</th>
+            <th style="width: 10%">Model</th>
+            <th style="width: 10%">Location</th>
+            <th style="width: 12.5%">Date added</th>
+            <th style="width: 12.5%">Last modified</th>
+            <th style="width: 15%">Status</th>
+            <th style="width: 38%">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sensor in sensors %}
+        <tr>
+            <td class="sensor_id" style="vertical-align: middle;">{{sensor.id}}</td>
+            <td class="name" style="vertical-align: middle;"><a href="/sensors/{{sensor.id}}">{{sensor.name}}</td>
+            <td class="model" style="vertical-align: middle;"><a href="/sensors/type/{{sensor.model}}">{{sensor.model}}</td>
+            <td class="location" style="vertical-align: middle;">{{sensor.location}}</td>
+            <td class="date_added" style="vertical-align: middle;">{{sensor.date_added}}</td>
+            <td class="last_modified" style="vertical-align: middle;">{{sensor.date_modified}}</td>
+            <td class="status" style="vertical-align: middle;">{{sensor.status}}</td>
+            <td class="actions" style="margin: 0px;">
+            {% if user.auth_level > 1 %}
+              <button type="button" onclick="location.href='{{sensor.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='modify/{{sensor.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
+              <button type="button" value="delete/{{sensor.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
+            {% else %}
+              <button type="button" onclick="location.href='{{sensor.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+            {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">Sorry, we could not find any sensors!</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script src="{% static 'management/browse_sensors.js' %}"></script>
+{% endblock %}

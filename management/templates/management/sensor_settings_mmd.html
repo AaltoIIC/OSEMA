@@ -1,0 +1,29 @@
+{% extends "management/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="w-75 p-3" style="margin: 0 auto;">
+    <h3 id="adding-new-sensor" class="mb-3">Settings</h3>
+    <p> If setting is not in this list, you can leave it as default.</p>
+    <ul>
+      <li> Name: give sensor an unique name </li>
+      <li>Update url: riku.digikaksonen.fi </li>
+      <li>Update port: 443 </li>
+      <li>Update over HTTPS: &#x2714; </li>
+      <li>Model: ADXL345 </li>
+      <li>Sample rate (Hz): 12.5 </li>
+      <li>Communication technology: Wlan </li>
+      <li>Instance: Aalto open </li>
+      <li>Protocol: HTTP </li>
+      <li>Instance: HTTP </li>
+      <li>Data server url: 86.50.143.154 </li>
+      <li>Data server port: 11000 </li>
+      <li>Data server path: /add-data2 </li>
+      <li>Data format: JSON </li>
+    </ul>
+  </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'management/instructions/formatting.css' %}">
+{% endblock %}

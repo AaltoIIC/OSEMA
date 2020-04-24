@@ -1,0 +1,9 @@
+{% extends "management/base.html" %}
+
+{% block content %}
+  <h1><a href="{% url 'add_protocols' %}">Do you want to add protocols instance?</a></h1>
+  <br>
+  <h1> Or </h1>
+  <br>
+  <h1><a href="{% url 'browse_protocols' %}">Do you want to browse protocol instances?</a></h1>
+{% endblock %}

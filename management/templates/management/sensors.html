@@ -1,0 +1,9 @@
+{% extends "management/base.html" %}
+
+{% block content %}
+  <h1><a href="{% url 'add_sensor' %}">Do you want to add sensor?</a></h1>
+  <br>
+  <h1> Or </h1>
+  <br>
+  <h1><a href="{% url 'browse_sensors' %}">Do you want to browse sensors?</a></h1>
+{% endblock %}

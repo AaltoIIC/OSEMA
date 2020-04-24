@@ -1,0 +1,85 @@
+{% extends "management/base.html" %}
+{% load static %}
+
+{% block content %}
+<h2 style="margin-left: 10px; margin-top: 10px;" class="mb-3">Browse protocols technologies</h2>
+<form class="form-inline">
+  <p style="margin-left: 10px;"> Select type:
+    <select name="type" id="search_select">
+      <option value="All" selected>All</option>
+      <option value="HTTP">HTTP</option>
+      <option value="HTTPS">HTTPS</option>
+      <option value="MQTT">MQTT</option>
+    </select>
+    </p>
+</form>
+<form class="form-inline">
+    <p style="margin-left: 10px;"> Order by:
+    <select name="protocol_order" id="protocol_order_option">
+        <option value="name">Name</option>
+        <option value="type">Type</option>
+    </select>
+    <input type="checkbox" name="order_inverse" id="protocol_order_inverse">Invert </p>
+</form>
+<form class="form-inline" action="#">
+  <p style="margin-left: 10px;">Search by keyword: <input type="text" id="protocol_keyword"> </p>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width: 33.33%">Name</th>
+            <th style="width: 33.33%">Type</th>
+            <th style="width: 33.33%">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for instance in http_instances %}
+        <tr>
+            <td class="name" style="vertical-align: middle;"><a href="/protocols/HTTP/{{instance.id}}">{{instance.name}}</td>
+            <td class="type" style="vertical-align: middle;">HTTP</td>
+            <td class="actions" style="margin: 0px;">
+            {% if user.auth_level > 1 %}
+              <button type="button" onclick="location.href='HTTP/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='modify/HTTP/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
+              <button type="button" value="delete/HTTP/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
+            {% else %}
+              <button type="button" onclick="location.href='HTTP/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% for instance in https_instances %}
+        <tr>
+            <td class="name" style="vertical-align: middle;"><a href="/protocols/HTTPS/{{instance.id}}">{{instance.name}}</td>
+            <td class="type" style="vertical-align: middle;">HTTPS</td>
+            <td class="actions" style="margin: 0px;">
+            {% if user.auth_level > 1 %}
+              <button type="button" onclick="location.href='HTTPS/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='modify/HTTPS/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
+              <button type="button" value="delete/HTTPS/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
+            {% else %}
+              <button type="button" onclick="location.href='HTTPS/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% for instance in mqtt_instances %}
+        <tr>
+            <td class="name" style="vertical-align: middle;"><a href="/protocols/MQTT/{{instance.id}}">{{instance.name}}</td>
+            <td class="type" style="vertical-align: middle;">MQTT</td>
+            <td class="actions" style="margin: 0px;">
+            {% if user.auth_level > 1 %}
+              <button type="button" onclick="location.href='MQTT/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+              <button type="button" onclick="location.href='modify/MQTT/{{instance.id}}';" class="btn btn-primary btn-md" style="padding-top: 2px; padding-bottom: 2px;">Edit</button>
+              <button type="button" value="delete/MQTT/{{instance.id}}" class="btn btn-danger btn-md delete_button" style="padding-top: 2px; padding-bottom: 2px;">Delete</button>
+            {% else %}
+              <button type="button" onclick="location.href='MQTT/{{instance.id}}';" class="btn btn-success btn-md" style="padding-top: 2px; padding-bottom: 2px;">Info</button>
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script src="{% static "management/browse_protocols.js" %}"></script>
+{% endblock %}

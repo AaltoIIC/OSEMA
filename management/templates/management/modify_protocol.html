@@ -1,0 +1,39 @@
+{% extends "management/base.html" %}
+
+{% block content %}
+
+<div class="container">
+ <div class="row">
+   <div class="col-md-8 order-md-1">
+    <br>
+    <br>
+    {% if user.auth_level >= 2 %}
+      <h4 class="mb-3">Modify protocol instance</h4>
+    {% else %}
+      <h4 class="mb-3">You are not authorized to modify protocol instances</h4>
+    {% endif %}
+     <form class="needs-validation" method="POST">
+       {% csrf_token %}
+       {% for field in form %}
+       <div class="mb-3">
+         {{ field.label_tag }}<br>
+         {{ field }}
+         {% if field.help_text %}
+           <small style="color: grey">{{ field.help_text }}</small>
+         {% endif %}
+         {% for error in field.errors %}
+           <p style="color: red">{{ error }}</p>
+         {% endfor %}
+       </div>
+       {% endfor %}
+       {% if user.auth_level >= 2 %}
+         <hr class="mb-4">
+         <button class="btn btn-primary btn-lg btn-block" type="submit">Save changes</button>
+       {% endif %}
+     </form>
+  <br>
+   </div>
+ </div>
+</div>
+
+{% endblock %}
