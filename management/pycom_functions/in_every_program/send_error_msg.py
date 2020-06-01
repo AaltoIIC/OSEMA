@@ -1,5 +1,8 @@
 """Sends error message to the userinterface"""
 def send_error_msg(error_type):
+    #Add encryption adn HMAC
+    print("Error reporting currently not supported.")
+    """
     network = connect_network(flash_light=False) #Connect to network
     s = create_and_connect_socket(UPDATE_URL, UPDATE_PORT, UPDATE_HTTPS)
     content_length = len("sensor_id={}&sensor_key={}&status={}".format(SENSOR_ID, SENSOR_KEY, error_type))
@@ -7,3 +10,4 @@ def send_error_msg(error_type):
     s.send(bytes(data, 'utf8'))
     utime.sleep(2)
     print("Status sent to user interface")
+    """
