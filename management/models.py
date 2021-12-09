@@ -26,13 +26,20 @@ try:
     """generate hex key"""
     def generate_key(no_bytes=16):
         return secrets.token_hex(no_bytes)
+    
+    def generate_key_256():
+        return secrets.token_hex(32)
 except:
     def generate_password(length=20):
         return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length))
 
     def generate_key(no_bytes=16):
         hex_characters = "0123456789abcdef"
-        return ''.join(random.choice(hex_characters) for _ in range(length))
+        return ''.join(random.choice(hex_characters) for _ in range(no_bytes))
+    
+    def generate_key_256():
+        hex_characters = "0123456789abcdef"
+        return ''.join(random.choice(hex_characters) for _ in range(32))
 
 
 # Create your models here.
@@ -117,8 +124,8 @@ class Sensor(models.Model):
     adder = models.ForeignKey(User, related_name="adder", on_delete=models.PROTECT, blank=True, null=True)
     date_modified = models.DateTimeField(default=timezone.now)
     latest_modifier = models.ForeignKey(User, related_name="latest_modifier", on_delete=models.PROTECT, blank=True, null=True)
-    sensor_key = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
-    sensor_key_old = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
+    sensor_key = models.CharField(max_length=32, default=generate_key_256) #generate random 256-bit key
+    sensor_key_old = models.CharField(max_length=32, default=generate_key_256) #generate random 256-bit key
     shared_secret_updates = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
     shared_secret_data = models.CharField(max_length=32, default=generate_key) #generate random 128-bit key
     encrypt_data = models.BooleanField(default=False)
@@ -262,7 +269,7 @@ class Default_variable(models.Model):
 class Server(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30, default="This server")
-    server_key = models.CharField(max_length=128, default=generate_key) #generate random 128-bit identifier
+    server_key = models.CharField(max_length=32, default=generate_key_256) #generate random 256-bit identifier
 
     def __str__(self):
         return '{}: {}'.format(self.name, self.identifier)
