@@ -272,4 +272,4 @@ class Server(models.Model):
     server_key = models.CharField(max_length=32, default=generate_key_256) #generate random 256-bit identifier
 
     def __str__(self):
-        return '{}: {}'.format(self.name, self.identifier)
+        return '{}: {}'.format(self.name, self.server_key)
